@@ -28,19 +28,19 @@
         </div>
     @endif
 
-    {{-- @(session('error'))
-    <div class="alert alert-danger solid alert-dismissible fade show">
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
-            stroke-linecap="round" stroke-linejoin="round" class="me-2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="15" y1="9" x2="9" y2="15"></line>
-            <line x1="9" y1="9" x2="15" y2="15"></line>
-        </svg>
-        <strong>Error!</strong> {{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
-        </button>
-    </div>
-    @endif --}}
+    @if(session('error'))
+        <div class="alert alert-danger solid alert-dismissible fade show">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            <strong>Error!</strong> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
+            </button>
+        </div>
+    @endif
 
     <div class="row">
         <div class="col-lg-12">
@@ -60,7 +60,7 @@
                                     <th>Type</th>
                                     <th>Country</th>
                                     <th>STATUS</th>
-                                    <th>Action</th>
+                                    <th class="text-end" style="width: 80px">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,7 +84,7 @@
                                                 </button>
                                             </form>
                                         </td>
-                                        <td>
+                                        <td class="text-end">
                                             <div class="dropdown">
                                                 <button type="button"
                                                     class="btn {{ $gateway->is_active ? 'btn-success' : 'btn-danger' }} light sharp"

@@ -13,6 +13,51 @@
             </li>
         </ol>
     </div>
+    @if(session('status'))
+        <div class="alert alert-success solid alert-dismissible fade show">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                <polyline points="9 11 12 14 22 4"></polyline>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+            <strong>Success!</strong> {{ session('status') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
+            </button>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert alert-danger solid alert-dismissible fade show">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            <strong>Validation Failed</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close"></button>
+            <ul class="mt-2 mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger solid alert-dismissible fade show">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            <strong>Error!</strong> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
+            </button>
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -69,13 +114,21 @@
                                                 <div class="row">
                                                     <div class="col-12 mb-3">
                                                         <label class="form-label">Minimum Limit</label>
-                                                        <input type="number" step="0.00000001" name="min_limit"
-                                                            class="form-control" />
+                                                        <div class="input-group mb-3 input-primary">
+                                                            <input type="number" name="min_limit" class="form-control"
+                                                                required>
+                                                            <span class="input-group-text"
+                                                                id="charge-value-suffix">USDT</span>
+                                                        </div>
                                                     </div>
                                                     <div class="col-12 mb-3">
                                                         <label class="form-label">Maximum Limit</label>
-                                                        <input type="number" step="0.00000001" name="max_limit"
-                                                            class="form-control" />
+                                                        <div class="input-group mb-3 input-primary">
+                                                            <input type="number" name="max_limit" class="form-control"
+                                                                required>
+                                                            <span class="input-group-text"
+                                                                id="charge-value-suffix">USDT</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -92,23 +145,28 @@
                                                         <label class="form-label">Rate</label>
                                                         <div class="input-group mb-3 input-primary">
                                                             <span class="input-group-text">1 USDT</span>
-                                                            <input type="text" class="form-control">
+                                                            <input type="text" name="rate_usdt" class="form-control"
+                                                                required>
                                                             <span class="input-group-text" id="rate-suffix">USDT</span>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-6 mb-3">
                                                             <label class="form-label">Charge Type</label>
-                                                            <select name="charge_type"
+                                                            <select name="charge_type" id="charge_type"
                                                                 class="default-select form-control wide" required>
                                                                 <option value="fixed">Fixed</option>
                                                                 <option value="percent">Percent</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-md-6 mb-3">
+                                                        <div class="col-md-6 mb-3 ">
                                                             <label class="form-label">Charge Value</label>
-                                                            <input type="number" step="0.00000001" name="charge_value"
-                                                                class="form-control" required />
+                                                            <div class="input-group  input-primary">
+                                                                <input type="number" name="charge_value"
+                                                                    class="form-control" required>
+                                                                <span class="input-group-text"
+                                                                    id="charge-value-suffix">USDT</span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -182,7 +240,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="user-data-list" class="mb-3"></div>
-                                        <input type="hidden" name="custom_fields" id="custom_fields" value="[]" />
+                                        <div id="custom_fields_container"></div>
                                         {{-- <label class="form-label">Custom Fields (JSON)</label>
                                         <textarea name="custom_fields" id="custom_fields" class="form-control" rows="4"
                                             placeholder='[{"type":"text","label":"Account ID","required":true}]'></textarea>
@@ -207,24 +265,45 @@
     <script>
         (function () {
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+
             // Live update rate currency from Currency input
             const currencyInput = document.getElementById('currency-input');
             const rateSuffixEl = document.getElementById('rate-suffix');
+            const chargeTypeSelect = document.getElementById('charge_type');
+            const chargeValueSuffixEl = document.getElementById('charge-value-suffix');
             if (currencyInput && rateSuffixEl) {
                 const updateCurrency = () => {
                     const val = (currencyInput.value || '').trim();
                     const show = val ? val.toUpperCase() : 'USDT';
                     rateSuffixEl.textContent = show;
+                    // Only update charge value suffix if NOT percent
+                    if (chargeTypeSelect && chargeValueSuffixEl && chargeTypeSelect.value !== 'percent') {
+                        chargeValueSuffixEl.textContent = show;
+                    }
                 };
                 currencyInput.addEventListener('input', updateCurrency);
                 updateCurrency();
+            }
+            const updateChargeValueSuffix = () => {
+                if (!chargeValueSuffixEl) return;
+                if (chargeTypeSelect && chargeTypeSelect.value === 'percent') {
+                    chargeValueSuffixEl.textContent = '%';
+                } else {
+                    const cur = (currencyInput?.value || 'USDT').trim().toUpperCase() || 'USDT';
+                    chargeValueSuffixEl.textContent = cur;
+                }
+            };
+            if (chargeTypeSelect) {
+                chargeTypeSelect.addEventListener('change', updateChargeValueSuffix);
+                updateChargeValueSuffix();
             }
             if (!document.getElementById('gateway-description')) return;
             ClassicEditor
                 .create(document.getElementById('gateway-description'), {
                     simpleUpload: {
-                        // TODO: point to a real upload endpoint
-                        uploadUrl: '{{ route('admin.ckeditor.upload') }}',
+                        // Use explicit URL to avoid breaking when route name is missing
+                        uploadUrl: '{{ url('/admin/uploads/ckeditor') }}',
                         headers: {
                             'X-CSRF-TOKEN': token,
                             'Accept': 'application/json'
@@ -256,7 +335,7 @@
                 ensureDropzone().then(() => {
                     Dropzone.autoDiscover = false;
                     const dz = new Dropzone('#qr-dropzone', {
-                        url: '{{ route('admin.uploads.qr') }}',
+                        url: '{{ url('/admin/uploads/qr') }}',
                         method: 'post',
                         headers: { 'X-CSRF-TOKEN': token },
                         maxFiles: 1,
@@ -281,7 +360,7 @@
                     dz.on('removedfile', function (file) {
                         const path = document.getElementById('qr_path').value;
                         if (!path) return;
-                        fetch('{{ route('admin.uploads.qr.delete') }}', {
+                        fetch('{{ url('/admin/uploads/qr/delete') }}', {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': token,
@@ -350,7 +429,7 @@
     <script>
         (function () {
             const listEl = document.getElementById('user-data-list');
-            const jsonEl = document.getElementById('custom_fields');
+            const containerEl = document.getElementById('custom_fields_container');
             const typeEl = document.getElementById('gf-type');
             const reqEl = document.getElementById('gf-required');
             const labelEl = document.getElementById('gf-label');
@@ -401,11 +480,35 @@
             };
 
             const readJson = () => {
-                try { return JSON.parse(jsonEl.value || '[]'); } catch (e) { return []; }
+                const inputs = containerEl.querySelectorAll('input[name="custom_fields[]"]');
+                const arr = [];
+                inputs.forEach(i => {
+                    if (i.value) {
+                        try { arr.push(JSON.parse(i.value)); } catch (e) { }
+                    }
+                });
+                return arr;
             };
             const writeJson = (arr) => {
-                jsonEl.value = JSON.stringify(arr);
-                // re-render
+                // rebuild hidden inputs as array items
+                containerEl.innerHTML = '';
+                if (arr && arr.length > 0) {
+                    arr.forEach(item => {
+                        const inp = document.createElement('input');
+                        inp.type = 'hidden';
+                        inp.name = 'custom_fields[]';
+                        inp.value = JSON.stringify(item);
+                        containerEl.appendChild(inp);
+                    });
+                } else {
+                    // ensure it still submits as an array to satisfy validation rule
+                    const inp = document.createElement('input');
+                    inp.type = 'hidden';
+                    inp.name = 'custom_fields[]';
+                    inp.value = '';
+                    containerEl.appendChild(inp);
+                }
+                // re-render list preview
                 if (!arr || arr.length === 0) {
                     listEl.innerHTML = '<div class="text-muted">No data</div>';
                     return;

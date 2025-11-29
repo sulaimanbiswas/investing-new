@@ -66,7 +66,7 @@ class GatewayController extends Controller
 
     private function validateGateway(Request $request): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'type' => 'required|in:payment,withdrawal',
             'name' => 'required|string|max:255',
             'currency' => 'required|string|max:10',
@@ -84,5 +84,45 @@ class GatewayController extends Controller
             'custom_fields' => 'nullable|array',
             'is_active' => 'sometimes|boolean',
         ]);
+
+        // Normalize custom_fields coming from hidden inputs so that DB always
+        // stores a clean array of objects instead of JSON strings.
+        if (array_key_exists('custom_fields', $data)) {
+            $normalized = [];
+
+            if (is_array($data['custom_fields'])) {
+                foreach ($data['custom_fields'] as $value) {
+                    if ($value === null || $value === '') {
+                        continue;
+                    }
+
+                    // Each element is usually a JSON string created in the
+                    // edit/create view. Decode once, and if the result is
+                    // still a JSON string, try decoding again to handle
+                    // existing double-encoded values.
+                    $decoded = json_decode($value, true);
+
+                    if (is_string($decoded)) {
+                        $second = json_decode($decoded, true);
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($second)) {
+                            $decoded = $second;
+                        }
+                    }
+
+                    if (is_array($decoded)) {
+                        // Ensure required flag is a real boolean
+                        if (isset($decoded['required']) && ! is_bool($decoded['required'])) {
+                            $decoded['required'] = in_array($decoded['required'], [true, 'true', 1, '1'], true);
+                        }
+
+                        $normalized[] = $decoded;
+                    }
+                }
+            }
+
+            $data['custom_fields'] = $normalized;
+        }
+
+        return $data;
     }
 }
