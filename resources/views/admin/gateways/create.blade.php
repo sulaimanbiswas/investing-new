@@ -78,7 +78,8 @@
                                         <div class="row">
                                             <div class="col-md-3 mb-3">
                                                 <label class="form-label">Type</label>
-                                                <select name="type" class="default-select form-control wide" required>
+                                                <select name="type" id="gateway-type"
+                                                    class="default-select form-control wide" required>
                                                     <option value="payment">Payment</option>
                                                     <option value="withdrawal">Withdrawal</option>
                                                 </select>
@@ -102,7 +103,7 @@
                                 </div>
                             </div>
 
-                            <!-- Range & Charge -->
+                            <!-- Range & Charge (both types share) -->
                             <div class="col-12 mb-4">
                                 <div class="row">
                                     <div class="col-md-6 mb-4">
@@ -115,19 +116,17 @@
                                                     <div class="col-12 mb-3">
                                                         <label class="form-label">Minimum Limit</label>
                                                         <div class="input-group mb-3 input-primary">
-                                                            <input type="number" name="min_limit" class="form-control"
-                                                                required>
-                                                            <span class="input-group-text"
-                                                                id="charge-value-suffix">USDT</span>
+                                                            <input type="number" step="0.01" name="min_limit"
+                                                                class="form-control" required>
+                                                            <span class="input-group-text">USDT</span>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 mb-3">
                                                         <label class="form-label">Maximum Limit</label>
                                                         <div class="input-group mb-3 input-primary">
-                                                            <input type="number" name="max_limit" class="form-control"
-                                                                required>
-                                                            <span class="input-group-text"
-                                                                id="charge-value-suffix">USDT</span>
+                                                            <input type="number" step="0.01" name="max_limit"
+                                                                class="form-control" required>
+                                                            <span class="input-group-text">USDT</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -145,8 +144,8 @@
                                                         <label class="form-label">Rate</label>
                                                         <div class="input-group mb-3 input-primary">
                                                             <span class="input-group-text">1 USDT</span>
-                                                            <input type="text" name="rate_usdt" class="form-control"
-                                                                required>
+                                                            <input type="number" step="0.01" name="rate_usdt"
+                                                                class="form-control" required>
                                                             <span class="input-group-text" id="rate-suffix">USDT</span>
                                                         </div>
                                                     </div>
@@ -162,7 +161,7 @@
                                                         <div class="col-md-6 mb-3 ">
                                                             <label class="form-label">Charge Value</label>
                                                             <div class="input-group  input-primary">
-                                                                <input type="number" name="charge_value"
+                                                                <input type="number" step="0.01" name="charge_value"
                                                                     class="form-control" required>
                                                                 <span class="input-group-text"
                                                                     id="charge-value-suffix">USDT</span>
@@ -175,8 +174,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Deposit Instruction -->
-                            <div class="col-12 mb-4">
+                            <!-- Deposit Instruction (payment only) -->
+                            <div class="col-12 mb-4 type-payment">
                                 <div class="card border">
                                     <div class="card-header bg-primary text-white">
                                         <h5 class="mb-0 text-white">Deposit Instruction</h5>
@@ -189,8 +188,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Deposit Address & QR -->
-                            <div class="col-12 mb-4">
+                            <!-- Deposit Address & QR (payment only) -->
+                            <div class="col-12 mb-4 type-payment">
                                 <div class="card border">
                                     <div class="card-header bg-primary ">
                                         <h5 class="mb-0 text-white">Deposit Details</h5>
@@ -230,8 +229,8 @@
                                 </div>
                             </div>
 
-                            <!-- User Data -->
-                            <div class="col-12 mb-4">
+                            <!-- User Data (withdrawal only) -->
+                            <div class="col-12 mb-4 type-withdrawal">
                                 <div class="card border">
                                     <div class="card-header bg-primary">
                                         <h5 class="mb-0 text-white">User Data</h5>
@@ -266,6 +265,19 @@
         (function () {
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+            // Toggle fields by gateway type (payment vs withdrawal)
+            const typeSelect = document.getElementById('gateway-type');
+            const paymentBlocks = document.querySelectorAll('.type-payment');
+            const withdrawalBlocks = document.querySelectorAll('.type-withdrawal');
+            const applyTypeVisibility = () => {
+                const type = typeSelect ? typeSelect.value : 'payment';
+                paymentBlocks.forEach(el => el.style.display = (type === 'payment') ? '' : 'none');
+                withdrawalBlocks.forEach(el => el.style.display = (type === 'withdrawal') ? '' : 'none');
+            };
+            if (typeSelect) {
+                typeSelect.addEventListener('change', applyTypeVisibility);
+                applyTypeVisibility();
+            }
 
             // Live update rate currency from Currency input
             const currencyInput = document.getElementById('currency-input');
@@ -335,7 +347,7 @@
                 ensureDropzone().then(() => {
                     Dropzone.autoDiscover = false;
                     const dz = new Dropzone('#qr-dropzone', {
-                        url: '{{ url('/admin/uploads/qr') }}',
+                        url: '{{ url('/admin/uploads/qrs') }}',
                         method: 'post',
                         headers: { 'X-CSRF-TOKEN': token },
                         maxFiles: 1,
@@ -360,7 +372,7 @@
                     dz.on('removedfile', function (file) {
                         const path = document.getElementById('qr_path').value;
                         if (!path) return;
-                        fetch('{{ url('/admin/uploads/qr/delete') }}', {
+                        fetch('{{ url('/admin/uploads/qrs/delete') }}', {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': token,

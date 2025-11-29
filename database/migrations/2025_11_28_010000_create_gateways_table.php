@@ -13,11 +13,11 @@ return new class extends Migration {
             $table->string('name');
             $table->string('currency')->index();
             $table->string('country')->nullable();
-            $table->decimal('rate_usdt', 18, 8)->comment('Value of currency in USDT');
+            $table->decimal('rate_usdt', 18, 2)->comment('Value of currency in USDT');
             $table->enum('charge_type', ['fixed', 'percent']);
-            $table->decimal('charge_value', 18, 8)->default(0);
-            $table->decimal('min_limit', 18, 8)->nullable();
-            $table->decimal('max_limit', 18, 8)->nullable();
+            $table->decimal('charge_value', 18, 2)->default(0);
+            $table->decimal('min_limit', 18, 2)->nullable();
+            $table->decimal('max_limit', 18, 2)->nullable();
             $table->text('description')->nullable();
             $table->string('address')->nullable();
             $table->string('qr_path')->nullable();

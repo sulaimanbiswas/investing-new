@@ -24,7 +24,8 @@
                                         <div class="row">
                                             <div class="col-md-3 mb-3">
                                                 <label class="form-label">Type</label>
-                                                <select name="type" class="default-select form-control wide" required>
+                                                <select name="type" id="gateway-type"
+                                                    class="default-select form-control wide" required>
                                                     <option value="payment" @selected($gateway->type === 'payment')>Payment
                                                     </option>
                                                     <option value="withdrawal" @selected($gateway->type === 'withdrawal')>
@@ -63,13 +64,21 @@
                                                 <div class="row">
                                                     <div class="col-12 mb-3">
                                                         <label class="form-label">Minimum Limit</label>
-                                                        <input type="number" name="min_limit"
-                                                            class="form-control" value="{{ $gateway->min_limit }}" />
+                                                        <div class="input-group mb-3 input-primary">
+                                                            <input type="number" name="min_limit"
+                                                                value="{{ $gateway->min_limit }}" class="form-control"
+                                                                required>
+                                                            <span class="input-group-text">USDT</span>
+                                                        </div>
                                                     </div>
                                                     <div class="col-12 mb-3">
                                                         <label class="form-label">Maximum Limit</label>
-                                                        <input type="number" name="max_limit"
-                                                            class="form-control" value="{{ $gateway->max_limit }}" />
+                                                        <div class="input-group mb-3 input-primary">
+                                                            <input type="number" name="max_limit"
+                                                                value="{{ $gateway->max_limit }}" class="form-control"
+                                                                required>
+                                                            <span class="input-group-text">USDT</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -87,9 +96,8 @@
                                                         <div class="input-group mb-3 input-primary">
                                                             <span class="input-group-text">1
                                                                 {{ strtoupper($gateway->currency) }}</span>
-                                                            <input type="number" name="rate_usdt"
-                                                                class="form-control" value="{{ $gateway->rate_usdt }}"
-                                                                required />
+                                                            <input type="number" name="rate_usdt" class="form-control"
+                                                                value="{{ $gateway->rate_usdt }}" required />
                                                             <span class="input-group-text"
                                                                 id="rate-suffix">{{ strtoupper($gateway->currency) }}</span>
                                                         </div>
@@ -111,9 +119,10 @@
                                                             <label class="form-label">Charge Value</label>
                                                             <div class="input-group mb-3 input-primary">
                                                                 <input type="number" name="charge_value"
-                                                                    class="form-control" value="{{ $gateway->charge_value }}"
-                                                                    required />
-                                                                <span class="input-group-text" id="charge-value-suffix">{{ $gateway->charge_type === 'percent' ? '%' : strtoupper($gateway->currency) }}</span>
+                                                                    class="form-control"
+                                                                    value="{{ $gateway->charge_value }}" required />
+                                                                <span class="input-group-text"
+                                                                    id="charge-value-suffix">{{ $gateway->charge_type === 'percent' ? '%' : strtoupper($gateway->currency) }}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -124,8 +133,8 @@
                                 </div>
                             </div>
 
-                            <!-- Deposit Instruction -->
-                            <div class="col-12 mb-4">
+                            <!-- Deposit Instruction (payment only) -->
+                            <div class="col-12 mb-4 type-payment">
                                 <div class="card border">
                                     <div class="card-header bg-primary text-white">
                                         <h5 class="mb-0 text-white">Deposit Instruction</h5>
@@ -140,8 +149,8 @@
                                 </div>
                             </div>
 
-                            <!-- Deposit Details -->
-                            <div class="col-12 mb-4">
+                            <!-- Deposit Details (payment only) -->
+                            <div class="col-12 mb-4 type-payment">
                                 <div class="card border">
                                     <div class="card-header bg-primary ">
                                         <h5 class="mb-0 text-white">Deposit Details</h5>
@@ -185,28 +194,29 @@
                                 </div>
                             </div>
 
-                            <!-- User Data (editable) -->
-                            <div class="col-12 mb-4">
+                            <!-- User Data (withdrawal only) -->
+                            <div class="col-12 mb-4 type-withdrawal">
                                 <div class="card border">
                                     <div class="card-header bg-primary d-flex justify-content-between align-items-center">
                                         <h5 class="mb-0 text-white">User Data</h5>
-                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#editGenerateFormModal">+ Add New</button>
+                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal"
+                                            data-bs-target="#editGenerateFormModal">+ Add New</button>
                                     </div>
                                     <div class="card-body">
                                         <div id="user-data-list" class="mb-3"></div>
                                         <div id="custom_fields_container">
-@php
-    $existingFields = $gateway->custom_fields;
-    if (is_string($existingFields)) {
-        $decoded = json_decode($existingFields, true);
-        $existingFields = is_array($decoded) ? $decoded : [];
-    }
-@endphp
-@if(is_array($existingFields))
-    @foreach($existingFields as $f)
-        <input type="hidden" name="custom_fields[]" value='@json($f)' />
-    @endforeach
-@endif
+                                            @php
+                                                $existingFields = $gateway->custom_fields;
+                                                if (is_string($existingFields)) {
+                                                    $decoded = json_decode($existingFields, true);
+                                                    $existingFields = is_array($decoded) ? $decoded : [];
+                                                }
+                                            @endphp
+                                            @if(is_array($existingFields))
+                                                @foreach($existingFields as $f)
+                                                    <input type="hidden" name="custom_fields[]" value='@json($f)' />
+                                                @endforeach
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -242,7 +252,21 @@
     <script>
         (function () {
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-           
+
+            // Toggle fields by gateway type (payment vs withdrawal)
+            const typeSelect = document.getElementById('gateway-type');
+            const paymentBlocks = document.querySelectorAll('.type-payment');
+            const withdrawalBlocks = document.querySelectorAll('.type-withdrawal');
+            const applyTypeVisibility = () => {
+                const type = typeSelect ? typeSelect.value : 'payment';
+                paymentBlocks.forEach(el => el.style.display = (type === 'payment') ? '' : 'none');
+                withdrawalBlocks.forEach(el => el.style.display = (type === 'withdrawal') ? '' : 'none');
+            };
+            if (typeSelect) {
+                typeSelect.addEventListener('change', applyTypeVisibility);
+                applyTypeVisibility();
+            }
+
             // User Data Builder (edit/delete/add)
             const listEl = document.getElementById('user-data-list');
             const containerEl = document.getElementById('custom_fields_container');
@@ -266,7 +290,7 @@
                 delBtn.type = 'button';
                 delBtn.className = 'btn btn-danger btn-sm';
                 delBtn.innerHTML = '<i class="fa fa-times"></i>';
-                delBtn.onclick = () => { const arr = readJson(); arr.splice(idx,1); writeJson(arr); };
+                delBtn.onclick = () => { const arr = readJson(); arr.splice(idx, 1); writeJson(arr); };
                 actions.appendChild(editBtn);
                 actions.appendChild(delBtn);
                 div.appendChild(left);
@@ -283,7 +307,7 @@
                     try {
                         let parsed = JSON.parse(val);
                         if (typeof parsed === 'string') {
-                            try { parsed = JSON.parse(parsed); } catch(e2) {}
+                            try { parsed = JSON.parse(parsed); } catch (e2) { }
                         }
                         // Normalize keys and booleans
                         if (parsed && typeof parsed === 'object') {
@@ -292,7 +316,7 @@
                             }
                             arr.push(parsed);
                         }
-                    } catch(e) {}
+                    } catch (e) { }
                 });
                 return arr;
             };
@@ -389,7 +413,7 @@
                 ensureDropzone().then(() => {
                     Dropzone.autoDiscover = false;
                     const dz = new Dropzone('#qr-dropzone', {
-                        url: '{{ url('/admin/uploads/qr') }}',
+                        url: '{{ url('/admin/uploads/qrs') }}',
                         method: 'post',
                         headers: { 'X-CSRF-TOKEN': token },
                         maxFiles: 1,
@@ -428,7 +452,7 @@
                     dz.on('removedfile', function () {
                         const path = document.getElementById('qr_path').value;
                         if (!path) return;
-                        fetch('{{ url('/admin/uploads/qr/delete') }}', {
+                        fetch('{{ url('/admin/uploads/qrs/delete') }}', {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': token,
@@ -445,7 +469,7 @@
             }
             // Modal logic for add/edit user data
             const modalHtml = `
-<div class=\"modal fade\" id=\"editGenerateFormModal\" tabindex=\"-1\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h5 class=\"modal-title\">User Field</h5>\n        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>\n      </div>\n      <div class=\"modal-body\">\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Type <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-type\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"text\">Text</option>\n            <option value=\"textarea\">Textarea</option>\n            <option value=\"select\">Select</option>\n            <option value=\"checkbox\">Checkbox</option>\n            <option value=\"radio\">Radio</option>\n            <option value=\"file\">File</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Required <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-required\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"true\">Yes</option>\n            <option value=\"false\">No</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Label <span class=\"text-danger\">*</span></label>\n          <input type=\"text\" id=\"ud-label\" class=\"form-control\" placeholder=\"Label\" />\n        </div>\n        <div class=\"mb-3\" id=\"ud-options-wrap\" style=\"display:none;\">\n          <label class=\"form-label\">Options (comma separated)</label>\n          <input type=\"text\" id=\"ud-options\" class=\"form-control\" placeholder=\"Option1, Option2\" />\n        </div>\n        <div class=\"alert alert-danger d-none\" id=\"ud-error\"></div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-danger light\" data-bs-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary\" id=\"ud-save-btn\">Save</button>\n      </div>\n    </div>\n  </div>\n</div>`;
+                        <div class=\"modal fade\" id=\"editGenerateFormModal\" tabindex=\"-1\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h5 class=\"modal-title\">User Field</h5>\n        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>\n      </div>\n      <div class=\"modal-body\">\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Type <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-type\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"text\">Text</option>\n            <option value=\"textarea\">Textarea</option>\n            <option value=\"select\">Select</option>\n            <option value=\"checkbox\">Checkbox</option>\n            <option value=\"radio\">Radio</option>\n            <option value=\"file\">File</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Required <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-required\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"true\">Yes</option>\n            <option value=\"false\">No</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Label <span class=\"text-danger\">*</span></label>\n          <input type=\"text\" id=\"ud-label\" class=\"form-control\" placeholder=\"Label\" />\n        </div>\n        <div class=\"mb-3\" id=\"ud-options-wrap\" style=\"display:none;\">\n          <label class=\"form-label\">Options (comma separated)</label>\n          <input type=\"text\" id=\"ud-options\" class=\"form-control\" placeholder=\"Option1, Option2\" />\n        </div>\n        <div class=\"alert alert-danger d-none\" id=\"ud-error\"></div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-danger light\" data-bs-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary\" id=\"ud-save-btn\">Save</button>\n      </div>\n    </div>\n  </div>\n</div>`;
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             const typeEl = document.getElementById('ud-type');
             const reqEl = document.getElementById('ud-required');
@@ -455,7 +479,7 @@
             const errEl = document.getElementById('ud-error');
             const saveBtn = document.getElementById('ud-save-btn');
             typeEl.addEventListener('change', () => {
-                if (['select','checkbox','radio'].includes(typeEl.value)) { optsWrap.style.display=''; } else { optsWrap.style.display='none'; optsEl.value=''; }
+                if (['select', 'checkbox', 'radio'].includes(typeEl.value)) { optsWrap.style.display = ''; } else { optsWrap.style.display = 'none'; optsEl.value = ''; }
             });
             const openModalForEdit = (idx, item) => {
                 saveBtn.dataset.editIndex = idx;
@@ -463,24 +487,24 @@
                 typeEl.value = typeVal;
                 reqEl.value = item.required ? 'true' : 'false';
                 labelEl.value = item.label || item.name || item.form_label || item.title || '';
-                if (['select','checkbox','radio'].includes(typeVal)) {
-                    optsWrap.style.display='';
-                    optsEl.value = (item.options||[]).join(', ');
-                } else { optsWrap.style.display='none'; optsEl.value=''; }
+                if (['select', 'checkbox', 'radio'].includes(typeVal)) {
+                    optsWrap.style.display = '';
+                    optsEl.value = (item.options || []).join(', ');
+                } else { optsWrap.style.display = 'none'; optsEl.value = ''; }
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('editGenerateFormModal')).show();
             };
             saveBtn.addEventListener('click', () => {
-                errEl.classList.add('d-none'); errEl.textContent='';
+                errEl.classList.add('d-none'); errEl.textContent = '';
                 const type = typeEl.value; const required = reqEl.value; const label = labelEl.value.trim();
-                if (!type || !required || !label) { errEl.textContent='Please fill all required fields'; errEl.classList.remove('d-none'); return; }
-                const item = { type, label, required: required==='true' };
-                if (['select','checkbox','radio'].includes(type)) { const opts = (optsEl.value||'').split(',').map(s=>s.trim()).filter(Boolean); item.options = opts; }
+                if (!type || !required || !label) { errEl.textContent = 'Please fill all required fields'; errEl.classList.remove('d-none'); return; }
+                const item = { type, label, required: required === 'true' };
+                if (['select', 'checkbox', 'radio'].includes(type)) { const opts = (optsEl.value || '').split(',').map(s => s.trim()).filter(Boolean); item.options = opts; }
                 const arr = readJson();
                 const editIndex = saveBtn.dataset.editIndex;
-                if (editIndex !== undefined && editIndex !== '') { arr[parseInt(editIndex,10)] = item; saveBtn.dataset.editIndex=''; } else { arr.push(item); }
+                if (editIndex !== undefined && editIndex !== '') { arr[parseInt(editIndex, 10)] = item; saveBtn.dataset.editIndex = ''; } else { arr.push(item); }
                 writeJson(arr);
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('editGenerateFormModal')).hide();
-                typeEl.value=''; reqEl.value=''; labelEl.value=''; optsEl.value=''; optsWrap.style.display='none';
+                typeEl.value = ''; reqEl.value = ''; labelEl.value = ''; optsEl.value = ''; optsWrap.style.display = 'none';
             });
         })();
     </script>
