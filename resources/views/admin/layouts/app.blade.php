@@ -453,34 +453,7 @@
             </div>
         </div>
 
-        <div class="deznav">
-            <div class="deznav-scroll">
-                <ul class="metismenu" id="menu">
-                    <li>
-                        <a href="#" class="ai-icon" aria-expanded="false">
-                            <i class="flaticon-381-menu"></i>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0);" class="ai-icon has-arrow" aria-expanded="false">
-                            <i class="flaticon-381-id-card-4"></i>
-                            <span class="nav-text">Users</span>
-                        </a>
-                        <ul aria-expanded="false">
-                            <li><a href="staff.html">Active Users</a></li>
-                            <li><a href="staff-profile.html">All users</a></li>
-                        </ul>
-                    </li>
-                </ul>
-
-                <div class="plus-box">
-                    <p class="fs-16 font-w500 mb-1">Check your job schedule</p>
-                    <a class="text-white fs-26" href="javascript:;"><i class="las la-long-arrow-alt-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
+        @include('admin.layouts.sidebar')
 
         <div class="content-body">
             <div class="container-fluid">

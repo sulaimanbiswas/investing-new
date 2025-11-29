@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Gateway;
+use Illuminate\Http\Request;
+
+class GatewayController extends Controller
+{
+    public function index()
+    {
+        $gateways = Gateway::orderByDesc('created_at')->paginate(15);
+        return view('admin.gateways.index', compact('gateways'));
+    }
+
+    public function create()
+    {
+        return view('admin.gateways.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $this->validateGateway($request);
+        Gateway::create($validated);
+        return redirect()->route('admin.gateways.index')->with('status', 'Gateway created');
+    }
+
+    public function edit(Gateway $gateway)
+    {
+        return view('admin.gateways.edit', compact('gateway'));
+    }
+
+    public function update(Request $request, Gateway $gateway)
+    {
+        $validated = $this->validateGateway($request);
+        $gateway->update($validated);
+        return redirect()->route('admin.gateways.index')->with('status', 'Gateway updated');
+    }
+
+    public function destroy(Gateway $gateway)
+    {
+        $gateway->delete();
+        return redirect()->route('admin.gateways.index')->with('status', 'Gateway deleted');
+    }
+
+    public function toggle(Gateway $gateway)
+    {
+        $gateway->is_active = ! $gateway->is_active;
+        $gateway->save();
+        return redirect()->route('admin.gateways.index')->with('status', 'Gateway status updated');
+    }
+
+    // Compatibility: filtered views for legacy routes
+    public function payment()
+    {
+        $gateways = Gateway::where('type', 'payment')->orderByDesc('created_at')->paginate(15);
+        return view('admin.gateways.index', compact('gateways'));
+    }
+
+    public function withdrawal()
+    {
+        $gateways = Gateway::where('type', 'withdrawal')->orderByDesc('created_at')->paginate(15);
+        return view('admin.gateways.index', compact('gateways'));
+    }
+
+    private function validateGateway(Request $request): array
+    {
+        return $request->validate([
+            'type' => 'required|in:payment,withdrawal',
+            'name' => 'required|string|max:255',
+            'currency' => 'required|string|max:10',
+            'country' => 'nullable|string|max:100',
+            'rate_usdt' => 'required|numeric|min:0',
+            'charge_type' => 'required|in:fixed,percent',
+            'charge_value' => 'required|numeric|min:0',
+            'min_limit' => 'nullable|numeric|min:0',
+            'max_limit' => 'nullable|numeric|min:0',
+            'description' => 'nullable|string',
+            'address' => 'nullable|string|max:255',
+            'qr_path' => 'nullable|string|max:255',
+            'requires_txn_id' => 'sometimes|boolean',
+            'requires_screenshot' => 'sometimes|boolean',
+            'custom_fields' => 'nullable|array',
+            'is_active' => 'sometimes|boolean',
+        ]);
+    }
+}

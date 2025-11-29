@@ -29,6 +29,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
         Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
+
+        // Users management pages (views first)
+        Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+        Route::get('/users/active', [\App\Http\Controllers\Admin\UserController::class, 'active'])->name('users.active');
+        Route::get('/users/banned', [\App\Http\Controllers\Admin\UserController::class, 'banned'])->name('users.banned');
+
+        // Gateways CRUD
+        Route::get('/gateways', [\App\Http\Controllers\Admin\GatewayController::class, 'index'])->name('gateways.index');
+        Route::get('/gateways/create', [\App\Http\Controllers\Admin\GatewayController::class, 'create'])->name('gateways.create');
+        Route::post('/gateways', [\App\Http\Controllers\Admin\GatewayController::class, 'store'])->name('gateways.store');
+        Route::get('/gateways/{gateway}/edit', [\App\Http\Controllers\Admin\GatewayController::class, 'edit'])->name('gateways.edit');
+        Route::put('/gateways/{gateway}', [\App\Http\Controllers\Admin\GatewayController::class, 'update'])->name('gateways.update');
+        Route::delete('/gateways/{gateway}', [\App\Http\Controllers\Admin\GatewayController::class, 'destroy'])->name('gateways.destroy');
+        Route::patch('/gateways/{gateway}/toggle', [\App\Http\Controllers\Admin\GatewayController::class, 'toggle'])->name('gateways.toggle');
+
+        // Legacy filtered routes (for compatibility)
+        Route::get('/gateways/payment', [\App\Http\Controllers\Admin\GatewayController::class, 'payment'])->name('gateways.payment');
+        Route::get('/gateways/withdrawal', [\App\Http\Controllers\Admin\GatewayController::class, 'withdrawal'])->name('gateways.withdrawal');
     });
 });
 
