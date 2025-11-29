@@ -74,6 +74,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/platforms/{platform}/edit', [\App\Http\Controllers\Admin\PlatformController::class, 'edit'])->name('platforms.edit');
         Route::put('/platforms/{platform}', [\App\Http\Controllers\Admin\PlatformController::class, 'update'])->name('platforms.update');
         Route::delete('/platforms/{platform}', [\App\Http\Controllers\Admin\PlatformController::class, 'destroy'])->name('platforms.destroy');
+
+        // Platform Rule (separate module)
+        Route::get('/platform-rule', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'index'])->name('platform-rule.index');
+        Route::get('/platform-rule/create', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'create'])->name('platform-rule.create');
+        Route::post('/platform-rule', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'store'])->name('platform-rule.store');
+        Route::get('/platform-rule/{platform_rule}/edit', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'edit'])->name('platform-rule.edit');
+        Route::put('/platform-rule/{platform_rule}', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'update'])->name('platform-rule.update');
+        Route::delete('/platform-rule/{platform_rule}', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'destroy'])->name('platform-rule.destroy');
+        Route::match(['post', 'patch'], '/platform-rule/{platform_rule}/toggle', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'toggle'])->name('platform-rule.toggle');
     });
 });
 

@@ -40,6 +40,10 @@
                     <i class="flaticon-381-network"></i>
                     <span class="nav-text">Platforms</span>
                 </a>
+            <li>
+                <a class="ai-icon" href="{{ route('admin.platform-rule.index') }}" aria-expanded="false"><i
+                        class="flaticon-381-list"></i><span class="nav-text">Platform Rules</span></a>
+            </li>
             </li>
 
             <li>

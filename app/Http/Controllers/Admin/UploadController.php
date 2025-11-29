@@ -63,6 +63,7 @@ class UploadController extends Controller
         $subdir = match ($folder) {
             'platforms' => 'uploads/platforms',
             'products' => 'uploads/products',
+            'platform-rules' => 'uploads/platform-rules',
             default => 'uploads/qrs',
         };
 
@@ -99,7 +100,8 @@ class UploadController extends Controller
         if (
             !str_starts_with($path, '/uploads/qrs/') &&
             !str_starts_with($path, '/uploads/platforms/') &&
-            !str_starts_with($path, '/uploads/products/')
+            !str_starts_with($path, '/uploads/products/') &&
+            !str_starts_with($path, '/uploads/platform-rules/')
         ) {
             return response()->json(['deleted' => false, 'message' => 'Invalid path'], 422);
         }
