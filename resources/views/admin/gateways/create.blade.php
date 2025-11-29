@@ -93,7 +93,7 @@
                                                 <input type="text" name="currency" id="currency-input" class="form-control"
                                                     placeholder="USDT, BDT, USD" required />
                                             </div>
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-3 mb-3 type-payment">
                                                 <label class="form-label">Country</label>
                                                 <input type="text" name="country" class="form-control"
                                                     placeholder="Optional" />
@@ -174,14 +174,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Deposit Instruction (payment only) -->
-                            <div class="col-12 mb-4 type-payment">
+                            <div class="col-12 mb-4 ">
                                 <div class="card border">
                                     <div class="card-header bg-primary text-white">
-                                        <h5 class="mb-0 text-white">Deposit Instruction</h5>
+                                        <h5 class="mb-0 text-white"> Instruction</h5>
                                     </div>
                                     <div class="card-body">
-                                        <label class="form-label">Description</label>
                                         <textarea name="description" id="gateway-description" class="form-control"
                                             rows="6"></textarea>
                                         <small class="text-muted">Supports rich text and inline image upload.</small>
