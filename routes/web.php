@@ -30,6 +30,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
         Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
 
+        // CKEditor upload endpoint
+        Route::post('/uploads/ckeditor', [\App\Http\Controllers\Admin\UploadController::class, 'ckeditor'])
+            ->name('ckeditor.upload');
+
+        // QR image upload endpoint (Dropzone)
+        Route::post('/uploads/qrs', [\App\Http\Controllers\Admin\UploadController::class, 'qr'])
+            ->name('uploads.qr');
+        Route::post('/uploads/qrs/delete', [\App\Http\Controllers\Admin\UploadController::class, 'deleteQr'])->name('uploads.qr.delete');
+
         // Users management pages (views first)
         Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
         Route::get('/users/active', [\App\Http\Controllers\Admin\UserController::class, 'active'])->name('users.active');

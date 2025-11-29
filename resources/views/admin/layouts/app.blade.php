@@ -14,6 +14,87 @@
     <link href="{{ asset('admin/vendor/bootstrap-select/dist/css/bootstrap-select.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('admin/css/style.css') }}" rel="stylesheet" />
 
+    @php
+        // Derive a dynamic primary color from session/cookie/config
+        $cookiePrimary = request()->cookie('primary');
+        // Map template theme keys to hex colors (adjust as needed)
+        $themeMap = [
+            'color_1' => '#36C95F',
+            'color_2' => '#4d7cff',
+            'color_3' => '#ff6b6b',
+            'color_4' => '#f59e0b',
+            'color_5' => '#8b5cf6',
+        ];
+        $configured = config('app.primary_color');
+        $primaryColor = $configured ?: ($themeMap[$cookiePrimary] ?? '#36C95F');
+    @endphp
+    <style>
+        :root {
+            --primary:
+                {{ $primaryColor }}
+            ;
+        }
+
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+
+        .text-primary {
+            color: var(--primary) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .badge-primary {
+            background-color: var(--primary);
+        }
+
+        .border-primary {
+            border-color: var(--primary) !important;
+        }
+
+        .fill-primary {
+            fill: var(--primary);
+        }
+
+        .stroke-primary {
+            stroke: var(--primary);
+        }
+
+        /* Ensure readable text colors across cards and forms */
+        body,
+        .card,
+        .card-body,
+        .card-header,
+        .form-label,
+        .form-control,
+        .dropdown-menu,
+        .breadcrumb-item,
+        .dz-message {
+            color: #1f2937;
+            /* slate-800 */
+        }
+
+        .card-header.bg-primary,
+        .badge.bg-primary,
+        .btn-primary {
+            color: #ffffff !important;
+        }
+
+        .form-control::placeholder {
+            color: #6b7280;
+            /* gray-500 */
+            opacity: 1;
+        }
+
+        .dropzone {
+            background-color: #ffffff;
+        }
+    </style>
+
     @stack('styles')
 </head>
 

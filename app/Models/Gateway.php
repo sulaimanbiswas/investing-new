@@ -28,6 +28,18 @@ class Gateway extends Model
         'is_active'
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function (Gateway $gateway) {
+            if ($gateway->qr_path) {
+                $path = public_path($gateway->qr_path);
+                if (str_starts_with($gateway->qr_path, '/uploads/qrs/') && file_exists($path)) {
+                    @unlink($path);
+                }
+            }
+        });
+    }
+
     protected $casts = [
         'rate_usdt' => 'decimal:8',
         'charge_value' => 'decimal:8',
