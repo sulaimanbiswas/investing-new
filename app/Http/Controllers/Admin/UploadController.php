@@ -57,8 +57,13 @@ class UploadController extends Controller
 
         $file = $request->file('file');
 
-        // Save under public/uploads/qrs
-        $publicDir = public_path('uploads/qrs');
+        // Optional folder hint so other modules (e.g. platforms) can reuse
+        // this endpoint but store files in a different public subfolder.
+        $folder = $request->string('folder')->lower()->value() ?? '';
+        $subdir = $folder === 'platforms' ? 'uploads/platforms' : 'uploads/qrs';
+
+        // Save under public/uploads/qrs or public/uploads/platforms
+        $publicDir = public_path($subdir);
         if (!is_dir($publicDir)) {
             if (!mkdir($publicDir, 0775, true) && !is_dir($publicDir)) {
                 return response()->json(['error' => ['message' => 'Failed to create upload directory']], 500);
@@ -73,9 +78,10 @@ class UploadController extends Controller
             return response()->json(['error' => ['message' => 'Failed to store file', 'detail' => $e->getMessage()]], 500);
         }
 
-        $url = asset('uploads/qrs/' . $filename);
+        $relative = '/' . trim($subdir, '/') . '/' . $filename;
+        $url = asset(ltrim($relative, '/'));
 
-        return response()->json(['url' => $url, 'path' => '/uploads/qrs/' . $filename, 'uploaded' => true], 201);
+        return response()->json(['url' => $url, 'path' => $relative, 'uploaded' => true], 201);
     }
 
     public function deleteQr(Request $request)
@@ -84,9 +90,15 @@ class UploadController extends Controller
             'path' => ['required', 'string'],
         ]);
         $path = $request->string('path')->toString();
-        if (!str_starts_with($path, '/uploads/qrs/')) {
+
+        // Only allow deleting files from known public upload subfolders
+        if (
+            !str_starts_with($path, '/uploads/qrs/') &&
+            !str_starts_with($path, '/uploads/platforms/')
+        ) {
             return response()->json(['deleted' => false, 'message' => 'Invalid path'], 422);
         }
+
         $full = public_path($path);
         if (file_exists($full)) {
             @unlink($full);

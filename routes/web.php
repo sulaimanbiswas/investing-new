@@ -56,6 +56,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Legacy filtered routes (for compatibility)
         Route::get('/gateways/payment', [\App\Http\Controllers\Admin\GatewayController::class, 'payment'])->name('gateways.payment');
         Route::get('/gateways/withdrawal', [\App\Http\Controllers\Admin\GatewayController::class, 'withdrawal'])->name('gateways.withdrawal');
+
+        // Platforms CRUD
+        Route::get('/platforms', [\App\Http\Controllers\Admin\PlatformController::class, 'index'])->name('platforms.index');
+        Route::get('/platforms/create', [\App\Http\Controllers\Admin\PlatformController::class, 'create'])->name('platforms.create');
+        Route::post('/platforms', [\App\Http\Controllers\Admin\PlatformController::class, 'store'])->name('platforms.store');
+        Route::get('/platforms/{platform}/edit', [\App\Http\Controllers\Admin\PlatformController::class, 'edit'])->name('platforms.edit');
+        Route::put('/platforms/{platform}', [\App\Http\Controllers\Admin\PlatformController::class, 'update'])->name('platforms.update');
+        Route::delete('/platforms/{platform}', [\App\Http\Controllers\Admin\PlatformController::class, 'destroy'])->name('platforms.destroy');
     });
 });
 

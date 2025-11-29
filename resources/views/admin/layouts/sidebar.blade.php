@@ -28,6 +28,16 @@
                     <li><a href="{{ route('admin.gateways.create') }}">Create Gateway</a></li>
                 </ul>
             </li>
+            <li>
+                <a href="javascript:void(0);" class="ai-icon has-arrow" aria-expanded="false">
+                    <i class="flaticon-381-network"></i>
+                    <span class="nav-text">Platforms</span>
+                </a>
+                <ul aria-expanded="false">
+                    <li><a href="{{ route('admin.platforms.index') }}">Manage Platforms</a></li>
+                    <li><a href="{{ route('admin.platforms.create') }}">Create Platform</a></li>
+                </ul>
+            </li>
         </ul>
 
         <div class="plus-box">
