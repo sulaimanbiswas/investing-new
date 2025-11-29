@@ -60,7 +60,11 @@ class UploadController extends Controller
         // Optional folder hint so other modules (e.g. platforms) can reuse
         // this endpoint but store files in a different public subfolder.
         $folder = $request->string('folder')->lower()->value() ?? '';
-        $subdir = $folder === 'platforms' ? 'uploads/platforms' : 'uploads/qrs';
+        $subdir = match ($folder) {
+            'platforms' => 'uploads/platforms',
+            'products' => 'uploads/products',
+            default => 'uploads/qrs',
+        };
 
         // Save under public/uploads/qrs or public/uploads/platforms
         $publicDir = public_path($subdir);
@@ -94,7 +98,8 @@ class UploadController extends Controller
         // Only allow deleting files from known public upload subfolders
         if (
             !str_starts_with($path, '/uploads/qrs/') &&
-            !str_starts_with($path, '/uploads/platforms/')
+            !str_starts_with($path, '/uploads/platforms/') &&
+            !str_starts_with($path, '/uploads/products/')
         ) {
             return response()->json(['deleted' => false, 'message' => 'Invalid path'], 422);
         }

@@ -569,6 +569,7 @@
     <script src="{{ asset('admin/js/deznav-init.js') }}" type="text/javascript"></script>
     <script src="{{ asset('admin/js/demo.js') }}" type="text/javascript"></script>
     <script src="{{ asset('admin/js/styleSwitcher.js') }}" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ckeditor/ckeditor5-build-classic@41.4.2/build/ckeditor.js"></script>
 
     @stack('scripts')
 </body>
