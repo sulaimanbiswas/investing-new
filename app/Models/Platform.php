@@ -16,4 +16,9 @@ class Platform extends Model
         'end_price',
         'image',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

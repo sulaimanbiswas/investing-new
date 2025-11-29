@@ -45,7 +45,6 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Image</th>
                             <th>Name</th>
                             <th>Sort By</th>
                             <th>Status</th>
@@ -56,12 +55,10 @@
                         @forelse($rules as $rule)
                             <tr>
                                 <td>{{ $rule->id }}</td>
-                                <td>
-                                    @if($rule->image)
-                                        <img src="{{ $rule->image }}" alt="image" style="height:40px;">
-                                    @endif
+                                <td>@if($rule->image)
+                                    <img src="{{ $rule->image }}" alt="image" style="height:40px;">
+                                @endif {{ $rule->name }}
                                 </td>
-                                <td>{{ $rule->name }}</td>
                                 <td>{{ $rule->sort_by }}</td>
                                 <td>
                                     <form method="POST" action="{{ route('admin.platform-rule.toggle', parameters: $rule) }}"
@@ -116,7 +113,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center">No rules found.</td>
+                                <td colspan="5" class="text-center">No rules found.</td>
                             </tr>
                         @endforelse
                     </tbody>

@@ -34,7 +34,8 @@
                                     <th>Commission (%)</th>
                                     <th>Start Price</th>
                                     <th>End Price</th>
-                                    <th>Image</th>
+
+                                    <th>Total Products</th>
                                     <th class="text-end" style="width:120px">Action</th>
                                 </tr>
                             </thead>
@@ -42,18 +43,15 @@
                                 @forelse($platforms as $platform)
                                     <tr>
                                         <td><strong class="text-black">{{ $platform->id }}</strong></td>
-                                        <td>{{ $platform->name }}</td>
+                                        <td>@if($platform->image)
+                                            <img src="{{ asset($platform->image) }}" alt="{{ $platform->name }}"
+                                                style="height:32px;">
+                                        @endif {{ $platform->name }}
+                                        </td>
                                         <td>{{ rtrim(rtrim(number_format($platform->commission, 2, '.', ''), '0'), '.') }}</td>
                                         <td>{{ rtrim(rtrim(number_format($platform->start_price, 2, '.', ''), '0'), '.') }}</td>
                                         <td>{{ rtrim(rtrim(number_format($platform->end_price, 2, '.', ''), '0'), '.') }}</td>
-                                        <td>
-                                            @if($platform->image)
-                                                <img src="{{ asset($platform->image) }}" alt="{{ $platform->name }}"
-                                                    style="height:32px;">
-                                            @else
-                                                <span class="text-muted">N/A</span>
-                                            @endif
-                                        </td>
+                                        <td>{{ $platform->products_count }}</td>
                                         <td class="text-end">
                                             <div class="dropdown">
                                                 <button type="button" class="btn btn-success light sharp"
