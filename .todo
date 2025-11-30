@@ -1,27 +1,37 @@
-platform rule
+order-set
 ==========
 
 Index
 
-#
-image name,
-sort by,
-Status-> ekhane theke status toggle korte parbe activate/deactivate kore
+filters -> search by, status (active/inactive), platform (dropdown of existing platforms),
+
+name,
+price,
+platform,
+quantity,
+status, ekhane theke status toggle korte parbe activate/deactivate kore
+image,
 action -> edit, activate/deactivate, delete
 
 create
 
 name (string, required)
-sort by (integer, required)
+price (decimal, required)
+platform (select from existing platforms, required)
+quantity (integer, required)
 image (upload, optional) -> dropzone (uploads/products) add & remove functionality perfectly hote hobe
 description -> ckeditor
 
 edit
 name (string, required)
-sort by (integer, required)
-status (activate/deactivate)
+price (decimal, required)
+platform (select from existing platforms, required)
+quantity (integer, required)
 image (upload, optional) -> dropzone (uploads/products) view add & remove functionality perfectly hote hobe
+status (activate/deactivate)
 description -> ckeditor
 
 
 side bar eo add korte hobe
+
+ar ui niba gateways and platforms theke 
