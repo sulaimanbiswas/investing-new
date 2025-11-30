@@ -52,6 +52,20 @@
                     <span class="nav-text">Products</span>
                 </a>
             </li>
+
+            <li>
+                <a href="{{ route('admin.order-sets.index') }}" class="ai-icon" aria-expanded="false">
+                    <i class="flaticon-381-folder"></i>
+                    <span class="nav-text">Order Sets</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('admin.orders.index') }}" class="ai-icon" aria-expanded="false">
+                    <i class="flaticon-381-layer-1"></i>
+                    <span class="nav-text">Orders</span>
+                </a>
+            </li>
         </ul>
 
         <div class="plus-box">

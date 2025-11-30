@@ -75,6 +75,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/platforms/{platform}', [\App\Http\Controllers\Admin\PlatformController::class, 'update'])->name('platforms.update');
         Route::delete('/platforms/{platform}', [\App\Http\Controllers\Admin\PlatformController::class, 'destroy'])->name('platforms.destroy');
 
+        // Order Sets (Categories)
+        Route::get('/order-sets', [\App\Http\Controllers\Admin\OrderSetController::class, 'index'])->name('order-sets.index');
+        Route::get('/order-sets/create', [\App\Http\Controllers\Admin\OrderSetController::class, 'create'])->name('order-sets.create');
+        Route::post('/order-sets', [\App\Http\Controllers\Admin\OrderSetController::class, 'store'])->name('order-sets.store');
+        Route::get('/order-sets/{order_set}/edit', [\App\Http\Controllers\Admin\OrderSetController::class, 'edit'])->name('order-sets.edit');
+        Route::put('/order-sets/{order_set}', [\App\Http\Controllers\Admin\OrderSetController::class, 'update'])->name('order-sets.update');
+        Route::delete('/order-sets/{order_set}', [\App\Http\Controllers\Admin\OrderSetController::class, 'destroy'])->name('order-sets.destroy');
+        Route::match(['post', 'patch'], '/order-sets/{order_set}/toggle', [\App\Http\Controllers\Admin\OrderSetController::class, 'toggle'])->name('order-sets.toggle');
+
+        // Orders (Under Order Sets)
+        Route::get('/orders', [\App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/create', [\App\Http\Controllers\Admin\OrderController::class, 'create'])->name('orders.create');
+        Route::post('/orders', [\App\Http\Controllers\Admin\OrderController::class, 'store'])->name('orders.store');
+        Route::get('/orders/{order}/edit', [\App\Http\Controllers\Admin\OrderController::class, 'edit'])->name('orders.edit');
+        Route::put('/orders/{order}', [\App\Http\Controllers\Admin\OrderController::class, 'update'])->name('orders.update');
+        Route::delete('/orders/{order}', [\App\Http\Controllers\Admin\OrderController::class, 'destroy'])->name('orders.destroy');
+        Route::match(['post', 'patch'], '/orders/{order}/toggle', [\App\Http\Controllers\Admin\OrderController::class, 'toggle'])->name('orders.toggle');
+        Route::get('/orders/products', [\App\Http\Controllers\Admin\OrderController::class, 'getProducts'])->name('orders.products');
+
         // Platform Rule (separate module)
         Route::get('/platform-rule', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'index'])->name('platform-rule.index');
         Route::get('/platform-rule/create', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'create'])->name('platform-rule.create');

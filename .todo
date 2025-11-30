@@ -1,37 +1,47 @@
-order-set
+orders
 ==========
 
 Index
+===
 
-filters -> search by, status (active/inactive), platform (dropdown of existing platforms),
 
-name,
-price,
-platform,
-quantity,
-status, ekhane theke status toggle korte parbe activate/deactivate kore
-image,
+filters
+=== -> 
+search by, 
+type (single/combo),
+platform (dropdown of existing platforms),
+status (active/inactive), 
+
+table
+===
+
+SL #,
+type -> single or combo,
+order Id,
+platform (from existing platforms),
+manage products -> ei column e ekta table thakbe jekhane thakbe product name , quantity, price,
+order amount -> total amount price * quantity single er jonno ar combo er jonno sum of all products price * all product quantity,
+profit %, 
+profit amount -> calculated field,
+total with profit -> calculated field,
+status, ekhane theke status toggle korte parbe activate/deactivate kore3
 action -> edit, activate/deactivate, delete
 
 create
-
-name (string, required)
-price (decimal, required)
+===
+type (single/combo, required)
 platform (select from existing platforms, required)
-quantity (integer, required)
-image (upload, optional) -> dropzone (uploads/products) add & remove functionality perfectly hote hobe
-description -> ckeditor
+profit % (required)
+add products -> dynamic add/remove product rows, each row will have product (select from existing products under selected platform), quantity, price (auto filled from product price but editable)
+
+ar nicher dike etar total calculate hobe dynamically -> subtotal , profit amount, total with profit, expected income (sub total er sathe profit er calculate kore dekhabe real time e)
 
 edit
-name (string, required)
-price (decimal, required)
-platform (select from existing platforms, required)
-quantity (integer, required)
-image (upload, optional) -> dropzone (uploads/products) view add & remove functionality perfectly hote hobe
-status (activate/deactivate)
-description -> ckeditor
+===
+same as create
+status field thakbe ekhane jekhane activate/deactivate korte parbe
 
 
-side bar eo add korte hobe
+add sidebar link for order
 
-ar ui niba gateways and platforms theke 
+ar ui niba gateways or platforms or products theke 
