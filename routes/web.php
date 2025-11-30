@@ -13,10 +13,36 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/invitation', function () {
+    return view('invitation');
+})->middleware(['auth', 'verified'])->name('invitation');
+
+Route::get('/teams', function () {
+    $user = auth()->user();
+
+    // Get Level 1: Direct referrals
+    $level1 = $user->referrals()->with('referrals')->get();
+    $level1Count = $level1->count();
+
+    // Get Level 2: Referrals of referrals
+    $level2 = \App\Models\User::whereIn('referred_by', $level1->pluck('id'))->with('referrer')->get();
+    $level2Count = $level2->count();
+
+    // Get Level 3: Referrals of level 2
+    $level3 = \App\Models\User::whereIn('referred_by', $level2->pluck('id'))->with('referrer')->get();
+    $level3Count = $level3->count();
+
+    $totalTeamSize = $level1Count + $level2Count + $level3Count;
+
+    return view('teams', compact('level1', 'level2', 'level3', 'level1Count', 'level2Count', 'level3Count', 'totalTeamSize'));
+})->middleware(['auth', 'verified'])->name('teams');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // User profile dashboard
+    Route::view('/me', 'profile')->name('profile.home');
 });
 
 // Admin auth routes
