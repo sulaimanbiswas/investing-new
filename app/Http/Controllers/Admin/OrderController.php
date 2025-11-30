@@ -55,7 +55,7 @@ class OrderController extends Controller
     public function create()
     {
         $platforms = Platform::orderBy('name')->get();
-        $orderSets = OrderSet::orderBy('name')->get();
+        $orderSets = OrderSet::with('platform')->orderBy('name')->get();
         return view('admin.orders.create', compact('platforms', 'orderSets'));
     }
 
@@ -99,7 +99,7 @@ class OrderController extends Controller
     {
         $order->load(['orderProducts.product', 'platform', 'orderSet']);
         $platforms = Platform::orderBy('name')->get();
-        $orderSets = OrderSet::orderBy('name')->get();
+        $orderSets = OrderSet::with('platform')->orderBy('name')->get();
         return view('admin.orders.edit', compact('order', 'platforms', 'orderSets'));
     }
 
