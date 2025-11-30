@@ -23,7 +23,10 @@ class PlatformController extends Controller
     {
         $data = $this->validatePlatform($request);
         Platform::create($data);
-        return redirect()->route('admin.platforms.index')->with('status', 'Platform created');
+
+        flash()->success('Platform created successfully.');
+
+        return redirect()->route('admin.platforms.index');
     }
 
     public function edit(Platform $platform)
@@ -35,13 +38,19 @@ class PlatformController extends Controller
     {
         $data = $this->validatePlatform($request);
         $platform->update($data);
-        return redirect()->route('admin.platforms.index')->with('status', 'Platform updated');
+
+        flash()->success('Platform updated successfully.');
+
+        return redirect()->route('admin.platforms.index');
     }
 
     public function destroy(Platform $platform)
     {
         $platform->delete();
-        return redirect()->route('admin.platforms.index')->with('status', 'Platform deleted');
+
+        flash()->success('Platform deleted successfully.');
+
+        return redirect()->route('admin.platforms.index');
     }
 
     private function validatePlatform(Request $request): array

@@ -49,7 +49,10 @@ class OrderSetController extends Controller
         ]);
 
         OrderSet::create($data);
-        return redirect()->route('admin.order-sets.index')->with('success', 'Order set created successfully.');
+
+        flash()->success('Order set created successfully.');
+
+        return redirect()->route('admin.order-sets.index');
     }
 
     public function edit(OrderSet $order_set)
@@ -67,13 +70,19 @@ class OrderSetController extends Controller
         ]);
 
         $order_set->update($data);
-        return redirect()->route('admin.order-sets.index')->with('success', 'Order set updated successfully.');
+
+        flash()->success('Order set updated successfully.');
+
+        return redirect()->route('admin.order-sets.index');
     }
 
     public function destroy(OrderSet $order_set)
     {
         $order_set->delete();
-        return redirect()->route('admin.order-sets.index')->with('success', 'Order set deleted successfully.');
+
+        flash()->success('Order set deleted successfully.');
+
+        return redirect()->route('admin.order-sets.index');
     }
 
     public function toggle(Request $request, OrderSet $order_set)
@@ -85,7 +94,8 @@ class OrderSetController extends Controller
             return response()->json(['status' => $order_set->is_active]);
         }
 
-        return redirect()->route('admin.order-sets.index')
-            ->with('success', 'Order set ' . ($order_set->is_active ? 'activated' : 'deactivated') . '.');
+        flash()->success('Order set ' . ($order_set->is_active ? 'activated' : 'deactivated') . ' successfully.');
+
+        return redirect()->route('admin.order-sets.index');
     }
 }

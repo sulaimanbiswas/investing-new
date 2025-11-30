@@ -60,6 +60,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Prevent admin users from logging in through user panel
+        $user = Auth::user();
+        if ($user && $user->is_admin) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Admin users cannot login through user panel. Please use admin login.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

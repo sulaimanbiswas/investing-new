@@ -572,6 +572,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@ckeditor/ckeditor5-build-classic@41.4.2/build/ckeditor.js"></script>
 
     @stack('scripts')
+
+    <!-- PHP Flasher -->
+    @flasher_render
 </body>
 
 </html>

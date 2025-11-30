@@ -23,7 +23,10 @@ class GatewayController extends Controller
     {
         $validated = $this->validateGateway($request);
         Gateway::create($validated);
-        return redirect()->route('admin.gateways.index')->with('status', 'Gateway created');
+
+        flash()->success('Gateway created successfully.');
+
+        return redirect()->route('admin.gateways.index');
     }
 
     public function edit(Gateway $gateway)
@@ -35,20 +38,29 @@ class GatewayController extends Controller
     {
         $validated = $this->validateGateway($request);
         $gateway->update($validated);
-        return redirect()->route('admin.gateways.index')->with('status', 'Gateway updated');
+
+        flash()->success('Gateway updated successfully.');
+
+        return redirect()->route('admin.gateways.index');
     }
 
     public function destroy(Gateway $gateway)
     {
         $gateway->delete();
-        return redirect()->route('admin.gateways.index')->with('status', 'Gateway deleted');
+
+        flash()->success('Gateway deleted successfully.');
+
+        return redirect()->route('admin.gateways.index');
     }
 
     public function toggle(Gateway $gateway)
     {
         $gateway->is_active = ! $gateway->is_active;
         $gateway->save();
-        return redirect()->route('admin.gateways.index')->with('status', 'Gateway status updated');
+
+        flash()->success('Gateway status updated successfully.');
+
+        return redirect()->route('admin.gateways.index');
     }
 
     // Compatibility: filtered views for legacy routes

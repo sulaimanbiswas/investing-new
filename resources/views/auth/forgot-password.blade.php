@@ -1,25 +1,46 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
+@extends('layouts.auth')
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@section('title', 'Forgot Password')
+
+@section('content')
+    <h1 class="text-4xl font-bold text-center text-yellow-500 mb-6">Forgot Password</h1>
+    <p class="text-center text-gray-600 mb-8 text-sm leading-relaxed">
+        No problem. Just let us know your email address and we will email you a password reset link.
+    </p>
+
+    @if (session('status'))
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-6">
+            {{ session('status') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6">
+            @foreach ($errors->all() as $error)
+                {{ $error }}<br>
+            @endforeach
+        </div>
+    @endif
 
     <form method="POST" action="{{ route('password.email') }}">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div class="relative mb-6">
+            <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
+            <input type="email" name="email" placeholder="Email Address" value="{{ old('email') }}"
+                class="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
+                required autofocus>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
+        <button type="submit"
+            class="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-base font-semibold uppercase tracking-wide transition-all hover:-translate-y-1 hover:shadow-xl">Send
+            Reset Link</button>
     </form>
-</x-guest-layout>
+
+    <div class="text-center mt-6">
+        <a href="{{ route('login') }}"
+            class="text-yellow-500 font-semibold hover:text-yellow-600 hover:underline transition text-sm">
+            <i class="fas fa-arrow-left mr-1"></i> Back to Login
+        </a>
+    </div>
+@endsection

@@ -53,6 +53,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        flash()->success('Welcome Admin! You have been logged in successfully.');
+
         return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 
@@ -65,6 +67,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        flash()->info('You have been logged out successfully.');
 
         return redirect()->route('admin.login');
     }

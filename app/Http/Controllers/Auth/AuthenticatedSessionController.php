@@ -28,6 +28,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        flash()->success('Welcome back! You have been logged in successfully.');
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -41,6 +43,8 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        flash()->info('You have been logged out successfully.');
 
         return redirect('/');
     }

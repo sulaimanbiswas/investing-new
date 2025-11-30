@@ -22,6 +22,10 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'withdrawal_password',
+        'invitation_code',
+        'referral_code',
+        'referred_by',
     ];
 
     /**
@@ -31,6 +35,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'withdrawal_password',
         'remember_token',
     ];
 
@@ -46,5 +51,49 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_admin' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the user who referred this user.
+     */
+    public function referrer()
+    {
+        return $this->belongsTo(User::class, 'referred_by');
+    }
+
+    /**
+     * Get all users referred by this user.
+     */
+    public function referrals()
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
+
+    /**
+     * Generate a unique referral code.
+     */
+    public static function generateReferralCode(): string
+    {
+        do {
+            $code = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
+        } while (self::where('referral_code', $code)->exists());
+
+        return $code;
+    }
+
+    /**
+     * Get the user's referral link.
+     */
+    public function getReferralLinkAttribute(): string
+    {
+        return route('register', ['ref' => $this->referral_code]);
+    }
+
+    /**
+     * Get the count of users referred by this user.
+     */
+    public function getReferralCountAttribute(): int
+    {
+        return $this->referrals()->count();
     }
 }

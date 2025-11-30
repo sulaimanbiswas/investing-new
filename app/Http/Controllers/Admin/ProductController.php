@@ -48,9 +48,9 @@ class ProductController extends Controller
 
         Product::create($data);
 
-        return redirect()
-            ->route('admin.products.index')
-            ->with('success', 'Product created successfully.');
+        flash()->success('Product created successfully.');
+
+        return redirect()->route('admin.products.index');
     }
 
     public function edit(Product $product)
@@ -66,18 +66,18 @@ class ProductController extends Controller
 
         $product->update($data);
 
-        return redirect()
-            ->route('admin.products.index')
-            ->with('success', 'Product updated successfully.');
+        flash()->success('Product updated successfully.');
+
+        return redirect()->route('admin.products.index');
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
 
-        return redirect()
-            ->route('admin.products.index')
-            ->with('success', 'Product deleted successfully.');
+        flash()->success('Product deleted successfully.');
+
+        return redirect()->route('admin.products.index');
     }
 
     public function toggle(Request $request, Product $product)
@@ -85,18 +85,20 @@ class ProductController extends Controller
         $product->is_active = !$product->is_active;
         $product->save();
 
+        $message = 'Product ' . ($product->is_active ? 'activated' : 'deactivated') . ' successfully.';
+
         // If this is an AJAX / JSON request, keep returning JSON for dynamic updates.
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'status' => $product->is_active,
-                'message' => 'Product ' . ($product->is_active ? 'activated' : 'deactivated') . ' successfully.'
+                'message' => $message
             ]);
         }
 
+        flash()->success($message);
+
         // Regular form submission: redirect back to index with flash message.
-        return redirect()
-            ->route('admin.products.index')
-            ->with('success', 'Product ' . ($product->is_active ? 'activated' : 'deactivated') . ' successfully.');
+        return redirect()->route('admin.products.index');
     }
 
     protected function validateProduct(Request $request, ?int $productId = null): array

@@ -31,7 +31,10 @@ class PlatformRuleController extends Controller
     {
         $data = $this->validateRule($request);
         PlatformRule::create($data);
-        return redirect()->route('admin.platform-rule.index')->with('success', 'Rule created successfully.');
+
+        flash()->success('Rule created successfully.');
+
+        return redirect()->route('admin.platform-rule.index');
     }
 
     public function edit(PlatformRule $platform_rule)
@@ -43,21 +46,33 @@ class PlatformRuleController extends Controller
     {
         $data = $this->validateRule($request, $platform_rule->id);
         $platform_rule->update($data);
-        return redirect()->route('admin.platform-rule.index')->with('success', 'Rule updated successfully.');
+
+        flash()->success('Rule updated successfully.');
+
+        return redirect()->route('admin.platform-rule.index');
     }
 
     public function destroy(PlatformRule $platform_rule)
     {
         $platform_rule->delete();
-        return redirect()->route('admin.platform-rule.index')->with('success', 'Rule deleted successfully.');
+
+        flash()->success('Rule deleted successfully.');
+
+        return redirect()->route('admin.platform-rule.index');
     }
 
     public function toggle(Request $request, PlatformRule $platform_rule)
     {
         $platform_rule->is_active = !$platform_rule->is_active;
         $platform_rule->save();
-        if ($request->expectsJson() || $request->ajax()) return response()->json(['status' => $platform_rule->is_active]);
-        return redirect()->route('admin.platform-rule.index')->with('success', 'Rule ' . ($platform_rule->is_active ? 'activated' : 'deactivated') . '.');
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['status' => $platform_rule->is_active]);
+        }
+
+        flash()->success('Rule ' . ($platform_rule->is_active ? 'activated' : 'deactivated') . ' successfully.');
+
+        return redirect()->route('admin.platform-rule.index');
     }
 
     protected function validateRule(Request $request, ?int $id = null): array

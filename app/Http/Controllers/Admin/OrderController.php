@@ -92,7 +92,9 @@ class OrderController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.orders.index')->with('success', 'Order created successfully.');
+        flash()->success('Order created successfully.');
+
+        return redirect()->route('admin.orders.index');
     }
 
     public function edit(Order $order)
@@ -135,13 +137,18 @@ class OrderController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.orders.index')->with('success', 'Order updated successfully.');
+        flash()->success('Order updated successfully.');
+
+        return redirect()->route('admin.orders.index');
     }
 
     public function destroy(Order $order)
     {
         $order->delete();
-        return redirect()->route('admin.orders.index')->with('success', 'Order deleted successfully.');
+
+        flash()->success('Order deleted successfully.');
+
+        return redirect()->route('admin.orders.index');
     }
 
     public function toggle(Request $request, Order $order)
@@ -153,8 +160,9 @@ class OrderController extends Controller
             return response()->json(['status' => $order->is_active]);
         }
 
-        return redirect()->route('admin.orders.index')
-            ->with('success', 'Order ' . ($order->is_active ? 'activated' : 'deactivated') . '.');
+        flash()->success('Order ' . ($order->is_active ? 'activated' : 'deactivated') . ' successfully.');
+
+        return redirect()->route('admin.orders.index');
     }
 
     public function getProducts(Request $request)
