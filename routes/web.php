@@ -115,6 +115,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/order-sets', [\App\Http\Controllers\Admin\OrderSetController::class, 'index'])->name('order-sets.index');
         Route::get('/order-sets/create', [\App\Http\Controllers\Admin\OrderSetController::class, 'create'])->name('order-sets.create');
         Route::post('/order-sets', [\App\Http\Controllers\Admin\OrderSetController::class, 'store'])->name('order-sets.store');
+        Route::get('/order-sets/{order_set}/manage', [\App\Http\Controllers\Admin\OrderSetController::class, 'manage'])->name('order-sets.manage');
         Route::get('/order-sets/{order_set}/edit', [\App\Http\Controllers\Admin\OrderSetController::class, 'edit'])->name('order-sets.edit');
         Route::put('/order-sets/{order_set}', [\App\Http\Controllers\Admin\OrderSetController::class, 'update'])->name('order-sets.update');
         Route::delete('/order-sets/{order_set}', [\App\Http\Controllers\Admin\OrderSetController::class, 'destroy'])->name('order-sets.destroy');

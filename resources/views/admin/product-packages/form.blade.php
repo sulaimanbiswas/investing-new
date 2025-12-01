@@ -5,7 +5,7 @@
         <select name="order_set_id" id="order_set_id" class="form-control" required>
             <option value="">Select Order Set</option>
             @foreach($orderSets as $orderSet)
-                <option value="{{ $orderSet->id }}" data-platform-id="{{ $orderSet->platform_id }}" {{ (string) old('order_set_id', $productPackage->order_set_id ?? '') === (string) $orderSet->id ? 'selected' : '' }}>
+                <option value="{{ $orderSet->id }}" data-platform-id="{{ $orderSet->platform_id }}" {{ (string) old('order_set_id', $productPackage->order_set_id ?? $preSelectedOrderSetId ?? '') === (string) $orderSet->id ? 'selected' : '' }}>
                     {{ $orderSet->name }}
                 </option>
             @endforeach

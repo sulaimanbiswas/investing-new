@@ -55,6 +55,12 @@ class OrderSetController extends Controller
         return redirect()->route('admin.order-sets.index');
     }
 
+    public function manage(OrderSet $order_set)
+    {
+        $order_set->load(['productPackages.platform', 'productPackages.productPackageItems.product', 'platform']);
+        return view('admin.order-sets.manage', ['orderSet' => $order_set]);
+    }
+
     public function edit(OrderSet $order_set)
     {
         $platforms = Platform::orderBy('name')->get();

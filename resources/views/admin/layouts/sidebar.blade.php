@@ -12,11 +12,11 @@
                     <i class="flaticon-381-id-card-4"></i>
                     <span class="nav-text">Users</span>
                 </a>
-                {{-- <ul aria-expanded="false">
-                    <li><a href="{{ route('admin.users.active') }}">Active Users</a></li>
-                    <li><a href="{{ route('admin.users.banned') }}">Banned Users</a></li>
+                <ul aria-expanded="false">
+                    {{-- <li><a href="{{ route('admin.users.active') }}">Active Users</a></li>
+                    <li><a href="{{ route('admin.users.banned') }}">Banned Users</a></li> --}}
                     <li><a href="{{ route('admin.users.index') }}">All users</a></li>
-                </ul> --}}
+                </ul>
             </li>
             {{-- <li>
                 <a href="javascript:void(0);" class="ai-icon has-arrow" aria-expanded="false">

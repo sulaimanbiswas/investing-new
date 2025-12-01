@@ -210,13 +210,10 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <input type="date" name="start_date" value="{{ request('start_date') }}"
-                                            class="form-control form-control-sm" placeholder="Start Date">
-                                    </div>
-
-                                    <div class="col-12">
-                                        <input type="date" name="end_date" value="{{ request('end_date') }}"
-                                            class="form-control form-control-sm" placeholder="End Date">
+                                        <input type="text" name="daterange" 
+                                            class="form-control form-control-sm input-daterange-datepicker" 
+                                            value="@if(request('start_date') && request('end_date')){{ request('start_date') }} - {{ request('end_date') }}@endif" 
+                                            placeholder="Select Date Range">
                                     </div>
 
                                     <div class="col-12">
@@ -267,14 +264,11 @@
                             class="form-control form-control-sm" placeholder="Search...">
                     </div>
 
-                    <div class="col-md-2">
-                        <input type="date" name="start_date" value="{{ request('start_date') }}" 
-                            class="form-control form-control-sm">
-                    </div>
-
-                    <div class="col-md-2">
-                        <input type="date" name="end_date" value="{{ request('end_date') }}" 
-                            class="form-control form-control-sm">
+                    <div class="col-md-3">
+                        <input type="text" name="daterange" 
+                            class="form-control form-control-sm input-daterange-datepicker" 
+                            value="@if(request('start_date') && request('end_date')){{ request('start_date') }} - {{ request('end_date') }}@endif" 
+                            placeholder="Select Date Range">
                     </div>
 
                     <div class="col-md-2">
@@ -288,7 +282,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <select name="gateway_id" class="default-select form-control form-control-sm wide">
                             <option value="">Gateway</option>
                             @foreach($gateways as $gateway)
@@ -407,3 +401,46 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Initialize daterangepicker
+        $('.input-daterange-datepicker').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear',
+                format: 'YYYY-MM-DD'
+            }
+        });
+
+        $('.input-daterange-datepicker').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+            
+            // Create hidden inputs for start_date and end_date
+            var form = $(this).closest('form');
+            form.find('input[name="start_date"]').remove();
+            form.find('input[name="end_date"]').remove();
+            
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'start_date',
+                value: picker.startDate.format('YYYY-MM-DD')
+            }).appendTo(form);
+            
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'end_date',
+                value: picker.endDate.format('YYYY-MM-DD')
+            }).appendTo(form);
+        });
+
+        $('.input-daterange-datepicker').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+            var form = $(this).closest('form');
+            form.find('input[name="start_date"]').remove();
+            form.find('input[name="end_date"]').remove();
+        });
+    });
+</script>
+@endpush

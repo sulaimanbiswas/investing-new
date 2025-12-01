@@ -143,7 +143,10 @@
                                             </svg>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="{{ route('admin.order-sets.edit', $set) }}">Edit</a>
+                                            <a class="dropdown-item" href="{{ route('admin.order-sets.manage', $set) }}"><i
+                                                    class="fas fa-cog me-2"></i>Manage</a>
+                                            <a class="dropdown-item" href="{{ route('admin.order-sets.edit', $set) }}"><i
+                                                    class="fas fa-edit me-2"></i>Edit</a>
                                             <form method="POST"
                                                 action="{{ route('admin.order-sets.toggle', parameters: $set) }}"
                                                 class="order-set-toggle-form">

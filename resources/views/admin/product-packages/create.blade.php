@@ -12,6 +12,9 @@
                     <div class="card-body">
                         <form action="{{ route('admin.product-packages.store') }}" method="POST" id="productPackageForm">
                             @csrf
+                            @if(isset($preSelectedOrderSetId))
+                                <input type="hidden" name="redirect_to_order_set" value="1">
+                            @endif
                             @include('admin.product-packages.form')
                             <button class="btn btn-primary" type="submit">Save</button>
                         </form>

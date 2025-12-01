@@ -52,11 +52,12 @@ class ProductPackageController extends Controller
         return view('admin.product-packages.index', compact('productPackages', 'platforms', 'orderSets'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $platforms = Platform::orderBy('name')->get();
         $orderSets = OrderSet::with('platform')->orderBy('name')->get();
-        return view('admin.product-packages.create', compact('platforms', 'orderSets'));
+        $preSelectedOrderSetId = $request->input('order_set_id');
+        return view('admin.product-packages.create', compact('platforms', 'orderSets', 'preSelectedOrderSetId'));
     }
 
     public function store(Request $request)
@@ -93,6 +94,11 @@ class ProductPackageController extends Controller
         }
 
         flash()->success('Product Package created successfully.');
+
+        // If created from order set manage page, redirect back there
+        if ($request->input('redirect_to_order_set')) {
+            return redirect()->route('admin.order-sets.manage', $data['order_set_id']);
+        }
 
         return redirect()->route('admin.product-packages.index');
     }
@@ -139,14 +145,25 @@ class ProductPackageController extends Controller
 
         flash()->success('Product Package updated successfully.');
 
+        // If updated from order set manage page, redirect back there
+        if ($request->input('redirect_to_order_set')) {
+            return redirect()->route('admin.order-sets.manage', $data['order_set_id']);
+        }
+
         return redirect()->route('admin.product-packages.index');
     }
 
-    public function destroy(ProductPackage $product_package)
+    public function destroy(Request $request, ProductPackage $product_package)
     {
+        $orderSetId = $product_package->order_set_id;
         $product_package->delete();
 
         flash()->success('Product Package deleted successfully.');
+
+        // Check if should redirect to order set manage page
+        if ($request->input('from_manage') || $request->header('referer') && str_contains($request->header('referer'), 'order-sets')) {
+            return redirect()->route('admin.order-sets.manage', $orderSetId);
+        }
 
         return redirect()->route('admin.product-packages.index');
     }

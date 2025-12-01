@@ -12,6 +12,7 @@
     <link href="{{ asset('admin/vendor/owl-carousel/owl.carousel.css') }}" rel="stylesheet" />
     <link href="https://cdn.lineicons.com/2.0/LineIcons.css" rel="stylesheet" />
     <link href="{{ asset('admin/vendor/bootstrap-select/dist/css/bootstrap-select.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('admin/vendor/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
     <link href="{{ asset('admin/css/style.css') }}" rel="stylesheet" />
 
     @php
@@ -560,6 +561,9 @@
 
     <script src="{{ asset('admin/vendor/global/global.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('admin/vendor/bootstrap-select/dist/js/bootstrap-select.min.js') }}"
+        type="text/javascript"></script>
+    <script src="{{ asset('admin/vendor/moment/moment.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('admin/vendor/bootstrap-daterangepicker/daterangepicker.js') }}"
         type="text/javascript"></script>
     <script src="{{ asset('admin/vendor/chart.js/Chart.bundle.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('admin/vendor/owl-carousel/owl.carousel.js') }}" type="text/javascript"></script>

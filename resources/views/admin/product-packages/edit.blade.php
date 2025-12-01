@@ -14,6 +14,9 @@
                             id="productPackageForm">
                             @csrf
                             @method('PUT')
+                            @if(request('order_set_id'))
+                                <input type="hidden" name="redirect_to_order_set" value="1">
+                            @endif
                             @include('admin.product-packages.form', ['productPackage' => $productPackage])
                             <button class="btn btn-primary" type="submit">Update</button>
                         </form>
