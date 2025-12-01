@@ -27,6 +27,7 @@ class User extends Authenticatable
         'referral_code',
         'referred_by',
         'avatar_path',
+        'balance',
     ];
 
     /**
@@ -51,6 +52,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'balance' => 'decimal:2',
         ];
     }
 
@@ -104,5 +106,13 @@ class User extends Authenticatable
     public function deposits()
     {
         return $this->hasMany(Deposit::class);
+    }
+
+    /**
+     * Get all login histories for this user.
+     */
+    public function loginHistories()
+    {
+        return $this->hasMany(LoginHistory::class);
     }
 }

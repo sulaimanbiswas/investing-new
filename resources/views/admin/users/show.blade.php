@@ -18,6 +18,13 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="alert alert-danger solid alert-dismissible fade show">
+            <strong>{{ session('error') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close"></button>
+        </div>
+    @endif
+
     <!-- Statistics Cards -->
     <div class="row">
         <!-- Wallet Balance -->
@@ -241,10 +248,10 @@
                 </button>
 
                 <!-- Login History -->
-                <button type="button" class="btn btn-sm btn-warning rounded-pill px-4"
-                    onclick="alert('Login History - Coming Soon')">
+                <a href="{{ route('admin.reports.login-history', ['user_id' => $user->id]) }}"
+                    class="btn btn-sm btn-warning rounded-pill px-4">
                     <i class="fas fa-history me-2"></i>Logins
-                </button>
+                </a>
 
                 <!-- Login as User -->
                 <button type="button" class="btn btn-sm btn-info rounded-pill px-4"
@@ -447,7 +454,7 @@
                     <h5 class="modal-title" id="addBalanceModalLabel">Add Balance</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="#" method="POST">
+                <form action="{{ route('admin.users.add-balance', $user) }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <p class="text-muted">Add balance to user: <strong>{{ $user->name }}</strong></p>
@@ -478,7 +485,7 @@
                     <h5 class="modal-title" id="subtractBalanceModalLabel">Subtract Balance</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="#" method="POST">
+                <form action="{{ route('admin.users.subtract-balance', $user) }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <p class="text-muted">Subtract balance from user: <strong>{{ $user->name }}</strong></p>
@@ -510,7 +517,7 @@
                     <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="#" method="POST">
+                <form action="{{ route('admin.users.change-password', $user) }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <p class="text-muted">Change password for user: <strong>{{ $user->name }}</strong></p>

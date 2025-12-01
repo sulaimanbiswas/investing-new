@@ -80,6 +80,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Users management pages (views first)
         Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
         Route::get('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+        Route::post('/users/{user}/add-balance', [\App\Http\Controllers\Admin\UserController::class, 'addBalance'])->name('users.add-balance');
+        Route::post('/users/{user}/subtract-balance', [\App\Http\Controllers\Admin\UserController::class, 'subtractBalance'])->name('users.subtract-balance');
+        Route::post('/users/{user}/change-password', [\App\Http\Controllers\Admin\UserController::class, 'changePassword'])->name('users.change-password');
 
         // Gateways CRUD
         Route::get('/gateways', [\App\Http\Controllers\Admin\GatewayController::class, 'index'])->name('gateways.index');
@@ -145,6 +148,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/deposits', [\App\Http\Controllers\Admin\DepositController::class, 'index'])->name('deposits.index');
         Route::get('/deposits/{deposit}', [\App\Http\Controllers\Admin\DepositController::class, 'show'])->name('deposits.show');
         Route::patch('/deposits/{deposit}/status', [\App\Http\Controllers\Admin\DepositController::class, 'updateStatus'])->name('deposits.update-status');
+
+        // Reports
+        Route::get('/reports/login-history', [\App\Http\Controllers\Admin\ReportController::class, 'loginHistory'])->name('reports.login-history');
     });
 });
 

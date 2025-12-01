@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Services\LoginTrackingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,13 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
+    protected LoginTrackingService $loginTracker;
+
+    public function __construct(LoginTrackingService $loginTracker)
+    {
+        $this->loginTracker = $loginTracker;
+    }
+
     /**
      * Display the login view.
      */
@@ -27,6 +35,9 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        // Track successful login
+        $this->loginTracker->trackLogin(Auth::user(), $request, 'success');
 
         flash()->success('Welcome back! You have been logged in successfully.');
 
