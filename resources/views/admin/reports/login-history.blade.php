@@ -99,11 +99,16 @@
                                 @forelse($loginHistories as $history)
                                     <tr>
                                         <td>
-                                            <strong>{{ $history->user->username ?? 'N/A' }}</strong><br>
-                                            <a href="{{ route('admin.reports.login-history', ['user_id' => $history->user_id] + request()->except('user_id')) }}"
-                                                class="text-primary" style="text-decoration: none;">
-                                                @{{ $history->user->username ?? 'N/A' }}
-                                            </a>
+                                            @if($history->user)
+                                                <strong>{{ $history->user->username }}</strong><br>
+                                                <a href="{{ route('admin.reports.login-history', ['user_id' => $history->user_id] + request()->except('user_id')) }}"
+                                                    class="text-primary" style="text-decoration: none;">
+                                                    {{ "@" . $history->user->username }}
+                                                </a>
+                                            @else
+                                                <strong class="text-muted">Deleted User</strong><br>
+                                                <span class="text-muted">ID: {{ $history->user_id }}</span>
+                                            @endif
                                         </td>
                                         <td>
                                             @if($history->user && $history->user->is_admin)
@@ -143,11 +148,9 @@
                                             </button>
                                         </td>
                                     </tr>
-
-
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center py-4">
+                                        <td colspan="7" class="text-center py-4">
                                             <i class="fas fa-info-circle text-muted fa-3x mb-3"></i>
                                             <p class="text-muted mb-0">No login history found.</p>
                                         </td>
@@ -164,150 +167,153 @@
                     @endif
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Details Modal -->
-            <div class="modal fade" id="detailsModal{{ $history->id }}" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Login Details - {{ $history->created_at->format('M d, Y h:i A') }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6 class="text-primary mb-3"><i class="fas fa-user me-2"></i>User Information</h6>
-                                    <table class="table table-sm">
-                                        <tr>
-                                            <th width="40%">Username:</th>
-                                            <td>{{ $history->user->username ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Email:</th>
-                                            <td>{{ $history->user->email ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Name:</th>
-                                            <td>{{ $history->user->name ?? 'N/A' }}</td>
-                                        </tr>
-                                    </table>
+    <!-- Modals for each login history -->
+    @foreach($loginHistories as $history)
+        <div class="modal fade" id="detailsModal{{ $history->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Login Details - {{ $history->created_at->format('M d, Y h:i A') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-primary mb-3"><i class="fas fa-user me-2"></i>User Information</h6>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th width="40%">Username:</th>
+                                        <td>{{ $history->user ? $history->user->username : 'Deleted User' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Email:</th>
+                                        <td>{{ $history->user ? $history->user->email : 'N/A' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Name:</th>
+                                        <td>{{ $history->user ? $history->user->name : 'N/A' }}</td>
+                                    </tr>
+                                </table>
 
-                                    <h6 class="text-primary mb-3 mt-4"><i class="fas fa-network-wired me-2"></i>Network
-                                        Information</h6>
-                                    <table class="table table-sm">
-                                        <tr>
-                                            <th width="40%">IP Address:</th>
-                                            <td><code>{{ $history->ip_address }}</code></td>
-                                        </tr>
-                                        <tr>
-                                            <th>ISP:</th>
-                                            <td>{{ $history->isp ?? 'Unknown' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Timezone:</th>
-                                            <td>{{ $history->timezone ?? 'Unknown' }}</td>
-                                        </tr>
-                                    </table>
+                                <h6 class="text-primary mb-3 mt-4"><i class="fas fa-network-wired me-2"></i>Network Information
+                                </h6>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th width="40%">IP Address:</th>
+                                        <td><code>{{ $history->ip_address }}</code></td>
+                                    </tr>
+                                    <tr>
+                                        <th>ISP:</th>
+                                        <td>{{ $history->isp ?? 'Unknown' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Timezone:</th>
+                                        <td>{{ $history->timezone ?? 'Unknown' }}</td>
+                                    </tr>
+                                </table>
 
-                                    <h6 class="text-primary mb-3 mt-4"><i class="fas fa-map-marked-alt me-2"></i>Location
-                                        Information</h6>
-                                    <table class="table table-sm">
-                                        <tr>
-                                            <th width="40%">Country:</th>
-                                            <td>{{ $history->country }} ({{ $history->country_code }})</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Region:</th>
-                                            <td>{{ $history->region }} ({{ $history->region_code }})</td>
-                                        </tr>
-                                        <tr>
-                                            <th>City:</th>
-                                            <td>{{ $history->city ?? 'Unknown' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Latitude:</th>
-                                            <td>{{ $history->latitude ?? 'Unknown' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Longitude:</th>
-                                            <td>{{ $history->longitude ?? 'Unknown' }}</td>
-                                        </tr>
-                                    </table>
+                                <h6 class="text-primary mb-3 mt-4"><i class="fas fa-map-marked-alt me-2"></i>Location
+                                    Information</h6>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th width="40%">Country:</th>
+                                        <td>{{ $history->country }} ({{ $history->country_code }})</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Region:</th>
+                                        <td>{{ $history->region }} ({{ $history->region_code }})</td>
+                                    </tr>
+                                    <tr>
+                                        <th>City:</th>
+                                        <td>{{ $history->city ?? 'Unknown' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Latitude:</th>
+                                        <td>{{ $history->latitude ?? 'Unknown' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Longitude:</th>
+                                        <td>{{ $history->longitude ?? 'Unknown' }}</td>
+                                    </tr>
+                                </table>
 
-                                    @if($history->latitude && $history->longitude)
-                                        <a href="https://www.google.com/maps?q={{ $history->latitude }},{{ $history->longitude }}"
-                                            target="_blank" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-map-marker-alt me-2"></i>View on Google Maps
-                                        </a>
+                                @if($history->latitude && $history->longitude)
+                                    <a href="https://www.google.com/maps?q={{ $history->latitude }},{{ $history->longitude }}"
+                                        target="_blank" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-map-marker-alt me-2"></i>View on Google Maps
+                                    </a>
+                                @endif
+                            </div>
+
+                            <div class="col-md-6">
+                                <h6 class="text-success mb-3"><i class="fas fa-laptop me-2"></i>Device Information</h6>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th width="40%">Device Type:</th>
+                                        <td>{{ $history->device }}</td>
+                                    </tr>
+                                    @if($history->device_model)
+                                        <tr>
+                                            <th>Device Model:</th>
+                                            <td>{{ $history->device_model }}</td>
+                                        </tr>
                                     @endif
-                                </div>
+                                    <tr>
+                                        <th>Browser:</th>
+                                        <td>{{ $history->browser }} {{ $history->browser_version }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Platform:</th>
+                                        <td>{{ $history->platform }} {{ $history->platform_version }}</td>
+                                    </tr>
+                                </table>
 
-                                <div class="col-md-6">
-                                    <h6 class="text-success mb-3"><i class="fas fa-laptop me-2"></i>Device Information</h6>
-                                    <table class="table table-sm">
+                                <h6 class="text-success mb-3 mt-4"><i class="fas fa-info-circle me-2"></i>Login Status</h6>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th width="40%">Status:</th>
+                                        <td>
+                                            @if($history->status === 'success')
+                                                <span class="badge badge-success">Success</span>
+                                            @else
+                                                <span class="badge badge-danger">Failed</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @if($history->failure_reason)
                                         <tr>
-                                            <th width="40%">Device Type:</th>
-                                            <td>{{ $history->device }}</td>
+                                            <th>Failure Reason:</th>
+                                            <td class="text-danger">{{ $history->failure_reason }}</td>
                                         </tr>
-                                        @if($history->device_model)
-                                            <tr>
-                                                <th>Device Model:</th>
-                                                <td>{{ $history->device_model }}</td>
-                                            </tr>
-                                        @endif
-                                        <tr>
-                                            <th>Browser:</th>
-                                            <td>{{ $history->browser }} {{ $history->browser_version }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Platform:</th>
-                                            <td>{{ $history->platform }} {{ $history->platform_version }}</td>
-                                        </tr>
-                                    </table>
+                                    @endif
+                                    <tr>
+                                        <th>Login Time:</th>
+                                        <td>{{ $history->created_at->format('F d, Y h:i:s A') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Time Ago:</th>
+                                        <td>{{ $history->created_at->diffForHumans() }}</td>
+                                    </tr>
+                                </table>
 
-                                    <h6 class="text-success mb-3 mt-4"><i class="fas fa-info-circle me-2"></i>Login Status
-                                    </h6>
-                                    <table class="table table-sm">
-                                        <tr>
-                                            <th width="40%">Status:</th>
-                                            <td>
-                                                @if($history->status === 'success')
-                                                    <span class="badge badge-success">Success</span>
-                                                @else
-                                                    <span class="badge badge-danger">Failed</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        @if($history->failure_reason)
-                                            <tr>
-                                                <th>Failure Reason:</th>
-                                                <td class="text-danger">{{ $history->failure_reason }}</td>
-                                            </tr>
-                                        @endif
-                                        <tr>
-                                            <th>Login Time:</th>
-                                            <td>{{ $history->created_at->format('F d, Y h:i:s A') }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Time Ago:</th>
-                                            <td>{{ $history->created_at->diffForHumans() }}</td>
-                                        </tr>
-                                    </table>
-
-                                    <h6 class="text-muted mb-2 mt-4">User Agent:</h6>
-                                    <small class="text-muted font-monospace">{{ $history->user_agent }}</small>
-                                </div>
+                                <h6 class="text-muted mb-2 mt-4">User Agent:</h6>
+                                <small class="text-muted font-monospace">{{ $history->user_agent }}</small>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <a href="{{ route('admin.users.show', $history->user) }}" class="btn btn-primary btn-sm">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger light" data-bs-dismiss="modal">Close</button>
+                        @if($history->user)
+                            <a href="{{ route('admin.users.show', $history->user) }}" class="btn btn-primary">
                                 <i class="fas fa-user me-2"></i>View User
                             </a>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endforeach
 @endsection
