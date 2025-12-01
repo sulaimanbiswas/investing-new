@@ -32,14 +32,4 @@ class UserController extends Controller
 
         return view('admin.users.index', compact('users'));
     }
-
-    public function active()
-    {
-        return view('admin.users.active');
-    }
-
-    public function banned()
-    {
-        return view('admin.users.banned');
-    }
 }

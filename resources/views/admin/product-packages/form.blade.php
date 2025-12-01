@@ -69,8 +69,8 @@
     </div>
 
     <div id="productsContainer">
-        @if(isset($productPackage) && $productPackage->items->count() > 0)
-            @foreach($productPackage->items as $index => $item)
+        @if(isset($productPackage) && $productPackage->productPackageItems->count() > 0)
+            @foreach($productPackage->productPackageItems as $index => $item)
                 <div class="product-row card mb-2 p-3" data-index="{{ $index }}">
                     <div class="row align-items-end">
                         <div class="col-md-5">
@@ -125,11 +125,11 @@
 
 @push('scripts')
     <script>
-        let productIndex = {{ isset($productPackage) && $productPackage->items->count() > 0 ? $productPackage->items->count() : 1 }};
+        let productIndex = {{ isset($productPackage) && $productPackage->productPackageItems->count() > 0 ? $productPackage->productPackageItems->count() : 1 }};
         let availableProducts = [];
         const editMode = {{ isset($productPackage) ? 'true' : 'false' }};
         @php
-            $existingProductsData = isset($productPackage) ? $productPackage->items->map(function ($item) {
+            $existingProductsData = isset($productPackage) ? $productPackage->productPackageItems->map(function ($item) {
                 return [
                     'product_id' => $item->product_id,
                     'name' => $item->product->name,

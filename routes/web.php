@@ -79,8 +79,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Users management pages (views first)
         Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-        Route::get('/users/active', [\App\Http\Controllers\Admin\UserController::class, 'active'])->name('users.active');
-        Route::get('/users/banned', [\App\Http\Controllers\Admin\UserController::class, 'banned'])->name('users.banned');
 
         // Gateways CRUD
         Route::get('/gateways', [\App\Http\Controllers\Admin\GatewayController::class, 'index'])->name('gateways.index');

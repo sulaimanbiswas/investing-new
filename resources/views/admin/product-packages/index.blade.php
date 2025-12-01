@@ -176,7 +176,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach($productPackage->items as $item)
+                                                        @foreach($productPackage->productPackageItems as $item)
                                                             <tr>
                                                                 <td>{{ $item->product->name }}</td>
                                                                 <td>{{ $item->quantity }}</td>
