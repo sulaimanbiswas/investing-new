@@ -24,8 +24,8 @@ class OrderSet extends Model
         return $this->belongsTo(Platform::class);
     }
 
-    public function orders()
+    public function productPackages()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(ProductPackage::class, 'order_set_id');
     }
 }

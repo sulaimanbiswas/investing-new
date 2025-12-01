@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class ProductPackage extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'order_set_id',
         'type',
-        'order_id',
+        'package_id',
         'platform_id',
         'profit_percentage',
         'is_active',
@@ -35,20 +35,20 @@ class Order extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'order_products')
+        return $this->belongsToMany(Product::class, 'product_package_items')
             ->withPivot('quantity', 'price')
             ->withTimestamps();
     }
 
-    public function orderProducts()
+    public function productPackageItems()
     {
-        return $this->hasMany(OrderProduct::class);
+        return $this->hasMany(ProductPackageItem::class);
     }
 
     // Calculate subtotal (sum of all products price * quantity)
     public function getSubtotalAttribute()
     {
-        return $this->orderProducts->sum(function ($item) {
+        return $this->productPackageItems->sum(function ($item) {
             return $item->price * $item->quantity;
         });
     }

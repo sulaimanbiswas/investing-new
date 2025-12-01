@@ -23,20 +23,56 @@
             <a href="{{ route('admin.platform-rule.create') }}" class="btn btn-sm btn-primary">Create Rule</a>
         </div>
         <div class="card-body">
-            <form method="GET" class="row mb-3 g-2">
+            <!-- Mobile: Accordion toggle button -->
+            <div class="accordion accordion-header-bg accordion-bordered d-md-none mb-2" id="ruleFilterAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header accordion-header-primary" id="ruleFilterHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#ruleFilterCollapse" aria-expanded="false" aria-controls="ruleFilterCollapse">
+                            Filter
+                        </button>
+                    </h2>
+                    <div id="ruleFilterCollapse" class="accordion-collapse collapse" aria-labelledby="ruleFilterHeading"
+                        data-bs-parent="#ruleFilterAccordion">
+                        <div class="accordion-body">
+                            <form method="GET" class="row g-2">
+                                <div class="col-12">
+                                    <input type="text" name="search" value="{{ request('search') }}"
+                                        class="form-control form-control-sm" placeholder="Search by name">
+                                </div>
+                                <div class="col-12">
+                                    <select name="status" class="default-select form-control form-control-sm wide">
+                                        <option value="">All Status</option>
+                                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active
+                                        </option>
+                                        <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>
+                                            Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 d-grid">
+                                    <button class="btn btn-secondary" type="submit">Filter</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop/tablet: inline filter form -->
+            <form method="GET" class="row mb-3 g-2 d-none d-md-flex">
                 <div class="col-md-4">
-                    <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                    <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
                         placeholder="Search by name">
                 </div>
                 <div class="col-md-3">
-                    <select name="status" class="default-select form-control wide" required>
+                    <select name="status" class="default-select form-control form-control-sm wide">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
                     </select>
                 </div>
                 <div class="col-md-2 d-grid">
-                    <button class="btn btn-secondary" type="submit">Filter</button>
+                    <button class="btn btn-secondary btn-sm" type="submit">Filter</button>
                 </div>
             </form>
 

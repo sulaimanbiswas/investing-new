@@ -25,16 +25,54 @@
                     <a href="{{ route('admin.platforms.create') }}" class="btn btn-primary btn-sm">Create</a>
                 </div>
                 <div class="card-body">
+                    <!-- Mobile: Accordion toggle button -->
+                    <div class="accordion accordion-header-bg accordion-bordered d-md-none mb-2"
+                        id="platformFilterAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header accordion-header-primary" id="platformFilterHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#platformFilterCollapse" aria-expanded="false"
+                                    aria-controls="platformFilterCollapse">
+                                    Filter
+                                </button>
+                            </h2>
+                            <div id="platformFilterCollapse" class="accordion-collapse collapse"
+                                aria-labelledby="platformFilterHeading" data-bs-parent="#platformFilterAccordion">
+                                <div class="accordion-body">
+                                    <form method="GET" class="row g-2">
+                                        <div class="col-12">
+                                            <input type="text" name="search" value="{{ request('search') }}"
+                                                class="form-control form-control-sm" placeholder="Search by name">
+                                        </div>
+                                        <div class="col-12 d-grid">
+                                            <button class="btn btn-secondary" type="submit">Filter</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desktop/tablet: inline filter form -->
+                    <form method="GET" class="row mb-3 g-2 d-none d-md-flex">
+                        <div class="col-md-4">
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                class="form-control form-control-sm" placeholder="Search by name">
+                        </div>
+                        <div class="col-md-2 d-grid">
+                            <button class="btn btn-secondary btn-sm" type="submit">Filter</button>
+                        </div>
+                    </form>
+
                     <div class="table-responsive">
-                        <table class="table table-responsive-sm">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th style="width:80px">#</th>
+                                    <th>#</th>
                                     <th>Name</th>
                                     <th>Commission (%)</th>
                                     <th>Start Price</th>
                                     <th>End Price</th>
-
                                     <th>Total Products</th>
                                     <th class="text-end" style="width:120px">Action</th>
                                 </tr>

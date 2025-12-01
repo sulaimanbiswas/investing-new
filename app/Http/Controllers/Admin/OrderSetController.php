@@ -11,7 +11,7 @@ class OrderSetController extends Controller
 {
     public function index(Request $request)
     {
-        $query = OrderSet::with('platform')->withCount('orders');
+        $query = OrderSet::with('platform')->withCount('productPackages');
 
         if ($search = $request->string('search')->toString()) {
             $query->where('name', 'like', "%{$search}%");

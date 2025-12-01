@@ -61,9 +61,9 @@
             </li>
 
             <li>
-                <a href="{{ route('admin.orders.index') }}" class="ai-icon" aria-expanded="false">
+                <a href="{{ route('admin.product-packages.index') }}" class="ai-icon" aria-expanded="false">
                     <i class="flaticon-381-layer-1"></i>
-                    <span class="nav-text">Orders</span>
+                    <span class="nav-text">Product Packages</span>
                 </a>
             </li>
 

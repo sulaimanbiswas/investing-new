@@ -5,7 +5,7 @@
         <select name="order_set_id" id="order_set_id" class="form-control" required>
             <option value="">Select Order Set</option>
             @foreach($orderSets as $orderSet)
-                <option value="{{ $orderSet->id }}" data-platform-id="{{ $orderSet->platform_id }}" {{ (string) old('order_set_id', $order->order_set_id ?? '') === (string) $orderSet->id ? 'selected' : '' }}>
+                <option value="{{ $orderSet->id }}" data-platform-id="{{ $orderSet->platform_id }}" {{ (string) old('order_set_id', $productPackage->order_set_id ?? '') === (string) $orderSet->id ? 'selected' : '' }}>
                     {{ $orderSet->name }}
                 </option>
             @endforeach
@@ -18,8 +18,8 @@
         <label class="form-label">Type <span class="text-danger">*</span></label>
         <select name="type" id="type" class="form-control" required>
             <option value="">Select Type</option>
-            <option value="single" {{ old('type', $order->type ?? '') === 'single' ? 'selected' : '' }}>Single</option>
-            <option value="combo" {{ old('type', $order->type ?? '') === 'combo' ? 'selected' : '' }}>Combo</option>
+            <option value="single" {{ old('type', $productPackage->type ?? '') === 'single' ? 'selected' : '' }}>Single</option>
+            <option value="combo" {{ old('type', $productPackage->type ?? '') === 'combo' ? 'selected' : '' }}>Combo</option>
         </select>
         @error('type')
             <span class="text-danger">{{ $message }}</span>
@@ -28,7 +28,7 @@
     <div class="col-md-3 mb-3">
         <label class="form-label">Profit % <span class="text-danger">*</span></label>
         <input type="number" name="profit_percentage" id="profit_percentage" class="form-control"
-            value="{{ old('profit_percentage', $order->profit_percentage ?? '') }}" min="0" max="100" step="0.01"
+            value="{{ old('profit_percentage', $productPackage->profit_percentage ?? '') }}" min="0" max="100" step="0.01"
             required>
         @error('profit_percentage')
             <span class="text-danger">{{ $message }}</span>
@@ -39,7 +39,7 @@
         <select name="platform_id" id="platform_id" class="form-control" required>
             <option value="">Select Platform</option>
             @foreach($platforms as $platform)
-                <option value="{{ $platform->id }}" {{ (string) old('platform_id', $order->platform_id ?? '') === (string) $platform->id ? 'selected' : '' }}>
+                <option value="{{ $platform->id }}" {{ (string) old('platform_id', $productPackage->platform_id ?? '') === (string) $platform->id ? 'selected' : '' }}>
                     {{ $platform->name }}
                 </option>
             @endforeach
@@ -50,12 +50,12 @@
     </div>
 </div>
 
-@if(isset($order))
+@if(isset($productPackage))
     <div class="mb-3">
         <label class="form-label">Status</label>
         <select name="is_active" class="form-control">
-            <option value="1" {{ old('is_active', $order->is_active) ? 'selected' : '' }}>Active</option>
-            <option value="0" {{ !old('is_active', $order->is_active) ? 'selected' : '' }}>Inactive</option>
+            <option value="1" {{ old('is_active', $productPackage->is_active) ? 'selected' : '' }}>Active</option>
+            <option value="0" {{ !old('is_active', $productPackage->is_active) ? 'selected' : '' }}>Inactive</option>
         </select>
     </div>
 @endif
@@ -69,8 +69,8 @@
     </div>
 
     <div id="productsContainer">
-        @if(isset($order) && $order->orderProducts->count() > 0)
-            @foreach($order->orderProducts as $index => $item)
+        @if(isset($productPackage) && $productPackage->items->count() > 0)
+            @foreach($productPackage->items as $index => $item)
                 <div class="product-row card mb-2 p-3" data-index="{{ $index }}">
                     <div class="row align-items-end">
                         <div class="col-md-5">
@@ -102,7 +102,7 @@
 </div>
 
 <div class="card bg-light p-3 mb-3">
-    <h5 class="mb-3">Order Summary</h5>
+    <h5 class="mb-3">Package Summary</h5>
     <div class="row">
         <div class="col-md-3">
             <strong>Subtotal:</strong>
@@ -125,11 +125,11 @@
 
 @push('scripts')
     <script>
-        let productIndex = {{ isset($order) && $order->orderProducts->count() > 0 ? $order->orderProducts->count() : 1 }};
+        let productIndex = {{ isset($productPackage) && $productPackage->items->count() > 0 ? $productPackage->items->count() : 1 }};
         let availableProducts = [];
-        const editMode = {{ isset($order) ? 'true' : 'false' }};
+        const editMode = {{ isset($productPackage) ? 'true' : 'false' }};
         @php
-            $existingProductsData = isset($order) ? $order->orderProducts->map(function ($item) {
+            $existingProductsData = isset($productPackage) ? $productPackage->items->map(function ($item) {
                 return [
                     'product_id' => $item->product_id,
                     'name' => $item->product->name,
@@ -194,7 +194,7 @@
                 return;
             }
 
-            fetch(`{{ route('admin.orders.products') }}?platform_id=${platformId}`)
+            fetch(`{{ route('admin.product-packages.products') }}?platform_id=${platformId}`)
                 .then(response => response.json())
                 .then(data => {
                     availableProducts = data;
@@ -244,7 +244,7 @@
 
             // Prevent adding more products if type is single and already has 1 product
             if (type === 'single' && currentProductCount >= 1) {
-                alert('Single type orders can only have one product');
+                alert('Single type product packages can only have one product');
                 return;
             }
 

@@ -51,15 +51,86 @@
                             class="btn btn-primary btn-sm">Create</button></a>
                 </div>
                 <div class="card-body">
+                    <!-- Mobile: Accordion toggle button -->
+                    <div class="accordion accordion-header-bg accordion-bordered d-md-none mb-2"
+                        id="gatewayFilterAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header accordion-header-primary" id="gatewayFilterHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#gatewayFilterCollapse" aria-expanded="false"
+                                    aria-controls="gatewayFilterCollapse">
+                                    Filter
+                                </button>
+                            </h2>
+                            <div id="gatewayFilterCollapse" class="accordion-collapse collapse"
+                                aria-labelledby="gatewayFilterHeading" data-bs-parent="#gatewayFilterAccordion">
+                                <div class="accordion-body">
+                                    <form method="GET" class="row g-2">
+                                        <div class="col-12">
+                                            <input type="text" name="search" value="{{ request('search') }}"
+                                                class="form-control form-control-sm" placeholder="Search by name">
+                                        </div>
+                                        <div class="col-12">
+                                            <select name="type" class="default-select form-control form-control-sm wide">
+                                                <option value="">All Types</option>
+                                                <option value="automatic" {{ request('type') === 'automatic' ? 'selected' : '' }}>Automatic</option>
+                                                <option value="manual" {{ request('type') === 'manual' ? 'selected' : '' }}>
+                                                    Manual</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <select name="status" class="default-select form-control form-control-sm wide">
+                                                <option value="">All Status</option>
+                                                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>
+                                                    Active</option>
+                                                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 d-grid">
+                                            <button class="btn btn-secondary" type="submit">Filter</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desktop/tablet: inline filter form -->
+                    <form method="GET" class="row mb-3 g-2 d-none d-md-flex">
+                        <div class="col-md-4">
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                class="form-control form-control-sm" placeholder="Search by name">
+                        </div>
+                        <div class="col-md-3">
+                            <select name="type" class="default-select form-control form-control-sm wide">
+                                <option value="">All Types</option>
+                                <option value="automatic" {{ request('type') === 'automatic' ? 'selected' : '' }}>Automatic
+                                </option>
+                                <option value="manual" {{ request('type') === 'manual' ? 'selected' : '' }}>Manual</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="status" class="default-select form-control form-control-sm wide">
+                                <option value="">All Status</option>
+                                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-grid">
+                            <button class="btn btn-secondary btn-sm" type="submit">Filter</button>
+                        </div>
+                    </form>
+
                     <div class="table-responsive">
-                        <table class="table table-responsive-sm">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th style="width: 80px">#</th>
+                                    <th>#</th>
                                     <th>Gateway</th>
                                     <th>Type</th>
                                     <th>Country</th>
-                                    <th>STATUS</th>
+                                    <th>Status</th>
                                     <th class="text-end" style="width: 80px">Action</th>
                                 </tr>
                             </thead>

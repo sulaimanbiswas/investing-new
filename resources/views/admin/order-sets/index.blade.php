@@ -23,21 +23,67 @@
             <a href="{{ route('admin.order-sets.create') }}" class="btn btn-sm btn-primary">Create Order Set</a>
         </div>
         <div class="card-body">
-            <!-- Filters -->
+            <!-- Mobile: Accordion toggle button -->
+            <div class="accordion accordion-header-bg accordion-bordered d-md-none mb-2" id="orderSetFilterAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header accordion-header-primary" id="orderSetFilterHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#orderSetFilterCollapse" aria-expanded="false"
+                            aria-controls="orderSetFilterCollapse">
+                            Filter
+                        </button>
+                    </h2>
+                    <div id="orderSetFilterCollapse" class="accordion-collapse collapse"
+                        aria-labelledby="orderSetFilterHeading" data-bs-parent="#orderSetFilterAccordion">
+                        <div class="accordion-body">
+                            <form method="GET" class="row g-2">
+                                <div class="col-12">
+                                    <input type="text" name="search" value="{{ request('search') }}"
+                                        class="form-control form-control-sm" placeholder="Search by name">
+                                </div>
+                                <div class="col-12">
+                                    <select name="status" class="default-select form-control form-control-sm wide">
+                                        <option value="">All Status</option>
+                                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active
+                                        </option>
+                                        <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>
+                                            Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <select name="platform_id" class="default-select form-control form-control-sm wide">
+                                        <option value="">All Platforms</option>
+                                        @foreach($platforms as $platform)
+                                            <option value="{{ $platform->id }}" {{ (string) request('platform_id') === (string) $platform->id ? 'selected' : '' }}>
+                                                {{ $platform->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-12 d-grid">
+                                    <button class="btn btn-secondary" type="submit">Filter</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop/tablet: inline filter form -->
             <form method="GET" class="row mb-3 g-2 d-none d-md-flex">
                 <div class="col-md-4">
-                    <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                    <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
                         placeholder="Search by name">
                 </div>
                 <div class="col-md-3">
-                    <select name="status" class="default-select form-control wide" required>
+                    <select name="status" class="default-select form-control form-control-sm wide">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <select name="platform_id" class="default-select form-control wide" required>
+                    <select name="platform_id" class="default-select form-control form-control-sm wide">
                         <option value="">All Platforms</option>
                         @foreach($platforms as $platform)
                             <option value="{{ $platform->id }}" {{ (string) request('platform_id') === (string) $platform->id ? 'selected' : '' }}>
@@ -47,7 +93,7 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-grid">
-                    <button class="btn btn-secondary" type="submit">Filter</button>
+                    <button class="btn btn-secondary btn-sm" type="submit">Filter</button>
                 </div>
             </form>
 

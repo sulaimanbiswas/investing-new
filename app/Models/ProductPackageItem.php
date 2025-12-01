@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderProduct extends Model
+class ProductPackageItem extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'order_id',
+        'product_package_id',
         'product_id',
         'quantity',
         'price',
@@ -20,9 +20,9 @@ class OrderProduct extends Model
         'price' => 'decimal:2',
     ];
 
-    public function order()
+    public function productPackage()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(ProductPackage::class);
     }
 
     public function product()
