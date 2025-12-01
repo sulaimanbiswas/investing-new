@@ -66,6 +66,13 @@
                     <span class="nav-text">Orders</span>
                 </a>
             </li>
+
+            <li>
+                <a href="{{ route('admin.deposits.index') }}" class="ai-icon" aria-expanded="false">
+                    <i class="flaticon-381-calculator"></i>
+                    <span class="nav-text">Deposits</span>
+                </a>
+            </li>
         </ul>
 
         <div class="plus-box">

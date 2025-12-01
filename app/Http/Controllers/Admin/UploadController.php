@@ -113,4 +113,56 @@ class UploadController extends Controller
         }
         return response()->json(['deleted' => false, 'message' => 'File not found'], 404);
     }
+
+    public function gateway(Request $request)
+    {
+        if (!$request->hasFile('file')) {
+            return response()->json(['error' => ['message' => 'No file uploaded']], 422);
+        }
+
+        $request->validate([
+            'file' => 'required|file|mimes:jpg,jpeg,png,webp|max:5120',
+        ]);
+
+        $file = $request->file('file');
+        $publicDir = public_path('uploads/gateways');
+
+        if (!is_dir($publicDir)) {
+            if (!mkdir($publicDir, 0775, true) && !is_dir($publicDir)) {
+                return response()->json(['error' => ['message' => 'Failed to create upload directory']], 500);
+            }
+        }
+
+        $filename = Str::random(16) . '.' . $file->getClientOriginalExtension();
+
+        try {
+            $file->move($publicDir, $filename);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => ['message' => 'Failed to store file', 'detail' => $e->getMessage()]], 500);
+        }
+
+        $relative = '/uploads/gateways/' . $filename;
+        $url = asset('uploads/gateways/' . $filename);
+
+        return response()->json(['url' => $url, 'path' => $relative, 'uploaded' => true], 201);
+    }
+
+    public function deleteGateway(Request $request)
+    {
+        $request->validate([
+            'path' => ['required', 'string'],
+        ]);
+        $path = $request->string('path')->toString();
+
+        if (!str_starts_with($path, '/uploads/gateways/')) {
+            return response()->json(['deleted' => false, 'message' => 'Invalid path'], 422);
+        }
+
+        $full = public_path(ltrim($path, '/'));
+        if (file_exists($full)) {
+            @unlink($full);
+            return response()->json(['deleted' => true]);
+        }
+        return response()->json(['deleted' => false, 'message' => 'File not found'], 404);
+    }
 }

@@ -33,7 +33,12 @@
         <label class="form-label">Image</label>
         <input type="text" name="image" id="product_image" class="form-control mb-2"
             value="{{ old('image', $product->image ?? '') }}" placeholder="/uploads/products/product.png">
-        <div id="product-image-dropzone" class="dropzone border rounded p-3"></div>
+        <div id="product-image-dropzone" class="dropzone border rounded p-3">
+            <div class="dz-message text-center">
+                <i class="fas fa-cloud-upload-alt text-primary" style="font-size: 48px; margin-bottom: 10px;"></i>
+                <p class="mb-0">Drag & drop image here or click to upload</p>
+            </div>
+        </div>
 
     </div>
 

@@ -5,7 +5,8 @@
 @section('content')
     <!-- Quick Action Icons -->
     <div class="grid grid-cols-4 gap-3 mb-4">
-        <a href="#" class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
+        <a href="{{ route('deposit') }}"
+            class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
             <div
                 class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                 <i class="fas fa-credit-card text-white text-xl"></i>

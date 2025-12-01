@@ -217,7 +217,23 @@
                                                 <input type="text" name="qr_path" id="qr_path" class="form-control"
                                                     placeholder="e.g. /uploads/qrs/myqr.png" />
                                                 <div id="qr-dropzone" class="dropzone mt-2 border rounded p-3">
-                                                    <div class="dz-message">Drag & drop QR image here or click to upload
+                                                    <div class="dz-message text-center">
+                                                        <i class="fas fa-cloud-upload-alt text-primary"
+                                                            style="font-size: 48px; margin-bottom: 10px;"></i>
+                                                        <p class="mb-0">Drag & drop QR image here or click to upload</p>
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB.</small>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Logo</label>
+                                                <input type="text" name="logo_path" id="logo_path" class="form-control"
+                                                    placeholder="e.g. /uploads/gateways/logo.png" />
+                                                <div id="logo-dropzone" class="dropzone mt-2 border rounded p-3">
+                                                    <div class="dz-message text-center">
+                                                        <i class="fas fa-cloud-upload-alt text-primary"
+                                                            style="font-size: 48px; margin-bottom: 10px;"></i>
+                                                        <p class="mb-0">Drag & drop logo image here or click to upload</p>
                                                     </div>
                                                 </div>
                                                 <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB.</small>
@@ -327,21 +343,22 @@
                 .catch(error => {
                     console.error('[Gateways] CKEditor init failed', error);
                 });
+
+            // Load Dropzone dynamically if not present
+            const ensureDropzone = () => new Promise((resolve) => {
+                if (window.Dropzone) return resolve();
+                const css = document.createElement('link');
+                css.rel = 'stylesheet';
+                css.href = 'https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/min/dropzone.min.css';
+                document.head.appendChild(css);
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/min/dropzone.min.js';
+                script.onload = () => resolve();
+                document.body.appendChild(script);
+            });
+
             // Init Dropzone for QR upload
             if (document.getElementById('qr-dropzone')) {
-                // Load Dropzone dynamically if not present
-                const ensureDropzone = () => new Promise((resolve) => {
-                    if (window.Dropzone) return resolve();
-                    const css = document.createElement('link');
-                    css.rel = 'stylesheet';
-                    css.href = 'https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/min/dropzone.min.css';
-                    document.head.appendChild(css);
-                    const script = document.createElement('script');
-                    script.src = 'https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/min/dropzone.min.js';
-                    script.onload = () => resolve();
-                    document.body.appendChild(script);
-                });
-
                 ensureDropzone().then(() => {
                     Dropzone.autoDiscover = false;
                     const dz = new Dropzone('#qr-dropzone', {
@@ -382,6 +399,51 @@
                             document.getElementById('qr_path').value = '';
                             console.info('[Gateways] QR deleted:', res.deleted === true);
                         }).catch(err => console.error('[Gateways] QR delete failed', err));
+                    });
+                });
+            }
+
+            // Init Dropzone for Logo upload
+            if (document.getElementById('logo-dropzone')) {
+                ensureDropzone().then(() => {
+                    const dzLogo = new Dropzone('#logo-dropzone', {
+                        url: '{{ url('/admin/uploads/gateways') }}',
+                        method: 'post',
+                        headers: { 'X-CSRF-TOKEN': token },
+                        maxFiles: 1,
+                        maxFilesize: 5,
+                        acceptedFiles: 'image/jpeg,image/png,image/webp,image/jpg',
+                        addRemoveLinks: true,
+                        dictDefaultMessage: 'Drag & drop logo image here or click to upload',
+                    });
+
+                    dzLogo.on('success', function (file, response) {
+                        if (response && response.path) {
+                            document.getElementById('logo_path').value = response.path;
+                        } else if (response && response.url) {
+                            document.getElementById('logo_path').value = response.url;
+                        }
+                    });
+
+                    dzLogo.on('error', function (file, errorMessage) {
+                        console.error('[Gateways] Logo upload failed', errorMessage);
+                    });
+
+                    dzLogo.on('removedfile', function (file) {
+                        const path = document.getElementById('logo_path').value;
+                        if (!path) return;
+                        fetch('{{ url('/admin/uploads/gateways/delete') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': token,
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ path })
+                        }).then(r => r.json()).then(res => {
+                            document.getElementById('logo_path').value = '';
+                            console.info('[Gateways] Logo deleted:', res.deleted === true);
+                        }).catch(err => console.error('[Gateways] Logo delete failed', err));
                     });
                 });
             }

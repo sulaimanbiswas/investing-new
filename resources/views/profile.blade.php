@@ -6,14 +6,17 @@
     <!-- Header Card -->
     <div class="bg-gradient-to-br from-rose-600 to-purple-700 rounded-xl shadow-lg p-5 text-white mb-5">
         <div class="flex items-start gap-4">
-            <img src="https://via.placeholder.com/64x64" alt="avatar"
-                class="w-16 h-16 rounded-full border-4 border-white/30">
+            <img src="{{ auth()->user()->avatar_path ? asset('uploads/avatar/' . auth()->user()->avatar_path) : 'https://via.placeholder.com/64x64' }}"
+                alt="avatar" class="w-16 h-16 rounded-full border-4 border-white/30 object-cover">
             <div class="flex-1">
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <h2 class="text-2xl font-bold">{{ auth()->user()->name }}</h2>
                     <span class="bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded">VIP 1</span>
+                    @if(auth()->user()->username)
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded">{{ '@' . auth()->user()->username }}</span>
+                    @endif
                 </div>
-                <div class="text-white/80 text-sm">Invitation Code: {{ auth()->user()->referral_code ?? '—' }}</div>
+                <div class="text-white/80 text-sm mt-1">Invitation Code: {{ auth()->user()->referral_code ?? '—' }}</div>
             </div>
             <i class="fas fa-comment-dots text-white/80"></i>
         </div>
@@ -26,7 +29,7 @@
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <a href="#" class="flex flex-col items-center justify-center">
+                <a href="{{ route('deposit') }}" class="flex flex-col items-center justify-center">
                     <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
                         <i class="fas fa-wallet text-white"></i>
                     </div>
@@ -89,7 +92,7 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="flex items-center justify-between p-4">
+                <a href="{{ route('deposit.records') }}" class="flex items-center justify-between p-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-clipboard-list text-gray-600"></i>
@@ -115,17 +118,19 @@
                 </a>
             </li>
             <li>
-                <form method="POST" action="{{ route('logout') }}" class="flex items-center justify-between p-4">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-power-off text-gray-600"></i>
+                    <button type="submit" class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-power-off text-gray-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-800">Log Out</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="font-semibold text-gray-800">Log Out</div>
-                        </div>
-                    </div>
-                    <button type="submit"><i class="fas fa-chevron-right text-gray-400"></i></button>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </button>
                 </form>
             </li>
         </ul>

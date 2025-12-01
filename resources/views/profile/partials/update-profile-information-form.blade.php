@@ -1,64 +1,71 @@
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {{ __('Profile Information') }}
-        </h2>
+<form method="post" action="{{ route('profile.update') }}" class="space-y-5" enctype="multipart/form-data">
+    @csrf
+    @method('patch')
 
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
-    </header>
+    <div>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+        <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+        @error('name')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+    </div>
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-        @csrf
-    </form>
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+        <input type="text" value="{{ '@' . $user->username }}" disabled
+            class="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg text-gray-600 cursor-not-allowed">
+        <p class="mt-1 text-xs text-gray-500">Username cannot be changed.</p>
+    </div>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
-        @csrf
-        @method('patch')
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+        <input type="text" value="{{ $user->email }}" disabled
+            class="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg text-gray-600 cursor-not-allowed">
+        <p class="mt-1 text-xs text-gray-500">Email cannot be changed.</p>
+    </div>
 
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+    <div>
+        <label for="avatar" class="block text-sm font-medium text-gray-700 mb-2">Profile Avatar</label>
+        <div class="flex items-center gap-5">
+            <img id="avatar-preview"
+                src="{{ $user->avatar_path ? asset('uploads/avatar/' . $user->avatar_path) : 'https://via.placeholder.com/80x80' }}"
+                alt="avatar" class="w-20 h-20 rounded-full object-cover border-2 border-gray-200 shadow-sm">
+            <div class="flex-1">
+                <input id="avatar" name="avatar" type="file" accept="image/*"
+                    class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 file:cursor-pointer cursor-pointer"
+                    onchange="previewAvatar(event)">
+                <p class="mt-1 text-xs text-gray-500">JPEG, PNG, WEBP up to 2MB.</p>
+            </div>
         </div>
+        @error('avatar')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+    </div>
 
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+    <div class="flex items-center gap-4 pt-2">
+        <button type="submit"
+            class="px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition shadow-sm">
+            Save Changes
+        </button>
+        @if (session('status') === 'profile-updated')
+            <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 3000)"
+                class="text-sm text-green-600 font-medium">✓ Profile updated successfully!</p>
+        @endif
+    </div>
+</form>
 
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
-                        {{ __('Your email address is unverified.') }}
-
-                        <button form="send-verification" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
-
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
-                </div>
-            @endif
-        </div>
-
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
-
-            @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600 dark:text-gray-400"
-                >{{ __('Saved.') }}</p>
-            @endif
-        </div>
-    </form>
-</section>
+@push('scripts')
+    <script>
+        function previewAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('avatar-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+@endpush

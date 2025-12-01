@@ -5,7 +5,8 @@
             <i class="fas fa-home text-xl"></i>
             <span class="text-xs font-medium">Home</span>
         </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-gray-500 hover:text-indigo-600 transition">
+        <a href="{{ route('deposit') }}"
+            class="flex flex-col items-center gap-1 {{ request()->routeIs('deposit*') ? 'text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }} transition">
             <i class="fas fa-wallet text-xl"></i>
             <span class="text-xs font-medium">Recharge</span>
         </a>

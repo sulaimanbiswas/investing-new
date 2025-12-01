@@ -4,38 +4,35 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController as AdminAuthController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $platformRules = \App\Models\PlatformRule::where('is_active', true)
+        ->orderBy('sort_by')
+        ->take(4)
+        ->get();
+    return view('user.dashboard.index', compact('platformRules'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/invitation', function () {
-    return view('invitation');
+    return view('user.invitation.index');
 })->middleware(['auth', 'verified'])->name('invitation');
 
-Route::get('/teams', function () {
-    $user = auth()->user();
+Route::get('/teams', [\App\Http\Controllers\TeamsController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('teams');
 
-    // Get Level 1: Direct referrals
-    $level1 = $user->referrals()->with('referrals')->get();
-    $level1Count = $level1->count();
+Route::get('/platform-rules', [\App\Http\Controllers\PlatformRulesController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('platform-rules');
 
-    // Get Level 2: Referrals of referrals
-    $level2 = \App\Models\User::whereIn('referred_by', $level1->pluck('id'))->with('referrer')->get();
-    $level2Count = $level2->count();
-
-    // Get Level 3: Referrals of level 2
-    $level3 = \App\Models\User::whereIn('referred_by', $level2->pluck('id'))->with('referrer')->get();
-    $level3Count = $level3->count();
-
-    $totalTeamSize = $level1Count + $level2Count + $level3Count;
-
-    return view('teams', compact('level1', 'level2', 'level3', 'level1Count', 'level2Count', 'level3Count', 'totalTeamSize'));
-})->middleware(['auth', 'verified'])->name('teams');
+Route::get('/platform-rules/{id}', [\App\Http\Controllers\PlatformRulesController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('platform-rules.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -43,6 +40,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     // User profile dashboard
     Route::view('/me', 'profile')->name('profile.home');
+
+    // Deposit routes
+    Route::get('/deposit', [\App\Http\Controllers\DepositController::class, 'index'])->name('deposit');
+    Route::get('/deposit/confirm', [\App\Http\Controllers\DepositController::class, 'confirm'])->name('deposit.confirm');
+    Route::post('/deposit', [\App\Http\Controllers\DepositController::class, 'store'])->name('deposit.store');
+    Route::get('/deposit/records', [\App\Http\Controllers\DepositController::class, 'records'])->name('deposit.records');
 });
 
 // Admin auth routes
@@ -64,6 +67,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/uploads/qrs', [\App\Http\Controllers\Admin\UploadController::class, 'qr'])
             ->name('uploads.qr');
         Route::post('/uploads/qrs/delete', [\App\Http\Controllers\Admin\UploadController::class, 'deleteQr'])->name('uploads.qr.delete');
+
+        // Gateway logo upload endpoint
+        Route::post('/uploads/gateways', [\App\Http\Controllers\Admin\UploadController::class, 'gateway'])
+            ->name('uploads.gateway');
+        Route::post('/uploads/gateways/delete', [\App\Http\Controllers\Admin\UploadController::class, 'deleteGateway'])->name('uploads.gateway.delete');
 
         // Users management pages (views first)
         Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
@@ -128,6 +136,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/platform-rule/{platform_rule}', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'update'])->name('platform-rule.update');
         Route::delete('/platform-rule/{platform_rule}', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'destroy'])->name('platform-rule.destroy');
         Route::match(['post', 'patch'], '/platform-rule/{platform_rule}/toggle', [\App\Http\Controllers\Admin\PlatformRuleController::class, 'toggle'])->name('platform-rule.toggle');
+
+        // Deposits management
+        Route::get('/deposits', [\App\Http\Controllers\Admin\DepositController::class, 'index'])->name('deposits.index');
+        Route::get('/deposits/{deposit}', [\App\Http\Controllers\Admin\DepositController::class, 'show'])->name('deposits.show');
+        Route::patch('/deposits/{deposit}/status', [\App\Http\Controllers\Admin\DepositController::class, 'updateStatus'])->name('deposits.update-status');
     });
 });
 

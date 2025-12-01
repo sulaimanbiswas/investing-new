@@ -183,7 +183,24 @@
                                                     placeholder="e.g. /uploads/qrs/myqr.png"
                                                     value="{{ $gateway->qr_path }}" />
                                                 <div id="qr-dropzone" class="dropzone mt-2 border rounded p-3">
-                                                    <div class="dz-message">Drag & drop QR image here or click to upload
+                                                    <div class="dz-message text-center">
+                                                        <i class="fas fa-cloud-upload-alt text-primary"
+                                                            style="font-size: 48px; margin-bottom: 10px;"></i>
+                                                        <p class="mb-0">Drag & drop QR image here or click to upload</p>
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB.</small>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Logo</label>
+                                                <input type="text" name="logo_path" id="logo_path" class="form-control"
+                                                    placeholder="e.g. /uploads/gateways/logo.png"
+                                                    value="{{ $gateway->logo_path }}" />
+                                                <div id="logo-dropzone" class="dropzone mt-2 border rounded p-3">
+                                                    <div class="dz-message text-center">
+                                                        <i class="fas fa-cloud-upload-alt text-primary"
+                                                            style="font-size: 48px; margin-bottom: 10px;"></i>
+                                                        <p class="mb-0">Drag & drop logo image here or click to upload</p>
                                                     </div>
                                                 </div>
                                                 <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB.</small>
@@ -395,20 +412,21 @@
                     .catch(error => console.error('[Gateways Edit] CKEditor init failed', error));
             }
 
+            // Ensure Dropzone library is loaded
+            const ensureDropzone = () => new Promise((resolve) => {
+                if (window.Dropzone) return resolve();
+                const css = document.createElement('link');
+                css.rel = 'stylesheet';
+                css.href = 'https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/min/dropzone.min.css';
+                document.head.appendChild(css);
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/min/dropzone.min.js';
+                script.onload = () => resolve();
+                document.body.appendChild(script);
+            });
+
             // Dropzone for QR upload
             if (document.getElementById('qr-dropzone')) {
-                const ensureDropzone = () => new Promise((resolve) => {
-                    if (window.Dropzone) return resolve();
-                    const css = document.createElement('link');
-                    css.rel = 'stylesheet';
-                    css.href = 'https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/min/dropzone.min.css';
-                    document.head.appendChild(css);
-                    const script = document.createElement('script');
-                    script.src = 'https://cdn.jsdelivr.net/npm/dropzone@5.9.3/dist/min/dropzone.min.js';
-                    script.onload = () => resolve();
-                    document.body.appendChild(script);
-                });
-
                 ensureDropzone().then(() => {
                     Dropzone.autoDiscover = false;
                     const dz = new Dropzone('#qr-dropzone', {
@@ -466,9 +484,64 @@
                     });
                 });
             }
+
+            // Init Dropzone for Logo upload
+            if (document.getElementById('logo-dropzone')) {
+                ensureDropzone().then(() => {
+                    const dzLogo = new Dropzone('#logo-dropzone', {
+                        url: '{{ url('/admin/uploads/gateways') }}',
+                        method: 'post',
+                        headers: { 'X-CSRF-TOKEN': token },
+                        maxFiles: 1,
+                        maxFilesize: 5,
+                        acceptedFiles: 'image/jpeg,image/png,image/webp,image/jpg',
+                        addRemoveLinks: true,
+                        dictDefaultMessage: 'Drag & drop logo image here or click to upload',
+                    });
+
+                    // Preload existing logo if present
+                    const existingLogoPath = document.getElementById('logo_path');
+                    if (existingLogoPath && existingLogoPath.value) {
+                        const mockFile = { name: existingLogoPath.value.split('/').pop(), size: 1234 };
+                        dzLogo.emit('addedfile', mockFile);
+                        dzLogo.emit('thumbnail', mockFile, '{{ url('/') }}' + existingLogoPath.value);
+                        dzLogo.emit('complete', mockFile);
+                        dzLogo.files.push(mockFile);
+                    }
+
+                    dzLogo.on('success', function (file, response) {
+                        if (response && response.path) {
+                            document.getElementById('logo_path').value = response.path;
+                        } else if (response && response.url) {
+                            document.getElementById('logo_path').value = response.url;
+                        }
+                    });
+
+                    dzLogo.on('error', function (file, errorMessage) {
+                        console.error('[Gateways Edit] Logo upload failed', errorMessage);
+                    });
+
+                    dzLogo.on('removedfile', function () {
+                        const path = document.getElementById('logo_path').value;
+                        if (!path) return;
+                        fetch('{{ url('/admin/uploads/gateways/delete') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': token,
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ path })
+                        }).then(r => r.json()).then(res => {
+                            document.getElementById('logo_path').value = '';
+                            console.info('[Gateways Edit] Logo deleted:', res.deleted === true);
+                        }).catch(err => console.error('[Gateways Edit] Logo delete failed', err));
+                    });
+                });
+            }
             // Modal logic for add/edit user data
             const modalHtml = `
-                                        <div class=\"modal fade\" id=\"editGenerateFormModal\" tabindex=\"-1\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h5 class=\"modal-title\">User Field</h5>\n        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>\n      </div>\n      <div class=\"modal-body\">\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Type <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-type\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"text\">Text</option>\n            <option value=\"textarea\">Textarea</option>\n            <option value=\"select\">Select</option>\n            <option value=\"checkbox\">Checkbox</option>\n            <option value=\"radio\">Radio</option>\n            <option value=\"file\">File</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Required <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-required\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"true\">Yes</option>\n            <option value=\"false\">No</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Label <span class=\"text-danger\">*</span></label>\n          <input type=\"text\" id=\"ud-label\" class=\"form-control\" placeholder=\"Label\" />\n        </div>\n        <div class=\"mb-3\" id=\"ud-options-wrap\" style=\"display:none;\">\n          <label class=\"form-label\">Options (comma separated)</label>\n          <input type=\"text\" id=\"ud-options\" class=\"form-control\" placeholder=\"Option1, Option2\" />\n        </div>\n        <div class=\"alert alert-danger d-none\" id=\"ud-error\"></div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-danger light\" data-bs-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary\" id=\"ud-save-btn\">Save</button>\n      </div>\n    </div>\n  </div>\n</div>`;
+                    <div class=\"modal fade\" id=\"editGenerateFormModal\" tabindex=\"-1\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h5 class=\"modal-title\">User Field</h5>\n        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>\n      </div>\n      <div class=\"modal-body\">\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Type <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-type\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"text\">Text</option>\n            <option value=\"textarea\">Textarea</option>\n            <option value=\"select\">Select</option>\n            <option value=\"checkbox\">Checkbox</option>\n            <option value=\"radio\">Radio</option>\n            <option value=\"file\">File</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Required <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-required\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"true\">Yes</option>\n            <option value=\"false\">No</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Label <span class=\"text-danger\">*</span></label>\n          <input type=\"text\" id=\"ud-label\" class=\"form-control\" placeholder=\"Label\" />\n        </div>\n        <div class=\"mb-3\" id=\"ud-options-wrap\" style=\"display:none;\">\n          <label class=\"form-label\">Options (comma separated)</label>\n          <input type=\"text\" id=\"ud-options\" class=\"form-control\" placeholder=\"Option1, Option2\" />\n        </div>\n        <div class=\"alert alert-danger d-none\" id=\"ud-error\"></div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-danger light\" data-bs-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary\" id=\"ud-save-btn\">Save</button>\n      </div>\n    </div>\n  </div>\n</div>`;
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             const typeEl = document.getElementById('ud-type');
             const reqEl = document.getElementById('ud-required');

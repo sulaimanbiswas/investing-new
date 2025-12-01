@@ -91,6 +91,7 @@ class GatewayController extends Controller
             'description' => 'nullable|string',
             'address' => 'nullable|string|max:255',
             'qr_path' => 'nullable|string|max:255',
+            'logo_path' => 'nullable|string|max:255',
             'requires_txn_id' => 'sometimes|boolean',
             'requires_screenshot' => 'sometimes|boolean',
             'custom_fields' => 'nullable|array',

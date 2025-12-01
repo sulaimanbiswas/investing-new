@@ -26,6 +26,7 @@ class User extends Authenticatable
         'invitation_code',
         'referral_code',
         'referred_by',
+        'avatar_path',
     ];
 
     /**
@@ -95,5 +96,13 @@ class User extends Authenticatable
     public function getReferralCountAttribute(): int
     {
         return $this->referrals()->count();
+    }
+
+    /**
+     * Get all deposits for this user.
+     */
+    public function deposits()
+    {
+        return $this->hasMany(Deposit::class);
     }
 }

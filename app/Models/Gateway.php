@@ -22,6 +22,7 @@ class Gateway extends Model
         'description',
         'address',
         'qr_path',
+        'logo_path',
         'requires_txn_id',
         'requires_screenshot',
         'custom_fields',
@@ -32,8 +33,14 @@ class Gateway extends Model
     {
         static::deleting(function (Gateway $gateway) {
             if ($gateway->qr_path) {
-                $path = public_path($gateway->qr_path);
+                $path = public_path(ltrim($gateway->qr_path, '/'));
                 if (str_starts_with($gateway->qr_path, '/uploads/qrs/') && file_exists($path)) {
+                    @unlink($path);
+                }
+            }
+            if ($gateway->logo_path) {
+                $path = public_path(ltrim($gateway->logo_path, '/'));
+                if (str_starts_with($gateway->logo_path, '/uploads/gateways/') && file_exists($path)) {
                     @unlink($path);
                 }
             }

@@ -24,7 +24,10 @@
         <input type="text" name="image" id="platform_image" class="form-control"
             value="{{ old('image', $platform->image ?? '') }}" placeholder="e.g. /uploads/platforms/myimage.png">
         <div id="platform-image-dropzone" class="dropzone mt-2 border rounded p-3">
-            <div class="dz-message">Drag & drop image here or click to upload</div>
+            <div class="dz-message text-center">
+                <i class="fas fa-cloud-upload-alt text-primary" style="font-size: 48px; margin-bottom: 10px;"></i>
+                <p class="mb-0">Drag & drop image here or click to upload</p>
+            </div>
         </div>
         <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB. Uses same uploader as gateway QR.</small>
     </div>

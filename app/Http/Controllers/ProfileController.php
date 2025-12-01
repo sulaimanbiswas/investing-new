@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -26,13 +27,35 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Update basic fields
+        $user->fill($request->validated());
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $filename = 'avatar_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+            // Store in public/uploads/avatar
+            $destinationPath = public_path('uploads/avatar');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            // Delete old avatar if exists
+            if ($user->avatar_path) {
+                $oldFile = public_path('uploads/avatar/' . $user->avatar_path);
+                if (file_exists($oldFile)) {
+                    @unlink($oldFile);
+                }
+            }
+
+            $file->move($destinationPath, $filename);
+            $user->avatar_path = $filename;
         }
 
-        $request->user()->save();
+        $user->save();
 
         flash()->success('Profile updated successfully.');
 
@@ -44,21 +67,8 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        flash()->info('Your account has been deleted.');
-
-        return Redirect::to('/');
+        // Account deletion disabled for users.
+        flash()->warning('Account deletion is disabled. Contact support for assistance.');
+        return Redirect::route('profile.edit');
     }
 }
