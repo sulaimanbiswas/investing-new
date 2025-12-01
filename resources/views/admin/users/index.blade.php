@@ -111,7 +111,7 @@
                                             </svg>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="javascript:void(0)">
+                                            <a class="dropdown-item" href="{{ route('admin.users.show', $user) }}">
                                                 <i class="fas fa-eye me-2"></i>View Details
                                             </a>
                                             <a class="dropdown-item" href="javascript:void(0)">
