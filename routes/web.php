@@ -34,6 +34,10 @@ Route::get('/platform-rules/{id}', [\App\Http\Controllers\PlatformRulesControlle
     ->middleware(['auth', 'verified'])
     ->name('platform-rules.show');
 
+Route::get('/menu', [\App\Http\Controllers\MenuController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('menu.index');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

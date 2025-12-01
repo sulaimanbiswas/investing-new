@@ -57,6 +57,7 @@ class PlatformController extends Controller
     {
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'package_name' => ['required', 'string', 'in:vip1,vip2,vip3'],
             'commission' => ['required', 'numeric', 'min:0', 'max:100'],
             'start_price' => ['required', 'numeric', 'min:0'],
             'end_price' => ['required', 'numeric', 'min:0'],

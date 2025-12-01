@@ -63,7 +63,7 @@ class DepositController extends Controller
 
         // Calculate statistics
         $stats = [
-            'completed' => Deposit::where('status', 'completed')->sum('amount'),
+            'approved' => Deposit::where('status', 'approved')->sum('amount'),
             'pending' => Deposit::where('status', 'pending')->sum('amount'),
             'rejected' => Deposit::where('status', 'rejected')->sum('amount'),
             'initialed' => Deposit::where('status', 'initialed')->sum('amount'),
@@ -87,7 +87,7 @@ class DepositController extends Controller
     public function updateStatus(Request $request, Deposit $deposit)
     {
         $request->validate([
-            'status' => 'required|in:pending,completed,rejected',
+            'status' => 'required|in:pending,approved,rejected',
             'admin_note' => 'nullable|string|max:1000'
         ]);
 
@@ -97,7 +97,7 @@ class DepositController extends Controller
         ]);
 
         // If approved, add balance to user
-        if ($request->status === 'completed' && $deposit->status !== 'completed') {
+        if ($request->status === 'approved' && $deposit->status !== 'approved') {
             $deposit->user->increment('balance', $deposit->amount);
         }
 

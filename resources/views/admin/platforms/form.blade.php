@@ -5,6 +5,18 @@
         <input type="text" name="name" class="form-control" value="{{ old('name', $platform->name ?? '') }}" required>
     </div>
     <div class="col-md-3 mb-3">
+        <label class="form-label">Package Name</label>
+        <select name="package_name" class="form-control" required>
+            <option value="">Select Package</option>
+            <option value="vip1" {{ old('package_name', $platform->package_name ?? '') == 'vip1' ? 'selected' : '' }}>VIP
+                1</option>
+            <option value="vip2" {{ old('package_name', $platform->package_name ?? '') == 'vip2' ? 'selected' : '' }}>VIP
+                2</option>
+            <option value="vip3" {{ old('package_name', $platform->package_name ?? '') == 'vip3' ? 'selected' : '' }}>VIP
+                3</option>
+        </select>
+    </div>
+    <div class="col-md-3 mb-3">
         <label class="form-label">Commission (%)</label>
         <input type="number" step="0.01" name="commission" class="form-control"
             value="{{ old('commission', $platform->commission ?? 0) }}" required>

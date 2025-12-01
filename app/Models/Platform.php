@@ -11,6 +11,7 @@ class Platform extends Model
 
     protected $fillable = [
         'name',
+        'package_name',
         'commission',
         'start_price',
         'end_price',

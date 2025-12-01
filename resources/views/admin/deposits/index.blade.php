@@ -25,10 +25,10 @@
                     <div class="card-body">
                         <div class="media align-items-center">
                             <div class="media-body">
-                                <p class="mb-1">Successful Deposit</p>
+                                <p class="mb-1">Approved Deposit</p>
                                 <div class="d-flex flex-wrap">
                                     <h2 class="fs-40 font-w600 text-white mb-0 me-3">
-                                        {{ number_format($stats['completed'], 2) }}
+                                        {{ number_format($stats['approved'], 2) }}
                                     </h2>
                                     <div>
                                         <svg width="28" height="19" viewBox="0 0 28 19" fill="none"
@@ -246,7 +246,7 @@
                                             <option value="">All Status</option>
                                             <option value="initialed" {{ request('status') === 'initialed' ? 'selected' : '' }}>Initialed</option>
                                             <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
+                                            <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
                                             <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
                                         </select>
                                     </div>
@@ -304,7 +304,7 @@
                             <option value="">Status</option>
                             <option value="initialed" {{ request('status') === 'initialed' ? 'selected' : '' }}>Initialed</option>
                             <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
+                            <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
                             <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
                         </select>
                     </div>
@@ -361,8 +361,8 @@
                                         <small class="text-muted">{{ $deposit->created_at->format('h:i A') }}</small>
                                     </td>
                                     <td>
-                                        @if($deposit->status === 'completed')
-                                            <span class="badge light badge-success">Completed</span>
+                                        @if($deposit->status === 'approved')
+                                            <span class="badge light badge-success">Approved</span>
                                         @elseif($deposit->status === 'pending')
                                             <span class="badge light badge-warning">Pending</span>
                                         @elseif($deposit->status === 'rejected')
@@ -374,7 +374,7 @@
                                     <td class="text-end">
                                         <div class="dropdown">
                                             <button type="button" 
-                                                class="btn {{ $deposit->status === 'completed' ? 'btn-success' : ($deposit->status === 'pending' ? 'btn-warning' : ($deposit->status === 'rejected' ? 'btn-danger' : 'btn-secondary')) }} light sharp"
+                                                class="btn {{ $deposit->status === 'approved' ? 'btn-success' : ($deposit->status === 'pending' ? 'btn-warning' : ($deposit->status === 'rejected' ? 'btn-danger' : 'btn-secondary')) }} light sharp"
                                                 data-bs-toggle="dropdown">
                                                 <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1">
                                                     <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
