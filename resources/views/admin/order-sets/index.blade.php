@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="col-12">
                                     <select name="status" class="default-select form-control form-control-sm wide">
-                                        <option value="">All Status</option>
+                                        <option value="">Status</option>
                                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active
                                         </option>
                                         <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>
@@ -52,7 +52,7 @@
                                 </div>
                                 <div class="col-12">
                                     <select name="platform_id" class="default-select form-control form-control-sm wide">
-                                        <option value="">All Platforms</option>
+                                        <option value="">Platform</option>
                                         @foreach($platforms as $platform)
                                             <option value="{{ $platform->id }}" {{ (string) request('platform_id') === (string) $platform->id ? 'selected' : '' }}>
                                                 {{ $platform->name }}
@@ -77,14 +77,14 @@
                 </div>
                 <div class="col-md-3">
                     <select name="status" class="default-select form-control form-control-sm wide">
-                        <option value="">All Status</option>
+                        <option value="">Status</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <select name="platform_id" class="default-select form-control form-control-sm wide">
-                        <option value="">All Platforms</option>
+                        <option value="">Platform</option>
                         @foreach($platforms as $platform)
                             <option value="{{ $platform->id }}" {{ (string) request('platform_id') === (string) $platform->id ? 'selected' : '' }}>
                                 {{ $platform->name }}
