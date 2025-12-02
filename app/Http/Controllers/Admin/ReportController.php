@@ -13,6 +13,19 @@ class ReportController extends Controller
     {
         $query = LoginHistory::with('user');
 
+        // Search filter (username, email, IP, country)
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('ip_address', 'like', "%{$search}%")
+                    ->orWhere('country', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('username', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         // Filter by user (from URL or form)
         if ($userId = $request->input('user_id')) {
             $query->where('user_id', $userId);
@@ -21,16 +34,6 @@ class ReportController extends Controller
         // Filter by status
         if ($status = $request->input('status')) {
             $query->where('status', $status);
-        }
-
-        // Filter by IP
-        if ($ip = $request->input('ip_address')) {
-            $query->where('ip_address', 'like', "%{$ip}%");
-        }
-
-        // Filter by country
-        if ($country = $request->input('country')) {
-            $query->where('country', 'like', "%{$country}%");
         }
 
         // Filter by device
@@ -54,6 +57,9 @@ class ReportController extends Controller
             $selectedUser = User::find($userId);
         }
 
-        return view('admin.reports.login-history', compact('loginHistories', 'selectedUser'));
+        // Get all users for dropdown
+        $users = User::select('id', 'name', 'username', 'email')->orderBy('name')->get();
+
+        return view('admin.reports.login-history', compact('loginHistories', 'selectedUser', 'users'));
     }
 }

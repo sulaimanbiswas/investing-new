@@ -11,25 +11,47 @@
         </ol>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">
-                        Login History Report
-                        @if($selectedUser)
-                            <span class="badge badge-primary">{{ $selectedUser->username }}</span>
-                        @endif
-                    </h4>
-                    <p class="text-muted mb-0">Total {{ $loginHistories->total() }} login records</p>
-                </div>
-                <div class="card-body">
-                    <!-- Filters -->
-                    <form method="GET" action="{{ route('admin.reports.login-history') }}" class="mb-4">
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label class="form-label">Status</label>
-                                <select name="status" class="form-control">
+    <div class="">
+        <!-- Mobile: Accordion toggle button -->
+        <div class="accordion accordion-header-bg accordion-bordered d-md-none mb-2" id="loginHistoryFilterAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header accordion-header-primary" id="loginHistoryFilterHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#loginHistoryFilterCollapse" aria-expanded="false"
+                        aria-controls="loginHistoryFilterCollapse">
+                        Filter
+                    </button>
+                </h2>
+                <div id="loginHistoryFilterCollapse" class="accordion-collapse collapse"
+                    aria-labelledby="loginHistoryFilterHeading" data-bs-parent="#loginHistoryFilterAccordion">
+                    <div class="accordion-body">
+                        <form method="GET" action="{{ route('admin.reports.login-history') }}" class="row g-2">
+                            <div class="col-12">
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    class="form-control form-control-sm"
+                                    placeholder="Search by username, email, IP, country...">
+                            </div>
+
+                            <div class="col-12">
+                                <input type="text" name="daterange"
+                                    class="form-control form-control-sm input-daterange-datepicker"
+                                    value="@if(request('date_from') && request('date_to')){{ request('date_from') }} - {{ request('date_to') }}@endif"
+                                    placeholder="Select Date Range">
+                            </div>
+
+                            <div class="col-12">
+                                <select name="user_id" class="default-select form-control form-control-sm wide">
+                                    <option value="">All Users</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                                            {{ $user->name }} ({{ $user->username ?? $user->email }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <select name="status" class="default-select form-control form-control-sm wide">
                                     <option value="">All Status</option>
                                     <option value="success" {{ request('status') === 'success' ? 'selected' : '' }}>Success
                                     </option>
@@ -37,19 +59,9 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">IP Address</label>
-                                <input type="text" name="ip_address" class="form-control" placeholder="Search IP"
-                                    value="{{ request('ip_address') }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Country</label>
-                                <input type="text" name="country" class="form-control" placeholder="Search Country"
-                                    value="{{ request('country') }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Device</label>
-                                <select name="device" class="form-control">
+
+                            <div class="col-12">
+                                <select name="device" class="default-select form-control form-control-sm wide">
                                     <option value="">All Devices</option>
                                     <option value="Desktop" {{ request('device') === 'Desktop' ? 'selected' : '' }}>Desktop
                                     </option>
@@ -60,112 +72,144 @@
                                     <option value="Bot" {{ request('device') === 'Bot' ? 'selected' : '' }}>Bot</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">From Date</label>
-                                <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">To Date</label>
-                                <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">&nbsp;</label>
-                                <div class="d-flex gap-2">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-filter me-2"></i>Filter
-                                    </button>
-                                    <a href="{{ route('admin.reports.login-history') }}" class="btn btn-secondary">
-                                        <i class="fas fa-redo me-2"></i>Reset
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
 
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead style="background-color: #ff6837; color: white;">
-                                <tr>
-                                    <th>User</th>
-                                    <th>User Type</th>
-                                    <th>Login at</th>
-                                    <th>IP</th>
-                                    <th>Latitude<br>Location<br>Longitude</th>
-                                    <th>Browser | OS</th>
-                                    <th class="text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($loginHistories as $history)
-                                    <tr>
-                                        <td>
-                                            @if($history->user)
-                                                <strong>{{ $history->user->username }}</strong><br>
-                                                <a href="{{ route('admin.reports.login-history', ['user_id' => $history->user_id] + request()->except('user_id')) }}"
-                                                    class="text-primary" style="text-decoration: none;">
-                                                    {{ "@" . $history->user->username }}
-                                                </a>
-                                            @else
-                                                <strong class="text-muted">Deleted User</strong><br>
-                                                <span class="text-muted">ID: {{ $history->user_id }}</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($history->user && $history->user->is_admin)
-                                                <span class="badge badge-danger">admin</span>
-                                            @else
-                                                <span class="badge badge-info">user</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ $history->created_at->format('Y-m-d h:i A') }}<br>
-                                            <small class="text-muted">{{ $history->created_at->diffForHumans() }}</small>
-                                        </td>
-                                        <td>
-                                            <span class="text-primary"
-                                                style="font-weight: 500;">{{ $history->ip_address }}</span>
-                                        </td>
-                                        <td>
-                                            @if($history->latitude)
-                                                <strong>{{ $history->latitude }}</strong><br>
-                                            @endif
-                                            @if($history->city || $history->country)
-                                                {{ $history->city }}@if($history->city && $history->country),
-                                                @endif{{ $history->country }}<br>
-                                            @endif
-                                            @if($history->longitude)
-                                                <strong>{{ $history->longitude }}</strong>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ $history->browser }}<br>
-                                            {{ $history->platform }}
-                                        </td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                data-bs-target="#detailsModal{{ $history->id }}" style="border-radius: 4px;">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center py-4">
-                                            <i class="fas fa-info-circle text-muted fa-3x mb-3"></i>
-                                            <p class="text-muted mb-0">No login history found.</p>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                            <div class="col-12 d-grid">
+                                <button class="btn btn-secondary" type="submit">Filter</button>
+                            </div>
+                        </form>
                     </div>
-
-                    @if($loginHistories->hasPages())
-                        <div class="d-flex justify-content-center mt-4">
-                            {{ $loginHistories->links() }}
-                        </div>
-                    @endif
                 </div>
+            </div>
+        </div>
+
+        <!-- Desktop/tablet: inline filter form -->
+        <form method="GET" action="{{ route('admin.reports.login-history') }}" class="row mb-3 g-2 d-none d-md-flex">
+            <div class="col-md-3">
+                <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
+                    placeholder="Search...">
+            </div>
+
+            <div class="col-md-2">
+                <input type="text" name="daterange" class="form-control form-control-sm input-daterange-datepicker"
+                    value="@if(request('date_from') && request('date_to')){{ request('date_from') }} - {{ request('date_to') }}@endif"
+                    placeholder="Select Date Range">
+            </div>
+
+            <div class="col-md-2">
+                <select name="user_id" class="default-select form-control form-control-sm wide">
+                    <option value="">User</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                            {{ $user->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <select name="status" class="default-select form-control form-control-sm wide">
+                    <option value="">Status</option>
+                    <option value="success" {{ request('status') === 'success' ? 'selected' : '' }}>Success</option>
+                    <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>Failed</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <select name="device" class="default-select form-control form-control-sm wide">
+                    <option value="">Device</option>
+                    <option value="Desktop" {{ request('device') === 'Desktop' ? 'selected' : '' }}>Desktop</option>
+                    <option value="Mobile" {{ request('device') === 'Mobile' ? 'selected' : '' }}>Mobile</option>
+                    <option value="Tablet" {{ request('device') === 'Tablet' ? 'selected' : '' }}>Tablet</option>
+                    <option value="Bot" {{ request('device') === 'Bot' ? 'selected' : '' }}>Bot</option>
+                </select>
+            </div>
+
+            <div class="col-md-1 d-grid">
+                <button class="btn btn-secondary btn-sm" type="submit">Filter</button>
+            </div>
+        </form>
+
+        <div class="card">
+            <div class="card-body">
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="background-color: #ff6837; color: white;">
+                            <tr>
+                                <th>User</th>
+                                <th>User Type</th>
+                                <th>Login at</th>
+                                <th>IP</th>
+                                <th>Latitude<br>Location<br>Longitude</th>
+                                <th>Browser | OS</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($loginHistories as $history)
+                                <tr>
+                                    <td>
+                                        @if($history->user)
+                                            <strong>{{ $history->user->username }}</strong><br>
+                                            <a href="{{ route('admin.reports.login-history', ['user_id' => $history->user_id] + request()->except('user_id')) }}"
+                                                class="text-primary" style="text-decoration: none;">
+                                                {{ "@" . $history->user->username }}
+                                            </a>
+                                        @else
+                                            <strong class="text-muted">Deleted User</strong><br>
+                                            <span class="text-muted">ID: {{ $history->user_id }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($history->user && $history->user->is_admin)
+                                            <span class="badge badge-danger">admin</span>
+                                        @else
+                                            <span class="badge badge-info">user</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ $history->created_at->format('Y-m-d h:i A') }}<br>
+                                        <small class="text-muted">{{ $history->created_at->diffForHumans() }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="text-primary" style="font-weight: 500;">{{ $history->ip_address }}</span>
+                                    </td>
+                                    <td>
+                                        @if($history->latitude)
+                                            <strong>{{ $history->latitude }}</strong><br>
+                                        @endif
+                                        @if($history->city || $history->country)
+                                            {{ $history->city }}@if($history->city && $history->country),
+                                            @endif{{ $history->country }}<br>
+                                        @endif
+                                        @if($history->longitude)
+                                            <strong>{{ $history->longitude }}</strong>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ $history->browser }}<br>
+                                        {{ $history->platform }}
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#detailsModal{{ $history->id }}" style="border-radius: 4px;">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <i class="fas fa-info-circle text-muted fa-3x mb-3"></i>
+                                        <p class="text-muted mb-0">No login history found.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                {{ $loginHistories->appends(request()->query())->links() }}
             </div>
         </div>
     </div>
@@ -317,3 +361,46 @@
         </div>
     @endforeach
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            // Initialize daterangepicker
+            $('.input-daterange-datepicker').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear',
+                    format: 'YYYY-MM-DD'
+                }
+            });
+
+            $('.input-daterange-datepicker').on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+
+                // Create hidden inputs for date_from and date_to
+                var form = $(this).closest('form');
+                form.find('input[name="date_from"]').remove();
+                form.find('input[name="date_to"]').remove();
+
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'date_from',
+                    value: picker.startDate.format('YYYY-MM-DD')
+                }).appendTo(form);
+
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'date_to',
+                    value: picker.endDate.format('YYYY-MM-DD')
+                }).appendTo(form);
+            });
+
+            $('.input-daterange-datepicker').on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+                var form = $(this).closest('form');
+                form.find('input[name="date_from"]').remove();
+                form.find('input[name="date_to"]').remove();
+            });
+        });
+    </script>
+@endpush
