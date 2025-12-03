@@ -47,6 +47,9 @@ Route::middleware('auth')->group(function () {
 
     // Order routes
     Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
+
+    // Return to admin
+    Route::post('/return-to-admin', [\App\Http\Controllers\Admin\UserController::class, 'returnToAdmin'])->name('return-to-admin');
 });
 
 // Admin auth routes
@@ -78,6 +81,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/users/{user}/change-password', [\App\Http\Controllers\Admin\UserController::class, 'changePassword'])->name('users.change-password');
         Route::post('/users/{user}/assign-order-set', [\App\Http\Controllers\Admin\UserController::class, 'assignOrderSet'])->name('users.assign-order-set');
         Route::put('/users/{user}/update-management', [\App\Http\Controllers\Admin\UserController::class, 'updateManagement'])->name('users.update-management');
+        Route::post('/users/{user}/login-as-user', [\App\Http\Controllers\Admin\UserController::class, 'loginAsUser'])->name('users.login-as-user');
 
         // Gateways CRUD
         Route::get('/gateways', [\App\Http\Controllers\Admin\GatewayController::class, 'index'])->name('gateways.index');

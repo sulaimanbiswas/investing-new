@@ -254,8 +254,8 @@
                 </a>
 
                 <!-- Login as User -->
-                <button type="button" class="btn btn-sm btn-info rounded-pill px-4"
-                    onclick="alert('Login as User - Coming Soon')">
+                <button type="button" class="btn btn-sm btn-info rounded-pill px-4" id="loginAsUserBtn"
+                    data-username="{{ $user->username }}" data-user-id="{{ $user->id }}">
                     <i class="fas fa-sign-in-alt me-2"></i>Login as User
                 </button>
 
@@ -642,4 +642,34 @@
             </div>
         </div>
     </div>
+
+    <!-- Login as User Form (Hidden) -->
+    <form id="loginAsUserForm" action="{{ route('admin.users.login-as-user', $user) }}" method="POST"
+        style="display: none;">
+        @csrf
+    </form>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('loginAsUserBtn').addEventListener('click', function () {
+            const username = this.dataset.username;
+
+            Swal.fire({
+                title: 'Login as User?',
+                html: `You will be logged in as <strong>${username}</strong>.<br><br>You can return to admin panel using the "Back to Admin" button.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#0dcaf0',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Login as User',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('loginAsUserForm').submit();
+                }
+            });
+        });
+    </script>
+@endpush

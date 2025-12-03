@@ -1,4 +1,5 @@
-<header class="bg-white shadow-sm fixed top-0 left-0 right-0 z-50 mb-3">
+<header
+    class="bg-white shadow-sm fixed {{ session()->has('admin_logged_in_as_user') ? 'top-[52px]' : 'top-0' }} left-0 right-0 z-50 mb-3">
     <div class="px-4 py-3 flex items-center justify-between">
         <!-- Logo -->
         <div class="flex items-center gap-3">

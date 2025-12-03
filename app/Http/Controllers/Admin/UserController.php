@@ -9,6 +9,8 @@ use App\Models\UserOrderSet;
 use App\Models\UserOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -265,5 +267,64 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.show', $user)
             ->with('success', 'User management settings updated successfully!');
+    }
+
+    public function loginAsUser(User $user)
+    {
+        // Store admin ID and user ID in session to allow returning
+        $adminId = Auth::guard('admin')->id();
+
+        // Logout from admin guard
+        Auth::guard('admin')->logout();
+
+        // Store admin ID and target user ID after logout
+        Session::put('admin_logged_in_as_user', $adminId);
+        Session::put('admin_viewing_user_id', $user->id);
+
+        // Login as the user using web guard
+        Auth::guard('web')->login($user);
+
+        // Regenerate session
+        request()->session()->regenerate();
+
+        return redirect()->route('dashboard')->with('success', 'You are now logged in as ' . $user->username);
+    }
+    public function returnToAdmin()
+    {
+        $adminId = Session::get('admin_logged_in_as_user');
+        $viewingUserId = Session::get('admin_viewing_user_id');
+
+        if (!$adminId) {
+            return redirect()->route('dashboard')->with('error', 'No admin session found.');
+        }
+
+        // Find admin before any logout
+        $admin = User::find($adminId);
+
+        if (!$admin || !$admin->is_admin) {
+            Session::forget('admin_logged_in_as_user');
+            Session::forget('admin_viewing_user_id');
+            return redirect()->route('admin.login')->with('error', 'Admin account not found.');
+        }
+
+        // Logout user from web guard
+        Auth::guard('web')->logout();
+
+        // Clear the session markers before logging in as admin
+        Session::forget('admin_logged_in_as_user');
+        Session::forget('admin_viewing_user_id');
+
+        // Login as admin using admin guard
+        Auth::guard('admin')->login($admin);
+
+        // Regenerate session for security
+        request()->session()->regenerate();
+
+        // Redirect back to user details page if we have the user ID
+        if ($viewingUserId) {
+            return redirect()->route('admin.users.show', $viewingUserId)->with('success', 'Returned to admin panel.');
+        }
+
+        return redirect()->route('admin.dashboard')->with('success', 'Returned to admin panel.');
     }
 }

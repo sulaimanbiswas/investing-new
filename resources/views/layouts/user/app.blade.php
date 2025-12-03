@@ -66,11 +66,38 @@
 </head>
 
 <body class="bg-gray-50">
+    <!-- Back to Admin Alert -->
+    @if(session()->has('admin_logged_in_as_user'))
+        <div
+            class="bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 fixed top-0 left-0 right-0 z-[60] shadow-lg">
+            <div class="max-w-6xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white/20 rounded-full p-2">
+                        <i class="fas fa-user-shield text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-sm font-bold block">Admin Mode</span>
+                        <span class="text-xs opacity-90">Viewing as {{ Auth::user()->username }}</span>
+                    </div>
+                </div>
+                <form action="{{ route('return-to-admin') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit"
+                        class="bg-white text-orange-600 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg transition duration-200 flex items-center gap-2 shadow-md">
+                        <i class="fas fa-arrow-left"></i>
+                        <span class="hidden sm:inline">Back to Admin</span>
+                        <span class="sm:hidden">Back</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    @endif
+
     <!-- Header -->
     @include('layouts.user.header')
 
     <!-- Main Content -->
-    <main class="pt-20 md:pt-24 pb-24 px-4">
+    <main class="{{ session()->has('admin_logged_in_as_user') ? 'pt-36 md:pt-40' : 'pt-20 md:pt-24' }} pb-24 px-4">
         <div class="max-w-6xl mx-auto py-4">
             @yield('content')
         </div>
