@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Ensure the 'auth' alias uses our custom Authenticate middleware for proper admin redirects
         $middleware->alias([
             'auth' => App\Http\Middleware\Authenticate::class,
+            'check.banned' => App\Http\Middleware\CheckIfBanned::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

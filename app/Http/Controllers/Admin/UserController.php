@@ -327,4 +327,63 @@ class UserController extends Controller
 
         return redirect()->route('admin.dashboard')->with('success', 'Returned to admin panel.');
     }
+
+    public function banUser(Request $request, User $user)
+    {
+        // Prevent banning admin users
+        if ($user->is_admin) {
+            return back()->with('error', 'Cannot ban admin users.');
+        }
+
+        // Validate the ban reason
+        $request->validate([
+            'ban_reason' => 'required|string|max:500',
+        ]);
+
+        // Ban the user
+        $user->update([
+            'is_banned' => true,
+            'ban_reason' => $request->ban_reason,
+            'banned_at' => now(),
+        ]);
+
+        // If user is currently logged in, log them out
+        if (Auth::guard('web')->id() === $user->id) {
+            Auth::guard('web')->logout();
+        }
+
+        return back()->with('success', 'User has been banned successfully.');
+    }
+
+    public function unbanUser(User $user)
+    {
+        // Unban the user
+        $user->update([
+            'is_banned' => false,
+            'ban_reason' => null,
+            'banned_at' => null,
+        ]);
+
+        return back()->with('success', 'User has been unbanned successfully.');
+    }
+
+    public function userTree(User $user)
+    {
+        // Load all referrals recursively (up to 4 levels)
+        $user->load([
+            'referrals' => function ($query) {
+                $query->with([
+                    'referrals' => function ($query) {
+                        $query->with([
+                            'referrals' => function ($query) {
+                                $query->with('referrals');
+                            }
+                        ]);
+                    }
+                ]);
+            }
+        ]);
+
+        return view('admin.users.tree', compact('user'));
+    }
 }

@@ -16,7 +16,7 @@ Route::get('/dashboard', function () {
         ->take(4)
         ->get();
     return view('user.dashboard.index', compact('platformRules'));
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'check.banned'])->name('dashboard');
 
 Route::get('/invitation', function () {
     return view('user.invitation.index');
@@ -32,7 +32,7 @@ Route::get('/platform-rules/{id}', [\App\Http\Controllers\PlatformRulesControlle
 
 Route::get('/menu', [\App\Http\Controllers\MenuController::class, 'index'])->middleware(['auth', 'verified'])->name('menu.index');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -82,6 +82,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/users/{user}/assign-order-set', [\App\Http\Controllers\Admin\UserController::class, 'assignOrderSet'])->name('users.assign-order-set');
         Route::put('/users/{user}/update-management', [\App\Http\Controllers\Admin\UserController::class, 'updateManagement'])->name('users.update-management');
         Route::post('/users/{user}/login-as-user', [\App\Http\Controllers\Admin\UserController::class, 'loginAsUser'])->name('users.login-as-user');
+        Route::post('/users/{user}/ban', [\App\Http\Controllers\Admin\UserController::class, 'banUser'])->name('users.ban');
+        Route::post('/users/{user}/unban', [\App\Http\Controllers\Admin\UserController::class, 'unbanUser'])->name('users.unban');
+        Route::get('/users/{user}/tree', [\App\Http\Controllers\Admin\UserController::class, 'userTree'])->name('users.tree');
 
         // Gateways CRUD
         Route::get('/gateways', [\App\Http\Controllers\Admin\GatewayController::class, 'index'])->name('gateways.index');

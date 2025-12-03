@@ -31,6 +31,9 @@ class User extends Authenticatable
         'daily_order_limit',
         'freeze_amount',
         'withdrawal_address',
+        'is_banned',
+        'ban_reason',
+        'banned_at',
     ];
 
     /**
@@ -55,9 +58,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_banned' => 'boolean',
             'balance' => 'decimal:2',
             'freeze_amount' => 'decimal:2',
             'daily_order_limit' => 'integer',
+            'banned_at' => 'datetime',
         ];
     }
 

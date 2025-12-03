@@ -260,16 +260,22 @@
                 </button>
 
                 <!-- User Tree -->
-                <button type="button" class="btn btn-sm btn-success rounded-pill px-4"
-                    onclick="alert('User Tree - Coming Soon')">
+                <a href="{{ route('admin.users.tree', $user) }}" class="btn btn-sm btn-success rounded-pill px-4">
                     <i class="fas fa-sitemap me-2"></i>User Tree
-                </button>
+                </a>
 
-                <!-- Ban User -->
-                <button type="button" class="btn btn-sm btn-warning rounded-pill px-4"
-                    onclick="alert('Ban User - Coming Soon')">
-                    <i class="fas fa-ban me-2"></i>Ban User
-                </button>
+                <!-- Ban/Unban User -->
+                @if($user->is_banned)
+                    <button type="button" class="btn btn-sm btn-success rounded-pill px-4" id="unbanUserBtn"
+                        data-username="{{ $user->username }}" data-user-id="{{ $user->id }}">
+                        <i class="fas fa-check-circle me-2"></i>Unban User
+                    </button>
+                @else
+                    <button type="button" class="btn btn-sm btn-warning rounded-pill px-4" id="banUserBtn"
+                        data-username="{{ $user->username }}" data-user-id="{{ $user->id }}">
+                        <i class="fas fa-ban me-2"></i>Ban User
+                    </button>
+                @endif
 
                 <!-- Change Password -->
                 <button type="button" class="btn btn-sm btn-danger rounded-pill px-4" data-bs-toggle="modal"
@@ -359,6 +365,17 @@
                             <label class="text-muted mb-1">Withdrawal Address</label>
                             <p class="mb-0 fw-semibold">{{ $user->withdrawal_address ?? 'N/A' }}</p>
                         </div>
+
+                        @if($user->is_banned)
+                            <div class="col-12">
+                                <div class="alert alert-danger mb-0">
+                                    <h6 class="alert-heading mb-2"><i class="fas fa-ban me-2"></i>Account Banned</h6>
+                                    <p class="mb-1"><strong>Reason:</strong> {{ $user->ban_reason ?? 'No reason provided' }}</p>
+                                    <p class="mb-0 text-muted small"><strong>Banned At:</strong>
+                                        {{ $user->banned_at?->format('M d, Y h:i A') ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -643,9 +660,46 @@
         </div>
     </div>
 
+    <!-- Ban User Modal -->
+    <div class="modal fade" id="banUserModal" tabindex="-1" aria-labelledby="banUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="banUserModalLabel">Ban User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('admin.users.ban', $user) }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <p class="text-muted">Ban user: <strong>{{ $user->name }}</strong></p>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Warning:</strong> This user will be immediately logged out and unable to access their
+                            account.
+                        </div>
+                        <div class="mb-3">
+                            <label for="ban_reason" class="form-label">Ban Reason <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="ban_reason" name="ban_reason" rows="3" required
+                                placeholder="Enter reason for banning this user..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning">Ban User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Login as User Form (Hidden) -->
     <form id="loginAsUserForm" action="{{ route('admin.users.login-as-user', $user) }}" method="POST"
         style="display: none;">
+        @csrf
+    </form>
+
+    <!-- Unban User Form (Hidden) -->
+    <form id="unbanUserForm" action="{{ route('admin.users.unban', $user) }}" method="POST" style="display: none;">
         @csrf
     </form>
 @endsection
@@ -671,5 +725,37 @@
                 }
             });
         });
+
+        // Ban User Modal
+        const banUserBtn = document.getElementById('banUserBtn');
+        if (banUserBtn) {
+            banUserBtn.addEventListener('click', function () {
+                const modal = new bootstrap.Modal(document.getElementById('banUserModal'));
+                modal.show();
+            });
+        }
+
+        // Unban User Confirmation
+        const unbanUserBtn = document.getElementById('unbanUserBtn');
+        if (unbanUserBtn) {
+            unbanUserBtn.addEventListener('click', function () {
+                const username = this.dataset.username;
+
+                Swal.fire({
+                    title: 'Unban User?',
+                    html: `Are you sure you want to unban <strong>${username}</strong>?<br><br>They will be able to access their account again.`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Unban User',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('unbanUserForm').submit();
+                    }
+                });
+            });
+        }
     </script>
 @endpush
