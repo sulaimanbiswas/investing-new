@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\OrderSet;
+use App\Models\UserOrderSet;
+use App\Models\UserOrder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -50,7 +54,25 @@ class UserController extends Controller
             'total_bv' => 0, // TODO: Implement when BV system is ready
         ];
 
-        return view('admin.users.show', compact('user', 'stats'));
+        // Get all order sets for assignment dropdown
+        $orderSets = OrderSet::where('is_active', true)->orderBy('name')->get();
+
+        // Get assigned order sets for this user
+        $userOrderSets = UserOrderSet::with('orderSet')
+            ->where('user_id', $user->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        // Get all user orders with relationships
+        $userOrders = UserOrder::with(['userOrderSet.orderSet', 'productPackageItem.productPackage'])
+            ->whereHas('userOrderSet', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->orderByRaw("CASE WHEN status = 'unpaid' THEN 0 ELSE 1 END")
+            ->orderByDesc('created_at')
+            ->paginate(20);
+
+        return view('admin.users.show', compact('user', 'stats', 'orderSets', 'userOrderSets', 'userOrders'));
     }
 
     public function addBalance(Request $request, User $user)
@@ -121,5 +143,127 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.show', $user)
             ->with('success', 'Password changed successfully for user: ' . $user->username);
+    }
+
+    public function assignOrderSet(Request $request, User $user)
+    {
+        $request->validate([
+            'order_set_id' => 'required|exists:order_sets,id',
+        ]);
+
+        $orderSet = OrderSet::with('productPackages.items.product')->findOrFail($request->order_set_id);
+
+        // Check if already assigned
+        $existing = UserOrderSet::where('user_id', $user->id)
+            ->where('order_set_id', $orderSet->id)
+            ->where('status', '!=', 'completed')
+            ->first();
+
+        if ($existing) {
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('error', 'This order set is already assigned to this user.');
+        }
+
+        DB::beginTransaction();
+        try {
+            if ($orderSet->productPackages->isEmpty()) {
+                DB::rollBack();
+                return redirect()
+                    ->route('admin.users.show', $user)
+                    ->with('error', 'This order set has no packages.');
+            }
+
+            // Calculate totals
+            $totalAmount = 0;
+            $totalPackages = $orderSet->productPackages->count();
+
+            foreach ($orderSet->productPackages as $package) {
+                foreach ($package->items as $item) {
+                    $totalAmount += ($item->quantity * $item->price);
+                }
+            }
+
+            // Create user order set
+            $userOrderSet = UserOrderSet::create([
+                'user_id' => $user->id,
+                'order_set_id' => $orderSet->id,
+                'total_products' => $totalPackages,
+                'completed_products' => 0,
+                'total_amount' => $totalAmount,
+                'profit_amount' => 0,
+                'status' => 'active',
+                'assigned_at' => now(),
+            ]);
+
+            // Create ONE order per package
+            foreach ($orderSet->productPackages as $package) {
+                $orderAmount = 0;
+                $manageCrypto = [];
+
+                // Get first item for basic order info
+                $firstItem = $package->items->first();
+
+                // Build manage_crypto array with all products in this package
+                foreach ($package->items as $item) {
+                    $itemAmount = $item->quantity * $item->price;
+                    $orderAmount += $itemAmount;
+
+                    $manageCrypto[] = [
+                        'name' => $item->product->name,
+                        'quantity' => $item->quantity,
+                        'price' => $item->price,
+                    ];
+                }
+
+                // Calculate profit from package profit_percentage
+                $profitAmount = $orderAmount * ($package->profit_percentage / 100);
+
+                UserOrder::create([
+                    'user_order_set_id' => $userOrderSet->id,
+                    'product_package_item_id' => $firstItem->id,
+                    'order_number' => UserOrder::generateOrderNumber(),
+                    'type' => 'normal',
+                    'product_name' => $firstItem->product->name,
+                    'quantity' => $firstItem->quantity,
+                    'price' => $firstItem->price,
+                    'order_amount' => $orderAmount,
+                    'profit_amount' => $profitAmount,
+                    'balance_after' => $user->balance,
+                    'status' => 'unpaid',
+                    'manage_crypto' => $manageCrypto,
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('success', 'Order set assigned successfully! Total ' . $totalPackages . ' orders created.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('error', 'Failed to assign order set: ' . $e->getMessage());
+        }
+    }
+
+    public function updateManagement(Request $request, User $user)
+    {
+        $request->validate([
+            'daily_order_limit' => 'required|integer|min:0',
+            'freeze_amount' => 'required|numeric|min:0',
+            'withdrawal_address' => 'nullable|string|max:255',
+        ]);
+
+        $user->update([
+            'daily_order_limit' => $request->daily_order_limit,
+            'freeze_amount' => $request->freeze_amount,
+            'withdrawal_address' => $request->withdrawal_address,
+        ]);
+
+        return redirect()
+            ->route('admin.users.show', $user)
+            ->with('success', 'User management settings updated successfully!');
     }
 }

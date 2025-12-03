@@ -45,6 +45,12 @@ class ProductPackage extends Model
         return $this->hasMany(ProductPackageItem::class);
     }
 
+    // Alias for items relationship
+    public function items()
+    {
+        return $this->hasMany(ProductPackageItem::class);
+    }
+
     // Calculate subtotal (sum of all products price * quantity)
     public function getSubtotalAttribute()
     {

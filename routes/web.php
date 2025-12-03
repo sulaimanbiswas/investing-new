@@ -44,6 +44,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/deposit/confirm', [\App\Http\Controllers\DepositController::class, 'confirm'])->name('deposit.confirm');
     Route::post('/deposit', [\App\Http\Controllers\DepositController::class, 'store'])->name('deposit.store');
     Route::get('/deposit/records', [\App\Http\Controllers\DepositController::class, 'records'])->name('deposit.records');
+
+    // Order routes
+    Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
 });
 
 // Admin auth routes
@@ -73,6 +76,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/users/{user}/add-balance', [\App\Http\Controllers\Admin\UserController::class, 'addBalance'])->name('users.add-balance');
         Route::post('/users/{user}/subtract-balance', [\App\Http\Controllers\Admin\UserController::class, 'subtractBalance'])->name('users.subtract-balance');
         Route::post('/users/{user}/change-password', [\App\Http\Controllers\Admin\UserController::class, 'changePassword'])->name('users.change-password');
+        Route::post('/users/{user}/assign-order-set', [\App\Http\Controllers\Admin\UserController::class, 'assignOrderSet'])->name('users.assign-order-set');
+        Route::put('/users/{user}/update-management', [\App\Http\Controllers\Admin\UserController::class, 'updateManagement'])->name('users.update-management');
 
         // Gateways CRUD
         Route::get('/gateways', [\App\Http\Controllers\Admin\GatewayController::class, 'index'])->name('gateways.index');

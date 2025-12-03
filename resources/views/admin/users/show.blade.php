@@ -282,168 +282,271 @@
 
     <!-- User Information Card -->
     <div class="row">
-        <div class="col-xl-4 col-lg-5">
+        <div class="col-xl-6 col-lg-6">
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">User Information</h4>
                 </div>
                 <div class="card-body">
-                    <div class="text-center mb-4">
+                    <div class="text-center d-flex align-items-center mb-4">
                         @if($user->avatar_path)
                             <img src="{{ asset('storage/' . $user->avatar_path) }}" alt="{{ $user->name }}"
-                                class="rounded-circle" width="120" height="120">
+                                class="rounded-circle" width="80" height="80">
                         @else
                             <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center"
-                                style="width: 120px; height: 120px; font-size: 48px;">
+                                style="width: 80px; height: 80px; font-size: 50px;">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
                         @endif
-                        <h4 class="mt-3 mb-1">{{ $user->name }}</h4>
-                        <p class="text-muted">@if($user->username){{ '@' . $user->username }}@else{{ $user->email }}@endif
-                        </p>
+                        <div class="ms-4 text-start">
+                            <h4 class="mt-3 mb-1">{{ $user->name }}</h4>
+                            <p class="text-muted">
+                                @if($user->username){{ '@' . $user->username }}@else{{ $user->email }}@endif
+                            </p>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="text-muted mb-1">Email</label>
-                        <p class="mb-0 fw-semibold">{{ $user->email }}</p>
-                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label class="text-muted mb-1">Email</label>
+                            <p class="mb-0 fw-semibold">{{ $user->email }}</p>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="text-muted mb-1">Username</label>
-                        <p class="mb-0 fw-semibold">{{ $user->username ?? 'N/A' }}</p>
-                    </div>
+                        <div class="col-sm-6 mb-3">
+                            <label class="text-muted mb-1">Username</label>
+                            <p class="mb-0 fw-semibold">{{ $user->username ?? 'N/A' }}</p>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="text-muted mb-1">Referral Code</label>
-                        <p class="mb-0 fw-semibold">{{ $user->referral_code }}</p>
-                    </div>
+                        <div class="col-sm-6 mb-3">
+                            <label class="text-muted mb-1">Referral Code</label>
+                            <p class="mb-0 fw-semibold">{{ $user->referral_code }}</p>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="text-muted mb-1">Referred By</label>
-                        <p class="mb-0 fw-semibold">
-                            @if($user->referrer)
-                                <a
-                                    href="{{ route('admin.users.show', $user->referrer) }}">{{ $user->referrer->username ?? $user->referrer->email }}</a>
-                            @else
-                                N/A
-                            @endif
-                        </p>
-                    </div>
+                        <div class="col-sm-6 mb-3">
+                            <label class="text-muted mb-1">Referred By</label>
+                            <p class="mb-0 fw-semibold">
+                                @if($user->referrer)
+                                    <a
+                                        href="{{ route('admin.users.show', $user->referrer) }}">{{ $user->referrer->username ?? $user->referrer->email }}</a>
+                                @else
+                                    N/A
+                                @endif
+                            </p>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="text-muted mb-1">Total Referrals</label>
-                        <p class="mb-0 fw-semibold">{{ $user->referrals->count() }}</p>
-                    </div>
+                        <div class="col-sm-6 mb-3">
+                            <label class="text-muted mb-1">Total Referrals</label>
+                            <p class="mb-0 fw-semibold">{{ $user->referrals->count() }}</p>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="text-muted mb-1">Member Since</label>
-                        <p class="mb-0 fw-semibold">{{ $user->created_at->format('M d, Y') }}</p>
-                    </div>
+                        <div class="col-sm-6 mb-3">
+                            <label class="text-muted mb-1">Member Since</label>
+                            <p class="mb-0 fw-semibold">{{ $user->created_at->format('M d, Y') }}</p>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="text-muted mb-1">Email Verified</label>
-                        <p class="mb-0">
-                            @if($user->email_verified_at)
-                                <span class="badge badge-success">Verified</span>
-                            @else
-                                <span class="badge badge-warning">Not Verified</span>
-                            @endif
-                        </p>
+                        <div class="col-sm-6 mb-3">
+                            <label class="text-muted mb-1">Email Verified</label>
+                            <p class="mb-0">
+                                @if($user->email_verified_at)
+                                    <span class="badge badge-success">Verified</span>
+                                @else
+                                    <span class="badge badge-warning">Not Verified</span>
+                                @endif
+                            </p>
+                        </div>
+
+                        <div class="col-sm-6 mb-3">
+                            <label class="text-muted mb-1">Withdrawal Address</label>
+                            <p class="mb-0 fw-semibold">{{ $user->withdrawal_address ?? 'N/A' }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-xl-8 col-lg-7">
-            <!-- Recent Deposits -->
+            <!-- Order Set Assign -->
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Recent Deposits</h4>
-                    <a href="{{ route('admin.deposits.index', ['user_id' => $user->id]) }}"
-                        class="btn btn-primary btn-sm">View All</a>
+                <div class="card-header">
+                    <h4 class="card-title">Order Set Assign</h4>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Order Number</th>
-                                    <th>Gateway</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($user->deposits()->latest()->take(5)->get() as $deposit)
-                                    <tr>
-                                        <td><small>{{ $deposit->order_number }}</small></td>
-                                        <td>{{ $deposit->gateway->name ?? 'N/A' }}</td>
-                                        <td>{{ $deposit->currency }} {{ number_format($deposit->amount, 2) }}</td>
-                                        <td>
-                                            @if($deposit->status === 'approved')
-                                                <span class="badge badge-success">Approved</span>
-                                            @elseif($deposit->status === 'pending')
-                                                <span class="badge badge-warning">Pending</span>
-                                            @elseif($deposit->status === 'rejected')
-                                                <span class="badge badge-danger">Rejected</span>
-                                            @else
-                                                <span class="badge badge-secondary">{{ ucfirst($deposit->status) }}</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $deposit->created_at->format('M d, Y') }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center">No deposits found.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    <form action="{{ route('admin.users.assign-order-set', $user) }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="order_set_id" class="form-label">Order Set <span
+                                    class="text-danger">*</span></label>
+                            <select name="order_set_id" id="order_set_id" class="default-select form-control wide" required>
+                                <option value="">Select Order Set</option>
+                                @foreach($orderSets as $orderSet)
+                                    <option value="{{ $orderSet->id }}">{{ $orderSet->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Assign</button>
+                    </form>
                 </div>
             </div>
 
-            <!-- Direct Referrals -->
-            <div class="card mt-3">
+
+
+
+        </div>
+
+        <div class="col-xl-6 col-lg-6">
+            <!-- User Management -->
+            <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Direct Referrals ({{ $user->referrals->count() }})</h4>
+                    <h4 class="card-title">User Management</h4>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Username</th>
-                                    <th>Email</th>
-                                    <th>Joined</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($user->referrals()->latest()->take(10)->get() as $referral)
+                    <form action="{{ route('admin.users.update-management', $user) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="mb-3">
+                            <label for="daily_order_limit" class="form-label">Daily Order Limit</label>
+                            <input type="number" class="form-control" id="daily_order_limit" name="daily_order_limit"
+                                value="{{ $user->daily_order_limit }}" required min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="freeze_amount" class="form-label">Freeze Amount (USDT)</label>
+                            <input type="number" step="0.01" class="form-control" id="freeze_amount" name="freeze_amount"
+                                value="{{ $user->freeze_amount }}" required min="0">
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="withdrawal_address" class="form-label">Withdrawal Address</label>
+                            <input type="text" class="form-control" id="withdrawal_address" name="withdrawal_address"
+                                value="{{ $user->withdrawal_address }}" placeholder="Enter wallet address">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Update Management</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Order Set Assigned -->
+            @if($userOrderSets->count() > 0)
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h4 class="card-title">Order Set Assigned</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
                                     <tr>
-                                        <td>{{ $referral->name }}</td>
-                                        <td>{{ $referral->username ?? 'N/A' }}</td>
-                                        <td>{{ $referral->email }}</td>
-                                        <td>{{ $referral->created_at->format('M d, Y') }}</td>
-                                        <td>
-                                            <a href="{{ route('admin.users.show', $referral) }}"
-                                                class="btn btn-primary btn-sm">View</a>
-                                        </td>
+                                        <th>Order Set</th>
+                                        <th>Completed</th>
+                                        <th>Status</th>
+                                        <th>Assigned</th>
                                     </tr>
-                                @empty
+                                </thead>
+                                <tbody>
+                                    @foreach($userOrderSets as $userOrderSet)
+                                        <tr>
+                                            <td>{{ $userOrderSet->orderSet->name }}</td>
+                                            <td>{{ $userOrderSet->completionPercentage() }}%</td>
+                                            <td>
+                                                @if($userOrderSet->status === 'active')
+                                                    <span class="badge badge-primary">Active</span>
+                                                @elseif($userOrderSet->status === 'completed')
+                                                    <span class="badge badge-success">Completed</span>
+                                                @else
+                                                    <span class="badge badge-secondary">{{ ucfirst($userOrderSet->status) }}</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $userOrderSet->assigned_at->format('M d, Y') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+        @if($userOrders->count() > 0)
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">User Orders</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead style="background-color: #ff6837; color: white;">
                                     <tr>
-                                        <td colspan="5" class="text-center">No referrals found.</td>
+                                        <th>Sr</th>
+                                        <th>Type</th>
+                                        <th>Order #</th>
+                                        <th>Manage Crypto</th>
+                                        <th>Order Amount</th>
+                                        <th>Profit</th>
+                                        <th>Balance</th>
+                                        <th>Status</th>
+                                        <th>Completed At</th>
                                     </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach($userOrders as $index => $order)
+                                        <tr>
+                                            <td>{{ $userOrders->firstItem() + $index }}</td>
+                                            <td>
+                                                @if($order->productPackageItem && $order->productPackageItem->productPackage)
+                                                    {{ ucfirst($order->productPackageItem->productPackage->type) }}
+                                                @else
+                                                    {{ ucfirst($order->type) }}
+                                                @endif
+                                            </td>
+                                            <td>{{ $order->order_number }}</td>
+                                            <td>
+                                                @if($order->manage_crypto && count($order->manage_crypto) > 0)
+                                                    <table class="table table-sm mb-0" style="background-color: #ff6837; color: white;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Name</th>
+                                                                <th>Quantity</th>
+                                                                <th>Price</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach($order->manage_crypto as $crypto)
+                                                                <tr>
+                                                                    <td>{{ $crypto['name'] ?? 'N/A' }}</td>
+                                                                    <td>{{ $crypto['quantity'] ?? 0 }}</td>
+                                                                    <td>{{ number_format($crypto['price'] ?? 0, 2) }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                @else
+                                                    <p class="text-muted mb-0">No products</p>
+                                                @endif
+                                            </td>
+                                            <td>${{ number_format($order->order_amount, 2) }}</td>
+                                            <td>{{ number_format($order->profit_amount, 2) }}</td>
+                                            <td>{{ number_format($order->balance_after, 2) }}</td>
+                                            <td>
+                                                @if($order->status === 'paid')
+                                                    <span class="badge bg-success">Paid</span>
+                                                @else
+                                                    <span class="badge bg-danger">Unpaid</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $order->paid_at ? $order->paid_at->format('Y-m-d h:i A') : 'N/A' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @if($userOrders->hasPages())
+                            <div class="card-footer">
+                                {{ $userOrders->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
+
     </div>
 
     <!-- Add Balance Modal -->

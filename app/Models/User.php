@@ -28,6 +28,9 @@ class User extends Authenticatable
         'referred_by',
         'avatar_path',
         'balance',
+        'daily_order_limit',
+        'freeze_amount',
+        'withdrawal_address',
     ];
 
     /**
@@ -53,6 +56,8 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_admin' => 'boolean',
             'balance' => 'decimal:2',
+            'freeze_amount' => 'decimal:2',
+            'daily_order_limit' => 'integer',
         ];
     }
 
