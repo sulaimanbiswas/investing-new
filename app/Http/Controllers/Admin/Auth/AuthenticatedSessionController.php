@@ -22,8 +22,13 @@ class AuthenticatedSessionController extends Controller
     /**
      * Show the admin login view.
      */
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
+        // If already logged in as admin, redirect to dashboard
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
+
         return view('admin.auth.login');
     }
 
@@ -32,6 +37,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // If already logged in, redirect to dashboard
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
+
         $data = $request->validate([
             'email' => ['required', 'string'], // email or username
             'password' => ['required', 'string'],
@@ -74,7 +84,7 @@ class AuthenticatedSessionController extends Controller
 
         flash()->success('Welcome Admin! You have been logged in successfully.');
 
-        return redirect()->intended(route('admin.dashboard', absolute: false));
+        return redirect()->intended(route('admin.dashboard'));
     }
 
     /**

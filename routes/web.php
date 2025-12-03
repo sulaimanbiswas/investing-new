@@ -54,10 +54,9 @@ Route::middleware('auth')->group(function () {
 
 // Admin auth routes
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::middleware(['guest', 'guest:admin'])->group(function () {
-        Route::get('/login', [AdminAuthController::class, 'create'])->name('login');
-        Route::post('/login', [AdminAuthController::class, 'store'])->name('login.store');
-    });
+    // No guest middleware - controller handles already logged in users
+    Route::get('/login', [AdminAuthController::class, 'create'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'store'])->name('login.store');
 
     Route::middleware('auth:admin')->group(function () {
         Route::view('/dashboard', 'admin.dashboard')->name('dashboard');

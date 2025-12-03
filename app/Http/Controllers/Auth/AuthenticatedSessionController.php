@@ -22,8 +22,13 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
+        // If already logged in as user, redirect to dashboard
+        if (Auth::guard('web')->check()) {
+            return redirect()->route('dashboard');
+        }
+
         return view('auth.login');
     }
 
@@ -41,7 +46,7 @@ class AuthenticatedSessionController extends Controller
 
         flash()->success('Welcome back! You have been logged in successfully.');
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard'));
     }
 
     /**
