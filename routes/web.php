@@ -22,21 +22,15 @@ Route::get('/invitation', function () {
     return view('user.invitation.index');
 })->middleware(['auth', 'verified'])->name('invitation');
 
-Route::get('/teams', [\App\Http\Controllers\TeamsController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('teams');
+Route::get('/teams', [\App\Http\Controllers\TeamsController::class, 'index'])->middleware(['auth', 'verified'])->name('teams');
 
-Route::get('/platform-rules', [\App\Http\Controllers\PlatformRulesController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('platform-rules');
+Route::get('/platform-rules', [\App\Http\Controllers\PlatformRulesController::class, 'index'])->middleware(['auth', 'verified'])->name('platform-rules');
 
 Route::get('/platform-rules/{id}', [\App\Http\Controllers\PlatformRulesController::class, 'show'])
     ->middleware(['auth', 'verified'])
     ->name('platform-rules.show');
 
-Route::get('/menu', [\App\Http\Controllers\MenuController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('menu.index');
+Route::get('/menu', [\App\Http\Controllers\MenuController::class, 'index'])->middleware(['auth', 'verified'])->name('menu.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -63,17 +57,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
 
         // CKEditor upload endpoint
-        Route::post('/uploads/ckeditor', [\App\Http\Controllers\Admin\UploadController::class, 'ckeditor'])
-            ->name('ckeditor.upload');
+        Route::post('/uploads/ckeditor', [\App\Http\Controllers\Admin\UploadController::class, 'ckeditor'])->name('ckeditor.upload');
 
         // QR image upload endpoint (Dropzone)
-        Route::post('/uploads/qrs', [\App\Http\Controllers\Admin\UploadController::class, 'qr'])
-            ->name('uploads.qr');
+        Route::post('/uploads/qrs', [\App\Http\Controllers\Admin\UploadController::class, 'qr'])->name('uploads.qr');
         Route::post('/uploads/qrs/delete', [\App\Http\Controllers\Admin\UploadController::class, 'deleteQr'])->name('uploads.qr.delete');
 
         // Gateway logo upload endpoint
-        Route::post('/uploads/gateways', [\App\Http\Controllers\Admin\UploadController::class, 'gateway'])
-            ->name('uploads.gateway');
+        Route::post('/uploads/gateways', [\App\Http\Controllers\Admin\UploadController::class, 'gateway'])->name('uploads.gateway');
         Route::post('/uploads/gateways/delete', [\App\Http\Controllers\Admin\UploadController::class, 'deleteGateway'])->name('uploads.gateway.delete');
 
         // Users management pages (views first)
