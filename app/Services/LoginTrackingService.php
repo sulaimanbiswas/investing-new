@@ -6,6 +6,7 @@ use App\Models\LoginHistory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Jenssegers\Agent\Agent;
 
 class LoginTrackingService
@@ -123,7 +124,7 @@ class LoginTrackingService
             }
         } catch (\Exception $e) {
             // Log error silently, don't break login flow
-            \Log::warning('Failed to fetch location data', [
+            Log::warning('Failed to fetch location data', [
                 'ip' => $ipAddress,
                 'error' => $e->getMessage(),
             ]);
