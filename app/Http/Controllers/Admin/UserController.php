@@ -115,7 +115,7 @@ class UserController extends Controller
         if ($user->balance < $request->amount) {
             return redirect()
                 ->route('admin.users.show', $user)
-                ->with('error', 'Insufficient balance. User has USDT' . number_format($user->balance, 2) . ' but you tried to subtract USDT' . number_format($request->amount, 2) . '.');
+                ->with('error', 'Insufficient balance. User has USDT' . number_format((float)$user->balance, 2) . ' but you tried to subtract USDT' . number_format((float)$request->amount, 2) . '.');
         }
 
         // Subtract balance from user

@@ -98,7 +98,7 @@ class DepositController extends Controller
 
         // If approved, add balance to user
         if ($request->status === 'approved' && $deposit->status !== 'approved') {
-            $deposit->user->increment('balance', $deposit->amount);
+            $deposit->user->increment('balance', (float) $deposit->amount);
         }
 
         flash()->success('Deposit status updated successfully');
