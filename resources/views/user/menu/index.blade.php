@@ -71,7 +71,7 @@
                 }
             @endphp
 
-            <a href="#" class="block bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
+            <a href="{{ route('menu.platform.show', $platform) }}" class="block bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
                 <div class="p-4">
                     <div class="flex items-start gap-4">
                         <!-- Platform Logo -->

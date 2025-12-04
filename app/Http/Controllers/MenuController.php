@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Platform;
+use App\Models\UserOrder;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MenuController extends Controller
 {
@@ -24,5 +27,60 @@ class MenuController extends Controller
         $platforms = $query->orderBy('start_price')->get();
 
         return view('user.menu.index', compact('platforms', 'vipLevel'));
+    }
+
+    /**
+     * Display platform details with order statistics
+     */
+    public function show(Platform $platform)
+    {
+        $user = Auth::user();
+
+        // Today's orders count
+        $todayOrdersCount = UserOrder::whereHas('userOrderSet', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        // Today's commission (profit) - from paid orders today
+        $todayCommission = UserOrder::whereHas('userOrderSet', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->whereDate('paid_at', Carbon::today())
+            ->where('status', 'paid')
+            ->sum('profit_amount') ?? 0;
+
+        // Yesterday's commission (profit) - from paid orders yesterday
+        $yesterdayCommission = UserOrder::whereHas('userOrderSet', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->whereDate('paid_at', Carbon::yesterday())
+            ->where('status', 'paid')
+            ->sum('profit_amount') ?? 0;
+
+        // Cash gap between task (difference between balance and next task requirement)
+        $nextTaskRequirement = $platform->start_price; // Minimum balance required for this platform
+        $cashGap = max(0, $nextTaskRequirement - $user->balance);
+
+        // Yesterday's team commission - Calculate from referrals' orders
+        $yesterdayTeamCommission = UserOrder::whereHas('userOrderSet', function ($query) use ($user) {
+            $query->whereHas('user', function ($q) use ($user) {
+                $q->where('referred_by', $user->id);
+            });
+        })
+            ->whereDate('paid_at', Carbon::yesterday())
+            ->where('status', 'paid')
+            ->sum('profit_amount') ?? 0;
+
+        return view('user.menu.show', compact(
+            'platform',
+            'user',
+            'todayOrdersCount',
+            'todayCommission',
+            'yesterdayCommission',
+            'cashGap',
+            'yesterdayTeamCommission'
+        ));
     }
 }
