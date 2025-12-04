@@ -11,8 +11,26 @@
             <div class="flex-1">
                 <div class="flex flex-wrap items-center gap-2">
                     <h2 class="text-2xl font-bold">{{ auth()->user()->name }}</h2>
+                    @php
+                        $currentVipLevel = $vipLevel ?? 0;
+                        $vipColors = [
+                            1 => 'bg-gradient-to-r from-yellow-400 to-yellow-500',
+                            2 => 'bg-gradient-to-r from-yellow-500 to-orange-500',
+                            3 => 'bg-gradient-to-r from-orange-500 to-red-500',
+                        ];
+                        $vipIcons = [
+                            1 => 'fa-star',
+                            2 => 'fa-crown',
+                            3 => 'fa-gem',
+                        ];
+                        $colorClass = $vipColors[$currentVipLevel] ?? 'bg-gray-400';
+                        $iconClass = $vipIcons[$currentVipLevel] ?? 'fa-user';
+                    @endphp
                     <span
-                        class="bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded">{{ $vipName ?? 'VIP 0' }}</span>
+                        class="{{ $colorClass }} text-white text-xs font-bold px-2.5 py-1 rounded inline-flex items-center gap-1">
+                        <i class="fas {{ $iconClass }}"></i>
+                        {{ $vipName ?? 'VIP 0' }}
+                    </span>
                     @if(auth()->user()->username)
                         <span class="text-xs bg-white/20 px-2 py-1 rounded">{{ '@' . auth()->user()->username }}</span>
                     @endif
