@@ -86,6 +86,7 @@
                             <th>Email</th>
                             <th>Join Date</th>
                             <th>Current Balance</th>
+                            <th>Task Status</th>
                             <th class="text-end" style="width: 120px">Action</th>
                         </tr>
                     </thead>
@@ -98,6 +99,26 @@
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->created_at->format('F j, Y') }}</td>
                                 <td>{{ number_format($user->balance ?? 0, 2) }}</td>
+                                <td>
+                                    @if($user->userOrderSets && $user->userOrderSets->count() > 0)
+                                        @foreach($user->userOrderSets as $userOrderSet)
+                                            @php
+                                                $percentage = $userOrderSet->completionPercentage();
+                                                $statusClass = 'success';
+                                                if ($percentage < 100) {
+                                                    $statusClass = $percentage > 0 ? 'warning' : 'secondary';
+                                                }
+                                            @endphp
+                                            <div class="mb-1">
+                                                <span class="badge badge-{{ $statusClass }}">
+                                                    {{ $userOrderSet->orderSet->name }}: {{ $percentage }}%
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <span class="badge badge-danger">Not Assigned</span>
+                                    @endif
+                                </td>
                                 <td class="text-end">
                                     <div class="dropdown">
                                         <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
@@ -140,7 +161,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center">No users found.</td>
+                                <td colspan="8" class="text-center">No users found.</td>
                             </tr>
                         @endforelse
                     </tbody>

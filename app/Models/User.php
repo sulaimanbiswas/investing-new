@@ -125,4 +125,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(LoginHistory::class);
     }
+
+    /**
+     * Get all user order sets for this user.
+     */
+    public function userOrderSets()
+    {
+        return $this->hasMany(UserOrderSet::class);
+    }
 }

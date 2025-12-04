@@ -34,7 +34,10 @@ class UserController extends Controller
             $query->whereDate('created_at', '<=', $to);
         }
 
-        $users = $query->orderByDesc('created_at')->paginate(20)->withQueryString();
+        $users = $query->with(['userOrderSets.orderSet'])
+            ->orderByDesc('created_at')
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.users.index', compact('users'));
     }
