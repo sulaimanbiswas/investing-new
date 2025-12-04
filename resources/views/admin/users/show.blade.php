@@ -294,19 +294,20 @@
                     <h4 class="card-title">User Information</h4>
                 </div>
                 <div class="card-body">
-                    <div class="text-center d-flex align-items-center mb-4">
+                    <div class="d-flex align-items-center mb-4">
                         @if($user->avatar_path)
-                            <img src="{{ asset('storage/' . $user->avatar_path) }}" alt="{{ $user->name }}"
-                                class="rounded-circle" width="80" height="80">
+                            <img src="{{ asset('uploads/avatar/' . $user->avatar_path) }}" alt="{{ $user->name }}"
+                                class="rounded-circle border border-2 border-light" width="80" height="80"
+                                style="object-fit: cover;">
                         @else
-                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center"
-                                style="width: 80px; height: 80px; font-size: 50px;">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            <div class="rounded-circle text-white d-flex align-items-center justify-content-center border border-2 border-light"
+                                style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="fas fa-user" style="font-size: 36px;"></i>
                             </div>
                         @endif
-                        <div class="ms-4 text-start">
-                            <h4 class="mt-3 mb-1">{{ $user->name }}</h4>
-                            <p class="text-muted">
+                        <div class="ms-4">
+                            <h4 class="mb-1">{{ $user->name }}</h4>
+                            <p class="text-muted mb-0">
                                 @if($user->username){{ '@' . $user->username }}@else{{ $user->email }}@endif
                             </p>
                         </div>
@@ -516,7 +517,7 @@
                                             <td>{{ $order->order_number }}</td>
                                             <td>
                                                 @if($order->manage_crypto && count($order->manage_crypto) > 0)
-                                                    <table class="table table-sm mb-0" style="background-color: #ff6837; color: white;">
+                                                    <table class="table table-sm mb-0">
                                                         <thead>
                                                             <tr>
                                                                 <th>Name</th>

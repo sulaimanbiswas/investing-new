@@ -61,7 +61,7 @@
                                         </div>
                                         <div>
                                             <div class="font-semibold text-gray-800">{{ $user->name }}</div>
-                                            <div class="text-sm text-gray-600">@username_{{ $user->username }}</div>
+                                            <div class="text-sm text-gray-600">{{ "@" . $user->username }}</div>
                                             <div class="text-xs text-purple-600 mt-1">
                                                 <i class="fas fa-users"></i> {{ $user->referrals->count() }} referrals
                                             </div>
@@ -106,7 +106,7 @@
                                         </div>
                                         <div>
                                             <div class="font-semibold text-gray-800">{{ $user->name }}</div>
-                                            <div class="text-sm text-gray-600">@username_{{ $user->username }}</div>
+                                            <div class="text-sm text-gray-600">{{ "@" . $user->username }}</div>
                                             <div class="text-xs text-blue-600 mt-1">
                                                 <i class="fas fa-link"></i> Referred by {{ $user->referrer->name }}
                                             </div>
@@ -151,7 +151,7 @@
                                         </div>
                                         <div>
                                             <div class="font-semibold text-gray-800">{{ $user->name }}</div>
-                                            <div class="text-sm text-gray-600">@username_{{ $user->username }}</div>
+                                            <div class="text-sm text-gray-600">{{ "@" . $user->username }}</div>
                                             <div class="text-xs text-green-600 mt-1">
                                                 <i class="fas fa-sitemap"></i> Referred by {{ $user->referrer->name }}
                                             </div>

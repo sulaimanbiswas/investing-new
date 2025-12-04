@@ -13,11 +13,16 @@
         <!-- User Profile Dropdown -->
         <div x-data="{ open: false }" class="relative">
             <button @click="open = !open"
-                class="flex items-center gap-2 hover:bg-gray-50 px-3 py-2 rounded-lg transition">
-                <div
-                    class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </div>
+                class="flex items-center gap-2 hover:bg-gray-50 px-3 py-2 rounded-lg transition ">
+                @if(auth()->user()->avatar_path)
+                    <img src="{{ asset('uploads/avatar/' . auth()->user()->avatar_path) }}" alt="avatar"
+                        class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">
+                @else
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white border-2 border-gray-200">
+                        <i class="fas fa-user"></i>
+                    </div>
+                @endif
                 <div class="text-left hidden sm:block">
                     <div class="font-semibold text-gray-800 text-sm">{{ auth()->user()->name }}</div>
                     <div class="text-xs text-gray-500">{{ auth()->user()->email }}</div>
@@ -29,12 +34,13 @@
             <div x-show="open" @click.away="open = false" x-transition x-cloak
                 class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50"
                 style="display: none;">
-                <a href="{{ route('profile.edit') }}"
+                <a href="{{ route('profile.home') }}"
                     class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition">
                     <i class="fas fa-user-circle text-gray-400 w-5"></i>
                     <span class="text-gray-700">Profile</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition">
+                <a href="{{ route('profile.edit') }}"
+                    class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition">
                     <i class="fas fa-cog text-gray-400 w-5"></i>
                     <span class="text-gray-700">Settings</span>
                 </a>

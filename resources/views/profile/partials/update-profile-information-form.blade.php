@@ -28,9 +28,19 @@
     <div>
         <label for="avatar" class="block text-sm font-medium text-gray-700 mb-2">Profile Avatar</label>
         <div class="flex items-center gap-5">
-            <img id="avatar-preview"
-                src="{{ $user->avatar_path ? asset('uploads/avatar/' . $user->avatar_path) : 'https://via.placeholder.com/80x80' }}"
-                alt="avatar" class="w-20 h-20 rounded-full object-cover border-2 border-gray-200 shadow-sm">
+            <div id="avatar-container" class="relative">
+                @if($user->avatar_path)
+                    <img id="avatar-preview" src="{{ asset('uploads/avatar/' . $user->avatar_path) }}" alt="avatar"
+                        class="w-20 h-20 rounded-full object-cover border-2 border-gray-200 shadow-sm">
+                @else
+                    <div id="avatar-placeholder"
+                        class="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center border-2 border-gray-200 shadow-sm">
+                        <i class="fas fa-user text-3xl text-indigo-400"></i>
+                    </div>
+                    <img id="avatar-preview" src="" alt="avatar"
+                        class="hidden w-20 h-20 rounded-full object-cover border-2 border-gray-200 shadow-sm">
+                @endif
+            </div>
             <div class="flex-1">
                 <input id="avatar" name="avatar" type="file" accept="image/*"
                     class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 file:cursor-pointer cursor-pointer"
@@ -62,7 +72,15 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    document.getElementById('avatar-preview').src = e.target.result;
+                    const preview = document.getElementById('avatar-preview');
+                    const placeholder = document.getElementById('avatar-placeholder');
+
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+
+                    if (placeholder) {
+                        placeholder.classList.add('hidden');
+                    }
                 };
                 reader.readAsDataURL(file);
             }

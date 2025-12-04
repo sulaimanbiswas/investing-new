@@ -6,8 +6,14 @@
     <!-- Header Card -->
     <div class="bg-gradient-to-br from-rose-600 to-purple-700 rounded-xl shadow-lg p-5 text-white mb-5">
         <div class="flex items-start gap-4">
-            <img src="{{ auth()->user()->avatar_path ? asset('uploads/avatar/' . auth()->user()->avatar_path) : 'https://via.placeholder.com/64x64' }}"
-                alt="avatar" class="w-16 h-16 rounded-full border-4 border-white/30 object-cover">
+            @if(auth()->user()->avatar_path)
+                <img src="{{ asset('uploads/avatar/' . auth()->user()->avatar_path) }}" alt="avatar"
+                    class="w-16 h-16 rounded-full border-4 border-white/30 object-cover">
+            @else
+                <div class="w-16 h-16 rounded-full border-4 border-white/30 bg-white/20 flex items-center justify-center">
+                    <i class="fas fa-user text-3xl text-white/80"></i>
+                </div>
+            @endif
             <div class="flex-1">
                 <div class="flex flex-wrap items-center gap-2">
                     <h2 class="text-2xl font-bold">{{ auth()->user()->name }}</h2>

@@ -29,11 +29,11 @@
                                 <li>
                                     <a href="{{ route('admin.users.show', $user) }}" class="user-node root-node">
                                         @if($user->avatar_path)
-                                            <img src="{{ asset('storage/' . $user->avatar_path) }}" alt="{{ $user->username }}"
+                                            <img src="{{ asset('uploads/avatar/' . $user->avatar_path) }}" alt="{{ $user->username }}"
                                                 class="user-avatar">
                                         @else
                                             <div class="user-avatar-placeholder">
-                                                {{ strtoupper(substr($user->username, 0, 1)) }}
+                                                <i class="fas fa-user" style="font-size: 28px;"></i>
                                             </div>
                                         @endif
                                         <div class="user-info">
@@ -48,11 +48,11 @@
                                                 <li>
                                                     <a href="{{ route('admin.users.show', $level1) }}" class="user-node level-1">
                                                         @if($level1->avatar_path)
-                                                            <img src="{{ asset('storage/' . $level1->avatar_path) }}"
+                                                            <img src="{{ asset('uploads/avatar/' . $level1->avatar_path) }}"
                                                                 alt="{{ $level1->username }}" class="user-avatar">
                                                         @else
                                                             <div class="user-avatar-placeholder">
-                                                                {{ strtoupper(substr($level1->username ?? $level1->email, 0, 1)) }}
+                                                                <i class="fas fa-user" style="font-size: 28px;"></i>
                                                             </div>
                                                         @endif
                                                         <div class="user-info">
@@ -67,11 +67,11 @@
                                                                     <a href="{{ route('admin.users.show', $level2) }}"
                                                                         class="user-node level-2">
                                                                         @if($level2->avatar_path)
-                                                                            <img src="{{ asset('storage/' . $level2->avatar_path) }}"
+                                                                            <img src="{{ asset('uploads/avatar/' . $level2->avatar_path) }}"
                                                                                 alt="{{ $level2->username }}" class="user-avatar">
                                                                         @else
                                                                             <div class="user-avatar-placeholder">
-                                                                                {{ strtoupper(substr($level2->username ?? $level2->email, 0, 1)) }}
+                                                                                <i class="fas fa-user" style="font-size: 28px;"></i>
                                                                             </div>
                                                                         @endif
                                                                         <div class="user-info">
@@ -86,11 +86,11 @@
                                                                                     <a href="{{ route('admin.users.show', $level3) }}"
                                                                                         class="user-node level-3">
                                                                                         @if($level3->avatar_path)
-                                                                                            <img src="{{ asset('storage/' . $level3->avatar_path) }}"
+                                                                                            <img src="{{ asset('uploads/avatar/' . $level3->avatar_path) }}"
                                                                                                 alt="{{ $level3->username }}" class="user-avatar">
                                                                                         @else
                                                                                             <div class="user-avatar-placeholder">
-                                                                                                {{ strtoupper(substr($level3->username ?? $level3->email, 0, 1)) }}
+                                                                                                <i class="fas fa-user" style="font-size: 28px;"></i>
                                                                                             </div>
                                                                                         @endif
                                                                                         <div class="user-info">
@@ -106,12 +106,12 @@
                                                                                                     <a href="{{ route('admin.users.show', $level4) }}"
                                                                                                         class="user-node level-4">
                                                                                                         @if($level4->avatar_path)
-                                                                                                            <img src="{{ asset('storage/' . $level4->avatar_path) }}"
+                                                                                                            <img src="{{ asset('uploads/avatar/' . $level4->avatar_path) }}"
                                                                                                                 alt="{{ $level4->username }}"
                                                                                                                 class="user-avatar">
                                                                                                         @else
                                                                                                             <div class="user-avatar-placeholder">
-                                                                                                                {{ strtoupper(substr($level4->username ?? $level4->email, 0, 1)) }}
+                                                                                                                <i class="fas fa-user" style="font-size: 28px;"></i>
                                                                                                             </div>
                                                                                                         @endif
                                                                                                         <div class="user-info">

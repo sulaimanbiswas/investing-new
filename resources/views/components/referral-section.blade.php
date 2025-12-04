@@ -38,10 +38,28 @@
         </div>
 
         <!-- Stats -->
+        @php
+            // Calculate 3-level team size like teams page
+            $level1 = auth()->user()->referrals;
+            $level1Count = $level1->count();
+
+            $level2Count = 0;
+            if ($level1Count > 0) {
+                $level2Count = \App\Models\User::whereIn('referred_by', $level1->pluck('id'))->count();
+            }
+
+            $level3Count = 0;
+            if ($level2Count > 0) {
+                $level2Ids = \App\Models\User::whereIn('referred_by', $level1->pluck('id'))->pluck('id');
+                $level3Count = \App\Models\User::whereIn('referred_by', $level2Ids)->count();
+            }
+
+            $totalTeamSize = $level1Count + $level2Count + $level3Count;
+        @endphp
         <div class="grid grid-cols-2 gap-3 sm:gap-4">
             <div class="bg-white/20 backdrop-blur-sm rounded-lg p-3 sm:p-4">
-                <div class="text-2xl sm:text-3xl font-bold mb-1">{{ auth()->user()->referral_count }}</div>
-                <div class="text-indigo-100 text-xs sm:text-sm">Total Referrals</div>
+                <div class="text-2xl sm:text-3xl font-bold mb-1">{{ $totalTeamSize }}</div>
+                <div class="text-indigo-100 text-xs sm:text-sm">Total Referrals (3 Levels)</div>
             </div>
             <div class="bg-white/20 backdrop-blur-sm rounded-lg p-3 sm:p-4">
                 <div class="text-xl sm:text-2xl font-bold mb-1 truncate">
@@ -52,12 +70,21 @@
         </div>
 
         <!-- Referrals List -->
-        @if(auth()->user()->referral_count > 0)
+        @if($level1Count > 0)
             <div class="mt-4 bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
-                <h4 class="font-semibold mb-3 text-sm sm:text-base">Your Referrals ({{ auth()->user()->referral_count }})
-                </h4>
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="font-semibold text-sm sm:text-base">Your Direct Referrals ({{ $level1Count }})
+                    </h4>
+                    @if($level1Count > 5)
+                        <a href="{{ route('teams') }}"
+                            class="text-xs sm:text-sm text-yellow-300 hover:text-yellow-100 font-semibold flex items-center gap-1">
+                            <span>View All</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    @endif
+                </div>
                 <div class="space-y-2 max-h-60 overflow-y-auto">
-                    @foreach(auth()->user()->referrals()->latest()->take(10)->get() as $referral)
+                    @foreach(auth()->user()->referrals()->latest()->take(5)->get() as $referral)
                         <div class="bg-white/10 rounded-lg p-3 flex items-center justify-between text-sm">
                             <div class="flex items-center gap-3">
                                 <div
@@ -66,7 +93,7 @@
                                 </div>
                                 <div>
                                     <div class="font-semibold text-sm sm:text-base">{{ $referral->name }}</div>
-                                    <div class="text-xs text-indigo-200">@{{ $referral->username }}</div>
+                                    <div class="text-xs text-indigo-200">{{ "@" . $referral->username }}</div>
                                 </div>
                             </div>
                             <div class="text-xs text-indigo-200">{{ $referral->created_at->diffForHumans() }}</div>
