@@ -52,7 +52,7 @@ class DepositController extends Controller
 
         flash()
             ->options(['timeout' => 8000, 'position' => 'top-right'])
-            ->info("You have requested " . number_format($deposit->amount, 2) . " {$gateway->currency}. Please pay " . number_format($deposit->amount, 2) . " {$gateway->currency} for successful payment.");
+            ->info("You have requested " . number_format((float)$deposit->amount, 2) . " {$gateway->currency}. Please pay " . number_format((float)$deposit->amount, 2) . " {$gateway->currency} for successful payment.");
 
         return view('user.deposit.confirm', compact('gateway', 'deposit'));
     }
