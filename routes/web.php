@@ -37,7 +37,7 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     // User profile dashboard
-    Route::view('/me', 'profile')->name('profile.home');
+    Route::get('/me', [\App\Http\Controllers\ProfileController::class, 'home'])->name('profile.home');
 
     // Deposit routes
     Route::get('/deposit', [\App\Http\Controllers\DepositController::class, 'index'])->name('deposit');

@@ -101,6 +101,11 @@
                                     <h4 class="mb-0 text-success">{{ number_format($deposit->amount, 2) }}
                                         {{ $deposit->currency }}
                                     </h4>
+                                    @if($deposit->approved_amount && $deposit->approved_amount != $deposit->amount)
+                                        <span class="badge badge-warning mt-2">
+                                            Approved: {{ number_format($deposit->approved_amount, 2) }} {{ $deposit->currency }}
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -217,7 +222,15 @@
                             <div class="col-12">
                                 <div class="p-3 bg-info-light rounded">
                                     <h2 class="fs-28 font-w600 text-info mb-0">
-                                        {{ $deposit->user->deposits ? number_format($deposit->user->deposits->where('status', 'approved')->sum('amount'), 2) : '0.00' }}
+                                        @php
+                                            $totalApproved = 0;
+                                            if ($deposit->user->deposits) {
+                                                foreach ($deposit->user->deposits->where('status', 'approved') as $dep) {
+                                                    $totalApproved += $dep->approved_amount ?? $dep->amount;
+                                                }
+                                            }
+                                        @endphp
+                                        {{ number_format($totalApproved, 2) }}
                                         USDT
                                     </h2>
                                     <span class="fs-14 text-muted">Total Deposited Amount</span>
@@ -240,16 +253,26 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('admin.deposits.update-status', $deposit->id) }}">
+                        <form method="POST" action="{{ route('admin.deposits.update-status', $deposit->id) }}" id="approveForm">
                             @csrf
                             @method('PATCH')
                             <input type="hidden" name="status" value="approved">
 
                             <div class="form-group mb-3">
-                                <label class="font-w600 text-black">Approval Note (Optional)</label>
-                                <textarea name="admin_note" class="form-control" rows="3"
+                                <label class="font-w600 text-black">Approved Amount (USDT)</label>
+                                <input type="number" step="0.01" name="approved_amount" id="approved_amount"
+                                    class="form-control" value="{{ $deposit->amount }}" placeholder="Enter approved amount">
+                                <small class="text-muted">Default: {{ number_format($deposit->amount, 2) }} USDT</small>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="font-w600 text-black">Approval Note <span class="text-danger" id="noteRequired"
+                                        style="display:none;">*</span></label>
+                                <textarea name="admin_note" id="admin_note" class="form-control" rows="3"
                                     placeholder="Add approval note...">{{ $deposit->admin_note }}</textarea>
-                                <small class="text-muted">This note will be visible to the user</small>
+                                <small class="text-muted" id="noteHint">Optional - This note will be visible to the user</small>
+                                <small class="text-danger" id="noteRequiredHint" style="display:none;">Required when amount is
+                                    changed</small>
                             </div>
 
                             <button type="submit" class="btn btn-success btn-block">
@@ -314,3 +337,38 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const approvedAmountInput = document.getElementById('approved_amount');
+            const adminNoteTextarea = document.getElementById('admin_note');
+            const noteRequired = document.getElementById('noteRequired');
+            const noteHint = document.getElementById('noteHint');
+            const noteRequiredHint = document.getElementById('noteRequiredHint');
+            const approveForm = document.getElementById('approveForm');
+
+            if (approvedAmountInput && adminNoteTextarea) {
+                const originalAmount = parseFloat({{ $deposit->amount }});
+
+                approvedAmountInput.addEventListener('input', function () {
+                    const currentAmount = parseFloat(this.value);
+
+                    if (currentAmount !== originalAmount && !isNaN(currentAmount)) {
+                        // Amount changed - make note required
+                        adminNoteTextarea.setAttribute('required', 'required');
+                        noteRequired.style.display = 'inline';
+                        noteHint.style.display = 'none';
+                        noteRequiredHint.style.display = 'block';
+                    } else {
+                        // Amount same as original - make note optional
+                        adminNoteTextarea.removeAttribute('required');
+                        noteRequired.style.display = 'none';
+                        noteHint.style.display = 'block';
+                        noteRequiredHint.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+@endpush

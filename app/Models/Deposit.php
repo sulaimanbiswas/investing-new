@@ -14,6 +14,7 @@ class Deposit extends Model
         'gateway_id',
         'order_number',
         'amount',
+        'approved_amount',
         'currency',
         'protocol',
         'txn_id',
@@ -24,6 +25,7 @@ class Deposit extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'approved_amount' => 'decimal:2',
     ];
 
     public function user()

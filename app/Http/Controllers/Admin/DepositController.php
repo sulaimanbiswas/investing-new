@@ -63,7 +63,9 @@ class DepositController extends Controller
 
         // Calculate statistics
         $stats = [
-            'approved' => Deposit::where('status', 'approved')->sum('amount'),
+            'approved' => Deposit::where('status', 'approved')
+                ->selectRaw('SUM(COALESCE(approved_amount, amount)) as total')
+                ->value('total') ?? 0,
             'pending' => Deposit::where('status', 'pending')->sum('amount'),
             'rejected' => Deposit::where('status', 'rejected')->sum('amount'),
             'initialed' => Deposit::where('status', 'initialed')->sum('amount'),
@@ -86,19 +88,35 @@ class DepositController extends Controller
      */
     public function updateStatus(Request $request, Deposit $deposit)
     {
-        $request->validate([
+        $rules = [
             'status' => 'required|in:pending,approved,rejected',
-            'admin_note' => 'nullable|string|max:1000'
-        ]);
+            'approved_amount' => 'nullable|numeric|min:0',
+        ];
+
+        // If approved_amount is provided and different from original, make admin_note required
+        if ($request->filled('approved_amount') && (float)$request->approved_amount != (float)$deposit->amount) {
+            $rules['admin_note'] = 'required|string|max:1000';
+        } else {
+            $rules['admin_note'] = 'nullable|string|max:1000';
+        }
+
+        $request->validate($rules);
+
+        // Determine the amount to approve
+        $approvedAmount = $request->filled('approved_amount') ? (float)$request->approved_amount : (float)$deposit->amount;
+
+        // Check if this is a new approval (status changing from non-approved to approved)
+        $wasNotApproved = $deposit->status !== 'approved';
 
         $deposit->update([
             'status' => $request->status,
-            'admin_note' => $request->admin_note
+            'admin_note' => $request->admin_note,
+            'approved_amount' => $request->status === 'approved' ? $approvedAmount : null,
         ]);
 
-        // If approved, add balance to user
-        if ($request->status === 'approved' && $deposit->status !== 'approved') {
-            $deposit->user->increment('balance', (float) $deposit->amount);
+        // If approved for the first time, add balance to user
+        if ($request->status === 'approved' && $wasNotApproved) {
+            $deposit->user->increment('balance', $approvedAmount);
         }
 
         flash()->success('Deposit status updated successfully');
