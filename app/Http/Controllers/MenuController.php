@@ -26,7 +26,15 @@ class MenuController extends Controller
 
         $platforms = $query->orderBy('start_price')->get();
 
-        return view('user.menu.index', compact('platforms', 'vipLevel'));
+        // Check if user has any active orders
+        $user = Auth::user();
+        $hasActiveOrder = UserOrder::whereHas('userOrderSet', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->where('status', 'unpaid')
+            ->exists();
+
+        return view('user.menu.index', compact('platforms', 'vipLevel', 'hasActiveOrder'));
     }
 
     /**

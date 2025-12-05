@@ -33,6 +33,9 @@ Route::get('/platform-rules/{id}', [\App\Http\Controllers\PlatformRulesControlle
 Route::get('/menu', [\App\Http\Controllers\MenuController::class, 'index'])->middleware(['auth', 'verified'])->name('menu.index');
 Route::get('/menu/platform/{platform}', [\App\Http\Controllers\MenuController::class, 'show'])->middleware(['auth', 'verified'])->name('menu.platform.show');
 
+Route::get('/service', [\App\Http\Controllers\ServiceController::class, 'index'])->middleware(['auth', 'verified'])->name('service.index');
+Route::get('/help', [\App\Http\Controllers\HelpController::class, 'index'])->middleware(['auth', 'verified'])->name('help.index');
+
 Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

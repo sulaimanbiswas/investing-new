@@ -5,7 +5,8 @@
             <i class="fas fa-home text-xl"></i>
             <span class="text-xs font-medium">Home</span>
         </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-gray-500 hover:text-yellow-500 transition">
+        <a href="{{ route('service.index') }}"
+            class="flex flex-col items-center gap-1 {{ request()->routeIs('service.*') ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500' }} transition">
             <i class="fas fa-headset text-xl"></i>
             <span class="text-xs font-medium">Service</span>
         </a>

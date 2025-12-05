@@ -9,14 +9,35 @@
     </div>
 
     <!-- Current Boost Badge -->
-    <div class="mb-6 text-center">
-        <div class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-orange-500 text-white px-5 py-2.5 rounded-full shadow-md">
-            <i class="fas fa-rocket"></i>
-            <div>
-                <span class="text-xs font-medium opacity-90">Current Boost</span>
-                <p class="text-sm font-bold">No Order</p>
+    <div class="mb-6">
+        @if($hasActiveOrder)
+            <div class="bg-gradient-to-br from-green-400 via-green-500 to-emerald-600 rounded-2xl shadow-xl p-5">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white bg-opacity-25 rounded-full p-3 animate-pulse">
+                        <i class="fas fa-check-circle text-white text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white text-sm font-medium opacity-90 mb-1">Current Boost</p>
+                        <p class="text-white text-xl font-bold">Order Available</p>
+                    </div>
+                    {{-- <div class="bg-white bg-opacity-20 rounded-full px-4 py-2">
+                        <i class="fas fa-arrow-right text-white"></i>
+                    </div> --}}
+                </div>
             </div>
-        </div>
+        @else
+            <div class="bg-gradient-to-br from-slate-500 via-slate-600 to-gray-700 rounded-2xl shadow-lg p-5">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white bg-opacity-20 rounded-full p-3">
+                        <i class="fas fa-inbox text-white text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white text-sm font-medium opacity-90 mb-1">Current Boost</p>
+                        <p class="text-white text-xl font-bold">No Order</p>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 
     <!-- VIP Filter Tabs -->
