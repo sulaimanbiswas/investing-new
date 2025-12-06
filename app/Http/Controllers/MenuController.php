@@ -89,14 +89,14 @@ class MenuController extends Controller
         $userVipLevel = $userVipPlatform ? strtoupper($userVipPlatform->package_name) : null;
         $hasVipLevel = $userVipPlatform !== null;
 
-        // Get first unpaid order ONLY from user's VIP level platform (sorted by price)
+        // Check if this is user's VIP platform
+        $isUserVipPlatform = $userVipPlatform && $userVipPlatform->id === $platform->id;
+
+        // Get first unpaid order - ONLY show on user's current VIP level platform
         $unpaidOrder = null;
-        if ($userVipPlatform) {
-            $unpaidOrder = UserOrder::whereHas('userOrderSet', function ($query) use ($user, $userVipPlatform) {
-                $query->where('user_id', $user->id)
-                    ->whereHas('orderSet', function ($q) use ($userVipPlatform) {
-                        $q->where('platform_id', $userVipPlatform->id);
-                    });
+        if ($isUserVipPlatform) {
+            $unpaidOrder = UserOrder::whereHas('userOrderSet', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
             })
                 ->where('status', 'unpaid')
                 ->orderBy('order_amount', 'asc') // Sort by price ascending
@@ -117,14 +117,6 @@ class MenuController extends Controller
 
         // Check if user has reached daily order limit
         $hasReachedDailyLimit = $todayCompletedCount >= $user->daily_order_limit;
-
-        // Check if this is user's VIP platform - only show orders on user's VIP level platform
-        $isUserVipPlatform = $userVipPlatform && $userVipPlatform->id === $platform->id;
-
-        // Hide orders if viewing different platform than user's VIP level
-        if (!$isUserVipPlatform) {
-            $unpaidOrder = null;
-        }
 
         // Calculate cash gap if there's an unpaid order (how much more balance needed)
         if ($unpaidOrder) {

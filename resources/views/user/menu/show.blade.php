@@ -107,7 +107,7 @@
         </div>
     </div>
 
-    <!-- Unpaid Order (Single) - Shows from User's VIP Level -->
+    <!-- Unpaid Order (Single) -->
     @if($unpaidOrder)
         <div class="mb-6">
             <h3 class="text-lg font-bold text-gray-900 mb-3">Your Unpaid Order</h3>
@@ -152,7 +152,7 @@
                     <div class="flex justify-between border-t-2 border-blue-300 pt-2">
                         <span class="font-bold text-gray-900">Expected Income:</span>
                         <span
-                            class="font-bold text-orange-500 text-xl">${{ number_format($user->balance + $unpaidOrder->profit_amount, 2) }}
+                            class="font-bold text-orange-500 text-xl">${{ number_format($unpaidOrder->order_amount + $unpaidOrder->profit_amount, 2) }}
                             USDT</span>
                     </div>
                 </div>
@@ -182,25 +182,37 @@
             </div>
         @elseif($hasReachedDailyLimit)
             <div
-                class="w-full bg-gradient-to-r from-red-400 to-red-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
-                <i class="fas fa-ban text-3xl mb-2"></i>
-                <p class="text-lg">Daily Limit Reached</p>
-                <p class="text-sm opacity-90">{{ $todayCompletedCount }}/{{ $user->daily_order_limit }} orders completed today
-                </p>
+                class="w-full bg-gradient-to-r from-green-400 to-green-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-check-circle text-4xl mb-2"></i>
+                <p class="text-xl font-bold">All Orders Completed!</p>
+                <p class="text-sm opacity-90 text-center px-4">Your daily limit has been reached. You can complete more orders
+                    tomorrow.</p>
+                <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
+                    <p class="text-xs font-medium">{{ $todayCompletedCount }}/{{ $user->daily_order_limit }} orders completed
+                        today</p>
+                </div>
             </div>
         @elseif($unpaidOrder)
             <div
                 class="w-full bg-gradient-to-r from-orange-400 to-orange-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
                 <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
                 <p class="text-lg">Complete Your Unpaid Order</p>
-                <p class="text-sm opacity-90">1 order pending</p>
+                <p class="text-sm opacity-90">Please submit your pending order above</p>
             </div>
-        @elseif($canGrabOrder)
-            <button type="button" id="grabOrderBtn" data-platform-id="{{ $platform->id }}"
-                class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-5 rounded-2xl shadow-xl hover:from-green-600 hover:to-green-700 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3">
-                <i class="fas fa-hand-holding-usd text-2xl"></i>
-                <span class="text-lg">Grab the order immediately</span>
-            </button>
+        @elseif(!$unpaidOrder && !$hasReachedDailyLimit)
+            <div
+                class="w-full bg-gradient-to-r from-green-400 to-green-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-check-circle text-4xl mb-2"></i>
+                <p class="text-xl font-bold">All Orders Completed!</p>
+                <p class="text-sm opacity-90 text-center px-4">
+                    You have completed all your orders for today.
+                </p>
+                <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
+                    <p class="text-xs font-medium">
+                        Contact support for more orders.
+                    </p>
+                </div>
+            </div>
         @else
             <div
                 class="w-full bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
@@ -539,14 +551,14 @@
                     const productDiv = document.createElement('div');
                     productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
                     productDiv.innerHTML = `
-                                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                            <i class="fas fa-box text-white text-2xl"></i>
-                                        </div>
-                                        <div class="flex-1">
-                                            <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
-                                            <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
-                                        </div>
-                                    `;
+                                                                                                <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                                                                    <i class="fas fa-box text-white text-2xl"></i>
+                                                                                                </div>
+                                                                                                <div class="flex-1">
+                                                                                                    <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                                                                                    <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                                                                                </div>
+                                                                                            `;
                     productsList.appendChild(productDiv);
                 });
             }
