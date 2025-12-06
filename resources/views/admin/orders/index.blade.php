@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Admin | Completed Orders')
+@section('title', 'Admin | Orders')
 
 @section('content')
     <div class="page-titles">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-            <li class="breadcrumb-item active"><a href="javascript:void(0)">Completed Orders</a></li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Orders</a></li>
         </ol>
     </div>
 
@@ -110,7 +110,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Completed Orders</h4>
+                    <h4 class="card-title">Orders</h4>
                 </div>
                 <div class="card-body">
                     <!-- Desktop/tablet: inline filter form -->
@@ -222,7 +222,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="10" class="text-center">No completed orders found</td>
+                                        <td colspan="10" class="text-center">No orders found</td>
                                     </tr>
                                 @endforelse
                             </tbody>

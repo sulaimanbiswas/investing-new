@@ -13,37 +13,24 @@
                     <span class="nav-text">Users</span>
                 </a>
                 <ul aria-expanded="false">
-                    {{-- <li><a href="{{ route('admin.users.active') }}">Active Users</a></li>
-                    <li><a href="{{ route('admin.users.banned') }}">Banned Users</a></li> --}}
                     <li><a href="{{ route('admin.users.index') }}">All users</a></li>
                 </ul>
             </li>
-            {{-- <li>
+            <li>
                 <a href="javascript:void(0);" class="ai-icon has-arrow" aria-expanded="false">
-                    <i class="flaticon-381-id-card-4"></i>
-                    <span class="nav-text">Gateways</span>
-                </a>
-                <ul aria-expanded="false">
-                    <li><a href="{{ route('admin.gateways.index') }}">Manage Gateways</a></li>
-                    <li><a href="{{ route('admin.gateways.create') }}">Create Gateway</a></li>
-                </ul>
-            </li> --}}
-            <li>
-                <a href="{{ route('admin.gateways.index') }}" class="ai-icon" aria-expanded="false">
-                    <i class="flaticon-381-id-card-4"></i>
-                    <span class="nav-text">Gateways</span>
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('admin.platforms.index') }}" class="ai-icon" aria-expanded="false">
                     <i class="flaticon-381-network"></i>
                     <span class="nav-text">Platforms</span>
                 </a>
-            <li>
-                <a class="ai-icon" href="{{ route('admin.platform-rule.index') }}" aria-expanded="false"><i
-                        class="flaticon-381-list"></i><span class="nav-text">Platform Rules</span></a>
+                <ul aria-expanded="false">
+                    <li><a href="{{ route('admin.platforms.index') }}">Platforms</a></li>
+                    <li><a href="{{ route('admin.platform-rule.index') }}">Platform Rules</a></li>
+                </ul>
             </li>
+            <li>
+                <a href="{{ route('admin.deposits.index') }}" class="ai-icon" aria-expanded="false">
+                    <i class="flaticon-381-calculator"></i>
+                    <span class="nav-text">Deposits</span>
+                </a>
             </li>
 
             <li>
@@ -54,32 +41,24 @@
             </li>
 
             <li>
-                <a href="{{ route('admin.order-sets.index') }}" class="ai-icon" aria-expanded="false">
-                    <i class="flaticon-381-folder"></i>
-                    <span class="nav-text">Order Sets</span>
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('admin.product-packages.index') }}" class="ai-icon" aria-expanded="false">
+                <a href="javascript:void(0);" class="ai-icon has-arrow" aria-expanded="false">
                     <i class="flaticon-381-layer-1"></i>
-                    <span class="nav-text">Product Packages</span>
+                    <span class="nav-text">Orders</span>
                 </a>
+                <ul aria-expanded="false">
+                    <li><a href="{{ route('admin.order-sets.index') }}">Order Sets</a></li>
+                    <li><a href="{{ route('admin.product-packages.index') }}">Order List</a></li>
+                    <li><a href="{{ route('admin.orders.index') }}">Orders</a></li>
+                </ul>
             </li>
 
             <li>
-                <a href="{{ route('admin.deposits.index') }}" class="ai-icon" aria-expanded="false">
-                    <i class="flaticon-381-calculator"></i>
-                    <span class="nav-text">Deposits</span>
+                <a href="{{ route('admin.gateways.index') }}" class="ai-icon" aria-expanded="false">
+                    <i class="flaticon-381-id-card-4"></i>
+                    <span class="nav-text">Gateways</span>
                 </a>
             </li>
 
-            <li>
-                <a href="{{ route('admin.orders.index') }}" class="ai-icon" aria-expanded="false">
-                    <i class="flaticon-381-shopping-cart"></i>
-                    <span class="nav-text">Completed Orders</span>
-                </a>
-            </li>
 
             <li>
                 <a href="javascript:void(0);" class="ai-icon has-arrow" aria-expanded="false">

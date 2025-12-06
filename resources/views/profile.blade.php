@@ -85,7 +85,7 @@
                 </div>
                 <span class="text-xs">Record</span>
             </a>
-            <a href="#" class="flex flex-col items-center gap-2">
+            <a href="{{ route('wallet.edit') }}" class="flex flex-col items-center gap-2">
                 <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
                     <i class="fas fa-wallet"></i>
                 </div>

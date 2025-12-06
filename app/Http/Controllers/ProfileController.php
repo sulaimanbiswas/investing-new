@@ -121,4 +121,32 @@ class ProfileController extends Controller
             'nextPlatform' => $nextPlatform,
         ]);
     }
+
+    /**
+     * Show the wallet management form.
+     */
+    public function wallet(Request $request): View
+    {
+        return view('user.wallet', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    /**
+     * Update the user's default wallet address.
+     */
+    public function updateWallet(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'withdrawal_address' => 'required|string|max:255',
+        ]);
+
+        $user = $request->user();
+        $user->withdrawal_address = $data['withdrawal_address'];
+        $user->save();
+
+        flash()->success('Wallet address updated successfully.');
+
+        return Redirect::route('wallet.edit');
+    }
 }
