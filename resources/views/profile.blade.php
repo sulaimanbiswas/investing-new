@@ -60,7 +60,7 @@
                     </div>
                     <span class="text-sm">Deposit</span>
                 </a>
-                <a href="#" class="flex flex-col items-center justify-center">
+                <a href="{{ route('withdrawal') }}" class="flex flex-col items-center justify-center">
                     <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
                         <i class="fas fa-money-bill-wave text-white"></i>
                     </div>
@@ -130,7 +130,7 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="flex items-center justify-between p-4">
+                <a href="{{ route('withdrawal.records') }}" class="flex items-center justify-between p-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-exchange-alt text-gray-600"></i>

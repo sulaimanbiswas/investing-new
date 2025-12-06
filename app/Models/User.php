@@ -119,6 +119,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all withdrawals for this user.
+     */
+    public function withdrawals()
+    {
+        return $this->hasMany(Withdrawal::class);
+    }
+
+    /**
      * Get all login histories for this user.
      */
     public function loginHistories()

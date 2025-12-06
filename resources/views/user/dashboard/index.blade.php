@@ -13,7 +13,8 @@
             </div>
             <span class="text-xs font-medium text-gray-700">Recharge</span>
         </a>
-        <a href="#" class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
+        <a href="{{ route('withdrawal') }}"
+            class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
             <div
                 class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
                 <i class="fas fa-wallet text-white text-xl"></i>

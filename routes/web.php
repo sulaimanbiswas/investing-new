@@ -54,6 +54,11 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::post('/deposit', [\App\Http\Controllers\DepositController::class, 'store'])->name('deposit.store');
     Route::get('/deposit/records', [\App\Http\Controllers\DepositController::class, 'records'])->name('deposit.records');
 
+    // Withdrawal routes
+    Route::get('/withdrawal', [\App\Http\Controllers\WithdrawalController::class, 'index'])->name('withdrawal');
+    Route::post('/withdrawal', [\App\Http\Controllers\WithdrawalController::class, 'store'])->name('withdrawal.store');
+    Route::get('/withdrawal/records', [\App\Http\Controllers\WithdrawalController::class, 'records'])->name('withdrawal.records');
+
     // Order routes
     Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
 
