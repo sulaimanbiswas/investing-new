@@ -141,4 +141,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserOrderSet::class);
     }
+
+    /**
+     * Get all notifications for this user.
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

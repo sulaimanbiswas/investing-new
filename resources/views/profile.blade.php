@@ -43,7 +43,27 @@
                 </div>
                 <div class="text-white/80 text-sm mt-1">Invitation Code: {{ auth()->user()->referral_code ?? '—' }}</div>
             </div>
-            <i class="fas fa-comment-dots text-white/80"></i>
+            {{-- <a href="{{ route('notifications.index') }}" class="relative">
+                <i class="fas fa-comment-dots text-white/90 text-xl"></i>
+                @if(!empty($userNotificationUnread))
+                <span class="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    {{ $userNotificationUnread }}
+                </span>
+                @endif
+            </a> --}}
+
+            {{-- <a href="{{ route('notifications.index') }}" class="relative mr-2">
+                <div
+                    class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition">
+                    <i class="fas fa-bell text-gray-700"></i>
+                </div>
+                @if(!empty($userNotificationUnread) && $userNotificationUnread > 0)
+                <span
+                    class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                    {{ $userNotificationUnread > 99 ? '99+' : $userNotificationUnread }}
+                </span>
+                @endif
+            </a> --}}
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-5">
             <div>

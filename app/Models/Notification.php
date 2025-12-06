@@ -16,10 +16,12 @@ class Notification extends Model
         'message',
         'data',
         'is_read',
+        'is_for_admin',
     ];
 
     protected $casts = [
         'is_read' => 'boolean',
+        'is_for_admin' => 'boolean',
         'data' => 'array',
     ];
 
