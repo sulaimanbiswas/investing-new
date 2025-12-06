@@ -159,6 +159,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Reports
         Route::get('/reports/login-history', [\App\Http\Controllers\Admin\ReportController::class, 'loginHistory'])->name('reports.login-history');
+
+        // Orders (Completed User Orders)
+        Route::get('/orders', [\App\Http\Controllers\Admin\AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{user_order}', [\App\Http\Controllers\Admin\AdminOrderController::class, 'show'])->name('orders.show');
     });
 });
 

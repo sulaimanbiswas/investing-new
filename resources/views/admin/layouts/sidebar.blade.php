@@ -75,6 +75,13 @@
             </li>
 
             <li>
+                <a href="{{ route('admin.orders.index') }}" class="ai-icon" aria-expanded="false">
+                    <i class="flaticon-381-shopping-cart"></i>
+                    <span class="nav-text">Completed Orders</span>
+                </a>
+            </li>
+
+            <li>
                 <a href="javascript:void(0);" class="ai-icon has-arrow" aria-expanded="false">
                     <i class="flaticon-381-file"></i>
                     <span class="nav-text">Report</span>

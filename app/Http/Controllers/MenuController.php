@@ -270,10 +270,10 @@ class MenuController extends Controller
                 'order_number' => $order->order_number,
                 'product_name' => $order->product_name,
                 'quantity' => $order->quantity,
-                'price' => number_format($order->price, 2),
-                'order_amount' => number_format($order->order_amount, 2),
-                'commission' => number_format($order->profit_amount, 2),
-                'expected_income' => number_format($user->balance + $order->profit_amount, 2),
+                'price' => number_format((float) $order->price, 2),
+                'order_amount' => number_format((float) $order->order_amount, 2),
+                'commission' => number_format((float) $order->profit_amount, 2),
+                'expected_income' => number_format((float) $user->balance + (float) $order->profit_amount, 2),
                 'manage_crypto' => $order->manage_crypto,
             ]
         ]);

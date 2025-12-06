@@ -343,7 +343,7 @@
 </div>
 
 <!-- Order Modal -->
-<div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+<div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden  items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <!-- Modal Header -->
         <div
@@ -551,14 +551,14 @@
                     const productDiv = document.createElement('div');
                     productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
                     productDiv.innerHTML = `
-                                                                                                <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                                                                    <i class="fas fa-box text-white text-2xl"></i>
-                                                                                                </div>
-                                                                                                <div class="flex-1">
-                                                                                                    <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
-                                                                                                    <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
-                                                                                                </div>
-                                                                                            `;
+                                                                                                    <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                                                                        <i class="fas fa-box text-white text-2xl"></i>
+                                                                                                    </div>
+                                                                                                    <div class="flex-1">
+                                                                                                        <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                                                                                        <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                                                                                    </div>
+                                                                                                `;
                     productsList.appendChild(productDiv);
                 });
             }
