@@ -314,15 +314,67 @@ class MenuController extends Controller
         // Update order status and user balance
         $profitAmount = (float) $order->profit_amount;
         $orderAmount = (float) $order->order_amount;
+        $balanceBefore = (float) $user->balance;
 
+        // Transaction 1: Deduct order amount from balance
+        $balanceAfterPayment = $balanceBefore - $orderAmount;
+        $user->decrement('balance', $orderAmount);
+
+        $baseTime = now();
+
+        // Log transaction: order payment (deduction)
+        $txn1 = \App\Models\Transaction::create([
+            'user_id' => $user->id,
+            'type' => 'order_payment',
+            'reference_id' => $order->id,
+            'amount' => -$orderAmount,
+            'balance_before' => $balanceBefore,
+            'balance_after' => $balanceAfterPayment,
+            'remarks' => 'Payment for order ' . $order->order_number,
+        ]);
+        $txn1->created_at = $baseTime;
+        $txn1->save();
+
+        // Transaction 2: Return principal to balance
+        $balanceBeforePrincipalReturn = (float) $user->fresh()->balance; // after deduction
+        $balanceAfterPrincipalReturn = $balanceBeforePrincipalReturn + $orderAmount;
+        $user->increment('balance', $orderAmount);
+
+        $txn2 = \App\Models\Transaction::create([
+            'user_id' => $user->id,
+            'type' => 'order_principal_return',
+            'reference_id' => $order->id,
+            'amount' => $orderAmount,
+            'balance_before' => $balanceBeforePrincipalReturn,
+            'balance_after' => $balanceAfterPrincipalReturn,
+            'remarks' => 'Principal returned for order ' . $order->order_number,
+        ]);
+        $txn2->created_at = $baseTime->copy()->addSeconds(1);
+        $txn2->save();
+
+        // Transaction 3: Add profit to balance
+        $balanceBeforeProfit = (float) $user->fresh()->balance;
+        $balanceAfterProfit = $balanceBeforeProfit + $profitAmount;
+        $user->increment('balance', $profitAmount);
+
+        $txn3 = \App\Models\Transaction::create([
+            'user_id' => $user->id,
+            'type' => 'order_profit',
+            'reference_id' => $order->id,
+            'amount' => $profitAmount,
+            'balance_before' => $balanceBeforeProfit,
+            'balance_after' => $balanceAfterProfit,
+            'remarks' => 'Commission from order ' . $order->order_number,
+        ]);
+        $txn3->created_at = $baseTime->copy()->addSeconds(2);
+        $txn3->save();
+
+        // Update order status
         $order->update([
             'status' => 'paid',
             'paid_at' => now(),
-            'balance_after' => (float) $user->balance + $profitAmount,
+            'balance_after' => $balanceAfterProfit,
         ]);
-
-        // Add profit to user balance
-        $user->increment('balance', $profitAmount);
 
         // Update user order set
         $order->userOrderSet->increment('completed_products');

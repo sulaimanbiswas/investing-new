@@ -28524,7 +28524,7 @@ span.num {
   .recentOrderTable table tbody td {
     color: #3e4954;
     font-weight: 500;
-    line-height: 40px; }
+    }
     [data-theme-version="dark"] .recentOrderTable table tbody td {
       color: #828690; }
     .recentOrderTable table tbody td img {

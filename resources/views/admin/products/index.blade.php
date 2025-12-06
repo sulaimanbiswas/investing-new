@@ -104,8 +104,8 @@
                 </div>
             </form>
 
-            <div class="table-responsive">
-                <table class="table table-striped">
+            <div class="table-responsive recentOrderTable">
+                <table class="table verticle-middle table-responsive-md">
                     <thead>
                         <tr>
                             <th>ID</th>

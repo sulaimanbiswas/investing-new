@@ -133,8 +133,8 @@
                             </div>
                         @endif
 
-                        <div class="table-responsive">
-                            <table class="table table-responsive-md">
+                        <div class="table-responsive recentOrderTable">
+                            <table class="table verticle-middle table-responsive-md">
                                 <thead>
                                     <tr>
                                         <th>SL #</th>

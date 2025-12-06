@@ -67,13 +67,14 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">Product Packages</h4>
-                    <a href="{{ route('admin.product-packages.create', ['order_set_id' => $orderSet->id]) }}" class="btn btn-sm btn-primary">
+                    <a href="{{ route('admin.product-packages.create', ['order_set_id' => $orderSet->id]) }}"
+                        class="btn btn-sm btn-primary">
                         <i class="fas fa-plus"></i> Create Package
                     </a>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
+                    <div class="table-responsive recentOrderTable">
+                        <table class="table verticle-middle table-responsive-md">
                             <thead>
                                 <tr>
                                     <th>SL #</th>
@@ -128,8 +129,7 @@
                                                 class="toggle-form" data-id="{{ $package->id }}">
                                                 @csrf
                                                 <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" {{ $package->is_active ? 'checked' : '' }}
-                                                        onchange="this.form.submit()">
+                                                    <input class="form-check-input" type="checkbox" {{ $package->is_active ? 'checked' : '' }} onchange="this.form.submit()">
                                                 </div>
                                             </form>
                                         </td>
@@ -171,7 +171,7 @@
                                                 <i class="fas fa-box-open fa-3x text-muted"></i>
                                             </div>
                                             <p class="text-muted mb-3">No product packages found for this order set.</p>
-                                            <a href="{{ route('admin.product-packages.create', ['order_set_id' => $orderSet->id]) }}" 
+                                            <a href="{{ route('admin.product-packages.create', ['order_set_id' => $orderSet->id]) }}"
                                                 class="btn btn-primary btn-sm">
                                                 <i class="fas fa-plus"></i> Create First Package
                                             </a>

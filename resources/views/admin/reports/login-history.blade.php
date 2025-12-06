@@ -130,10 +130,13 @@
         </form>
 
         <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Login History</h4>
+            </div>
             <div class="card-body">
 
-                <div class="table-responsive">
-                    <table class="table table-hover">
+                <div class="table-responsive recentOrderTable">
+                    <table class="table verticle-middle table-responsive-md">
                         <thead style="background-color: #ff6837; color: white;">
                             <tr>
                                 <th>User</th>

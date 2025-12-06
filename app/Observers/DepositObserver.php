@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Deposit;
 use App\Models\Notification;
+use App\Models\Transaction;
 
 class DepositObserver
 {
@@ -29,6 +30,24 @@ class DepositObserver
                     'is_for_admin' => true
                 ]);
             } elseif ($newStatus === 'approved') {
+                // Add balance to user account
+                $user = $deposit->user;
+                $balanceBefore = (float) $user->balance;
+                $balanceAfter = $balanceBefore + (float) $deposit->amount;
+
+                $user->increment('balance', (float) $deposit->amount);
+
+                // Create transaction record
+                Transaction::create([
+                    'user_id' => $deposit->user_id,
+                    'type' => 'deposit',
+                    'reference_id' => $deposit->id,
+                    'amount' => (float) $deposit->amount,
+                    'balance_before' => $balanceBefore,
+                    'balance_after' => $balanceAfter,
+                    'remarks' => 'Deposit of ' . number_format((float) $deposit->amount, 2) . ' ' . $deposit->currency . ' approved',
+                ]);
+
                 // Notify user about approval
                 Notification::create([
                     'user_id' => $deposit->user_id,

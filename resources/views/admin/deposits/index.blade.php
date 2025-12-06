@@ -191,132 +191,138 @@
         </div>
 
         <!-- Mobile: Accordion toggle button -->
-                <div class="accordion accordion-header-bg accordion-bordered d-md-none mb-2" id="depositFilterAccordion">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header accordion-header-primary" id="depositFilterHeading">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#depositFilterCollapse" aria-expanded="false"
-                                aria-controls="depositFilterCollapse">
-                                Filter
-                            </button>
-                        </h2>
-                        <div id="depositFilterCollapse" class="accordion-collapse collapse"
-                            aria-labelledby="depositFilterHeading" data-bs-parent="#depositFilterAccordion">
-                            <div class="accordion-body">
-                                <form method="GET" class="row g-2">
-                                    <div class="col-12">
-                                        <input type="text" name="search" value="{{ request('search') }}"
-                                            class="form-control form-control-sm" placeholder="Search by order number, txn ID, user...">
-                                    </div>
-
-                                    <div class="col-12">
-                                        <input type="text" name="daterange" 
-                                            class="form-control form-control-sm input-daterange-datepicker" 
-                                            value="@if(request('start_date') && request('end_date')){{ request('start_date') }} - {{ request('end_date') }}@endif" 
-                                            placeholder="Select Date Range">
-                                    </div>
-
-                                    <div class="col-12">
-                                        <select name="user_id" class="default-select form-control form-control-sm wide">
-                                            <option value="">All Users</option>
-                                            @foreach($users as $user)
-                                                <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
-                                                    {{ $user->name }} ({{ $user->username ?? $user->email }})
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <select name="gateway_id" class="default-select form-control form-control-sm wide">
-                                            <option value="">All Gateways</option>
-                                            @foreach($gateways as $gateway)
-                                                <option value="{{ $gateway->id }}" {{ request('gateway_id') == $gateway->id ? 'selected' : '' }}>
-                                                    {{ $gateway->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <select name="status" class="default-select form-control form-control-sm wide">
-                                            <option value="">All Status</option>
-                                            <option value="initialed" {{ request('status') === 'initialed' ? 'selected' : '' }}>Initialed</option>
-                                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
-                                            <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-12 d-grid">
-                                        <button class="btn btn-secondary" type="submit">Filter</button>
-                                    </div>
-                                </form>
+        <div class="accordion accordion-header-bg accordion-bordered d-md-none mb-2" id="depositFilterAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header accordion-header-primary" id="depositFilterHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#depositFilterCollapse" aria-expanded="false" aria-controls="depositFilterCollapse">
+                        Filter
+                    </button>
+                </h2>
+                <div id="depositFilterCollapse" class="accordion-collapse collapse" aria-labelledby="depositFilterHeading"
+                    data-bs-parent="#depositFilterAccordion">
+                    <div class="accordion-body">
+                        <form method="GET" class="row g-2">
+                            <div class="col-12">
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    class="form-control form-control-sm"
+                                    placeholder="Search by order number, txn ID, user...">
                             </div>
-                        </div>
+
+                            <div class="col-12">
+                                <input type="text" name="daterange"
+                                    class="form-control form-control-sm input-daterange-datepicker"
+                                    value="@if(request('start_date') && request('end_date')){{ request('start_date') }} - {{ request('end_date') }}@endif"
+                                    placeholder="Select Date Range">
+                            </div>
+
+                            <div class="col-12">
+                                <select name="user_id" class="default-select form-control form-control-sm wide">
+                                    <option value="">All Users</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                                            {{ $user->name }} ({{ $user->username ?? $user->email }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <select name="gateway_id" class="default-select form-control form-control-sm wide">
+                                    <option value="">All Gateways</option>
+                                    @foreach($gateways as $gateway)
+                                        <option value="{{ $gateway->id }}" {{ request('gateway_id') == $gateway->id ? 'selected' : '' }}>
+                                            {{ $gateway->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <select name="status" class="default-select form-control form-control-sm wide">
+                                    <option value="">All Status</option>
+                                    <option value="initialed" {{ request('status') === 'initialed' ? 'selected' : '' }}>
+                                        Initialed</option>
+                                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending
+                                    </option>
+                                    <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved
+                                    </option>
+                                    <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 d-grid">
+                                <button class="btn btn-secondary" type="submit">Filter</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Desktop/tablet: inline filter form -->
-                <form method="GET" class="row mb-3 g-2 d-none d-md-flex">
-                    <div class="col-md-3">
-                        <input type="text" name="search" value="{{ request('search') }}" 
-                            class="form-control form-control-sm" placeholder="Search...">
-                    </div>
+        <!-- Desktop/tablet: inline filter form -->
+        <form method="GET" class="row mb-3 g-2 d-none d-md-flex">
+            <div class="col-md-3">
+                <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
+                    placeholder="Search...">
+            </div>
 
-                    <div class="col-md-3">
-                        <input type="text" name="daterange" 
-                            class="form-control form-control-sm input-daterange-datepicker" 
-                            value="@if(request('start_date') && request('end_date')){{ request('start_date') }} - {{ request('end_date') }}@endif" 
-                            placeholder="Select Date Range">
-                    </div>
+            <div class="col-md-3">
+                <input type="text" name="daterange" class="form-control form-control-sm input-daterange-datepicker"
+                    value="@if(request('start_date') && request('end_date')){{ request('start_date') }} - {{ request('end_date') }}@endif"
+                    placeholder="Select Date Range">
+            </div>
 
-                    <div class="col-md-2">
-                        <select name="user_id" class="default-select form-control form-control-sm wide">
-                            <option value="">All Users</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+            <div class="col-md-2">
+                <select name="user_id" class="default-select form-control form-control-sm wide">
+                    <option value="">All Users</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                            {{ $user->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-                    <div class="col-md-2">
-                        <select name="gateway_id" class="default-select form-control form-control-sm wide">
-                            <option value="">Gateway</option>
-                            @foreach($gateways as $gateway)
-                                <option value="{{ $gateway->id }}" {{ request('gateway_id') == $gateway->id ? 'selected' : '' }}>
-                                    {{ $gateway->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+            <div class="col-md-2">
+                <select name="gateway_id" class="default-select form-control form-control-sm wide">
+                    <option value="">Gateway</option>
+                    @foreach($gateways as $gateway)
+                        <option value="{{ $gateway->id }}" {{ request('gateway_id') == $gateway->id ? 'selected' : '' }}>
+                            {{ $gateway->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-                    <div class="col-md-1">
-                        <select name="status" class="default-select form-control form-control-sm wide">
-                            <option value="">Status</option>
-                            <option value="initialed" {{ request('status') === 'initialed' ? 'selected' : '' }}>Initialed</option>
-                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                        </select>
-                    </div>
+            <div class="col-md-1">
+                <select name="status" class="default-select form-control form-control-sm wide">
+                    <option value="">Status</option>
+                    <option value="initialed" {{ request('status') === 'initialed' ? 'selected' : '' }}>Initialed</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
+                    <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                </select>
+            </div>
 
-                    <div class="col-md-1 d-grid">
-                        <button class="btn btn-secondary btn-sm" type="submit">Filter</button>
-                    </div>
-                </form>
+            <div class="col-md-1 d-grid">
+                <button class="btn btn-secondary btn-sm" type="submit">Filter</button>
+            </div>
+        </form>
 
         <div class="card">
             {{-- <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="card-title">Deposit History</h4>
             </div> --}}
+            <div class="card-header">
+                <h4 class="card-title mb-0">Recent Deposits</h4>
+            </div>
             <div class="card-body">
-                
 
-                <div class="table-responsive">
-                    <table class="table table-striped">
+
+                <div class="table-responsive recentOrderTable">
+                    <table class="table verticle-middle table-responsive-md">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -339,7 +345,8 @@
                                     <td>
                                         @if($deposit->user)
                                             <strong>{{ $deposit->user->name }}</strong><br>
-                                            <small class="text-muted">{{ '@' . ($deposit->user->username ?? $deposit->user->email) }}</small>
+                                            <small
+                                                class="text-muted">{{ '@' . ($deposit->user->username ?? $deposit->user->email) }}</small>
                                         @else
                                             <span class="text-muted">N/A</span>
                                         @endif
@@ -347,7 +354,8 @@
                                     <td>
                                         <strong>{{ $deposit->currency }} {{ number_format($deposit->amount, 2) }}</strong>
                                         @if($deposit->gateway && $deposit->gateway->charge_value > 0)
-                                            <br><small class="text-danger">+ {{ number_format($deposit->gateway->charge_value, 2) }}</small>
+                                            <br><small class="text-danger">+
+                                                {{ number_format($deposit->gateway->charge_value, 2) }}</small>
                                         @endif
                                     </td>
                                     <td>
@@ -367,7 +375,7 @@
                                     </td>
                                     <td class="text-end">
                                         <div class="dropdown">
-                                            <button type="button" 
+                                            <button type="button"
                                                 class="btn {{ $deposit->status === 'approved' ? 'btn-success' : ($deposit->status === 'pending' ? 'btn-warning' : ($deposit->status === 'rejected' ? 'btn-danger' : 'btn-secondary')) }} light sharp"
                                                 data-bs-toggle="dropdown">
                                                 <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1">
@@ -403,44 +411,44 @@
 @endsection
 
 @push('scripts')
-<script>
-    $(document).ready(function() {
-        // Initialize daterangepicker
-        $('.input-daterange-datepicker').daterangepicker({
-            autoUpdateInput: false,
-            locale: {
-                cancelLabel: 'Clear',
-                format: 'YYYY-MM-DD'
-            }
-        });
+    <script>
+        $(document).ready(function () {
+            // Initialize daterangepicker
+            $('.input-daterange-datepicker').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear',
+                    format: 'YYYY-MM-DD'
+                }
+            });
 
-        $('.input-daterange-datepicker').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
-            
-            // Create hidden inputs for start_date and end_date
-            var form = $(this).closest('form');
-            form.find('input[name="start_date"]').remove();
-            form.find('input[name="end_date"]').remove();
-            
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'start_date',
-                value: picker.startDate.format('YYYY-MM-DD')
-            }).appendTo(form);
-            
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'end_date',
-                value: picker.endDate.format('YYYY-MM-DD')
-            }).appendTo(form);
-        });
+            $('.input-daterange-datepicker').on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
 
-        $('.input-daterange-datepicker').on('cancel.daterangepicker', function(ev, picker) {
-            $(this).val('');
-            var form = $(this).closest('form');
-            form.find('input[name="start_date"]').remove();
-            form.find('input[name="end_date"]').remove();
+                // Create hidden inputs for start_date and end_date
+                var form = $(this).closest('form');
+                form.find('input[name="start_date"]').remove();
+                form.find('input[name="end_date"]').remove();
+
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'start_date',
+                    value: picker.startDate.format('YYYY-MM-DD')
+                }).appendTo(form);
+
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'end_date',
+                    value: picker.endDate.format('YYYY-MM-DD')
+                }).appendTo(form);
+            });
+
+            $('.input-daterange-datepicker').on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+                var form = $(this).closest('form');
+                form.find('input[name="start_date"]').remove();
+                form.find('input[name="end_date"]').remove();
+            });
         });
-    });
-</script>
+    </script>
 @endpush

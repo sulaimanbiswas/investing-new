@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController as AdminAuthController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\RecordController;
+use App\Http\Controllers\Admin\TransactionLogController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -67,6 +69,9 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
 
     // Order routes
     Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
+
+    // Records summary
+    Route::get('/records', [RecordController::class, 'index'])->name('records.index');
 
     // Return to admin
     Route::post('/return-to-admin', [\App\Http\Controllers\Admin\UserController::class, 'returnToAdmin'])->name('return-to-admin');
@@ -184,6 +189,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Reports
         Route::get('/reports/login-history', [\App\Http\Controllers\Admin\ReportController::class, 'loginHistory'])->name('reports.login-history');
+
+        // Transaction Logs
+        Route::get('/transactions', [TransactionLogController::class, 'index'])->name('transactions.index');
 
         // Orders (Completed User Orders)
         Route::get('/orders', [\App\Http\Controllers\Admin\AdminOrderController::class, 'index'])->name('orders.index');

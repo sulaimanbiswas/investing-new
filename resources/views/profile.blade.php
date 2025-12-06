@@ -99,7 +99,7 @@
                 </div>
                 <span class="text-xs">Teams</span>
             </a>
-            <a href="#" class="flex flex-col items-center gap-2">
+            <a href="{{ route('records.index') }}" class="flex flex-col items-center gap-2">
                 <div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
                     <i class="fas fa-file-alt"></i>
                 </div>

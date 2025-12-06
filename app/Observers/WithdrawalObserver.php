@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Withdrawal;
 use App\Models\Notification;
+use App\Models\Transaction;
 
 class WithdrawalObserver
 {
@@ -32,6 +33,24 @@ class WithdrawalObserver
             $newStatus = $withdrawal->status;
 
             if ($newStatus === 'approved') {
+                // Deduct balance from user account
+                $user = $withdrawal->user;
+                $balanceBefore = (float) $user->balance;
+                $balanceAfter = $balanceBefore - (float) $withdrawal->amount;
+
+                $user->decrement('balance', (float) $withdrawal->amount);
+
+                // Create transaction record
+                Transaction::create([
+                    'user_id' => $withdrawal->user_id,
+                    'type' => 'withdrawal',
+                    'reference_id' => $withdrawal->id,
+                    'amount' => -(float) $withdrawal->amount,
+                    'balance_before' => $balanceBefore,
+                    'balance_after' => $balanceAfter,
+                    'remarks' => 'Withdrawal of ' . number_format((float) $withdrawal->amount, 2) . ' ' . $withdrawal->currency . ' approved',
+                ]);
+
                 // Notify user about approval
                 Notification::create([
                     'user_id' => $withdrawal->user_id,

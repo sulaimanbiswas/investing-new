@@ -15,7 +15,8 @@
             <i class="fas fa-th-large text-xl"></i>
             <span class="text-xs font-medium">Menu</span>
         </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-gray-500 hover:text-yellow-500 transition">
+        <a href="{{ route('records.index') }}"
+            class="flex flex-col items-center gap-1 text-gray-500 hover:text-yellow-500 transition">
             <i class="fas fa-file-alt text-xl"></i>
             <span class="text-xs font-medium">Record</span>
         </a>

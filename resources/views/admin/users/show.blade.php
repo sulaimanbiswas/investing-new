@@ -447,8 +447,8 @@
                         <h4 class="card-title">Order Set Assigned</h4>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
+                        <div class="table-responsive recentOrderTable">
+                            <table class="table verticle-middle table-responsive-md">
                                 <thead>
                                     <tr>
                                         <th>Order Set</th>
@@ -488,8 +488,8 @@
                         <h5 class="card-title mb-0">User Orders</h5>
                     </div>
                     <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table mb-0">
+                        <div class="table-responsive recentOrderTable">
+                            <table class="table verticle-middle table-responsive-md mb-0">
                                 <thead style="background-color: #ff6837; color: white;">
                                     <tr>
                                         <th>Sr</th>
