@@ -165,6 +165,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/deposits/{deposit}', [\App\Http\Controllers\Admin\DepositController::class, 'show'])->name('deposits.show');
         Route::patch('/deposits/{deposit}/status', [\App\Http\Controllers\Admin\DepositController::class, 'updateStatus'])->name('deposits.update-status');
 
+        // Withdrawals management
+        Route::get('/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'index'])->name('withdrawals.index');
+        Route::get('/withdrawals/{withdrawal}', [\App\Http\Controllers\Admin\WithdrawalController::class, 'show'])->name('withdrawals.show');
+        Route::patch('/withdrawals/{withdrawal}/status', [\App\Http\Controllers\Admin\WithdrawalController::class, 'updateStatus'])->name('withdrawals.update-status');
+
         // Reports
         Route::get('/reports/login-history', [\App\Http\Controllers\Admin\ReportController::class, 'loginHistory'])->name('reports.login-history');
 

@@ -34,6 +34,13 @@
             </li>
 
             <li>
+                <a href="{{ route('admin.withdrawals.index') }}" class="ai-icon" aria-expanded="false">
+                    <i class="flaticon-381-download"></i>
+                    <span class="nav-text">Withdrawals</span>
+                </a>
+            </li>
+
+            <li>
                 <a href="{{ route('admin.products.index') }}" class="ai-icon" aria-expanded="false">
                     <i class="flaticon-381-notepad"></i>
                     <span class="nav-text">Products</span>
