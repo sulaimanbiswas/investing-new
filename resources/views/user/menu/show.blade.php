@@ -16,7 +16,8 @@
             @endif
         </div>
         <h2 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-1">
-            {{ $platform->name }}</h2>
+            {{ $platform->name }}
+        </h2>
         <p class="text-gray-500 text-sm">Commission Rate: <span
                 class="font-bold text-green-600">{{ number_format($platform->commission, 1) }}%</span></p>
     </div>
@@ -106,13 +107,108 @@
         </div>
     </div>
 
+    <!-- Unpaid Order (Single) - Shows from User's VIP Level -->
+    @if($unpaidOrder)
+        <div class="mb-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-3">Your Unpaid Order</h3>
+            <div class="bg-white rounded-xl shadow-md p-5 border-2 border-orange-300">
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600 mb-1">Order #{{ $unpaidOrder->order_number }}</p>
+                    <p class="text-xs text-gray-500">{{ $unpaidOrder->type === 'combo' ? 'Combo Order' : 'Single Order' }}</p>
+                </div>
+
+                <!-- Products List -->
+                @if($unpaidOrder->manage_crypto && count($unpaidOrder->manage_crypto) > 0)
+                    <div class="space-y-3 mb-4">
+                        @foreach($unpaidOrder->manage_crypto as $product)
+                            <div class="flex items-start gap-4 p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
+                                <div
+                                    class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-box text-white text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900 mb-1">{{ $product['name'] ?? 'Product' }}</h4>
+                                    <div class="flex items-center gap-4 text-sm">
+                                        <span class="text-gray-700">Price:
+                                            <strong>${{ number_format($product['price'] ?? 0, 2) }}</strong></span>
+                                        <span class="text-gray-700">x <strong>{{ $product['quantity'] ?? 0 }}</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                <!-- Order Summary -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-2 mb-4 border-2 border-blue-200">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-700 font-medium">Order Amount:</span>
+                        <span class="font-bold text-gray-900">${{ number_format($unpaidOrder->order_amount, 2) }} USDT</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-700 font-medium">Commission:</span>
+                        <span class="font-bold text-green-600">${{ number_format($unpaidOrder->profit_amount, 2) }} USDT</span>
+                    </div>
+                    <div class="flex justify-between border-t-2 border-blue-300 pt-2">
+                        <span class="font-bold text-gray-900">Expected Income:</span>
+                        <span
+                            class="font-bold text-orange-500 text-xl">${{ number_format($user->balance + $unpaidOrder->profit_amount, 2) }}
+                            USDT</span>
+                    </div>
+                </div>
+
+                <button type="button"
+                    class="submit-order-btn w-full bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-4 rounded-xl shadow-lg hover:from-red-600 hover:to-red-700 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2"
+                    data-order-id="{{ $unpaidOrder->id }}">
+                    <i class="fas fa-check-circle text-xl"></i>
+                    <span>Submit Order</span>
+                </button>
+            </div>
+        </div>
+    @endif
+
     <!-- Grab Order Button -->
     <div class="mb-6">
-        <button type="button" id="grabOrderBtn"
-            class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white font-bold py-5 rounded-2xl shadow-xl hover:from-gray-600 hover:to-gray-700 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3">
-            <i class="fas fa-hand-holding-usd text-2xl"></i>
-            <span class="text-lg">Grab the order immediately</span>
-        </button>
+        @if(!$hasVipLevel)
+            <div
+                class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-wallet text-4xl mb-2"></i>
+                <p class="text-xl font-bold">Not in VIP Level</p>
+                <p class="text-sm opacity-90 text-center px-4">You are not in any VIP level. Deposit and start earning!</p>
+                <a href="{{ route('deposit') }}"
+                    class="mt-2 bg-white text-indigo-600 font-bold py-3 px-6 rounded-xl hover:bg-gray-100 active:scale-95 transition-all duration-200">
+                    <i class="fas fa-plus-circle mr-2"></i>Deposit Now
+                </a>
+            </div>
+        @elseif($hasReachedDailyLimit)
+            <div
+                class="w-full bg-gradient-to-r from-red-400 to-red-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
+                <i class="fas fa-ban text-3xl mb-2"></i>
+                <p class="text-lg">Daily Limit Reached</p>
+                <p class="text-sm opacity-90">{{ $todayCompletedCount }}/{{ $user->daily_order_limit }} orders completed today
+                </p>
+            </div>
+        @elseif($unpaidOrder)
+            <div
+                class="w-full bg-gradient-to-r from-orange-400 to-orange-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
+                <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
+                <p class="text-lg">Complete Your Unpaid Order</p>
+                <p class="text-sm opacity-90">1 order pending</p>
+            </div>
+        @elseif($canGrabOrder)
+            <button type="button" id="grabOrderBtn" data-platform-id="{{ $platform->id }}"
+                class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-5 rounded-2xl shadow-xl hover:from-green-600 hover:to-green-700 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3">
+                <i class="fas fa-hand-holding-usd text-2xl"></i>
+                <span class="text-lg">Grab the order immediately</span>
+            </button>
+        @else
+            <div
+                class="w-full bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
+                <i class="fas fa-info-circle text-2xl mb-1"></i>
+                <p class="text-lg">You are in {{ $userVipLevel }}</p>
+                <p class="text-sm opacity-90">Complete orders to earn commission</p>
+            </div>
+        @endif
     </div>
 
     <!-- Hint Section -->
@@ -139,11 +235,384 @@
 
 @endsection
 
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-60 z-[60] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full transform transition-all">
+        <div class="p-6">
+            <!-- Icon -->
+            <div class="flex justify-center mb-4">
+                <div
+                    class="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center">
+                    <i class="fas fa-exclamation-circle text-orange-500 text-3xl"></i>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-xl font-bold text-gray-900 text-center mb-2">Confirm Submission</h3>
+
+            <!-- Message -->
+            <p class="text-gray-600 text-center mb-6">Are you sure you want to submit this order?</p>
+
+            <!-- Buttons -->
+            <div class="flex gap-3">
+                <button type="button" id="cancelConfirmBtn"
+                    class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 active:scale-95 transition-all duration-200">
+                    Cancel
+                </button>
+                <button type="button" id="proceedConfirmBtn"
+                    class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 rounded-xl hover:from-green-600 hover:to-green-700 active:scale-95 transition-all duration-200">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="fixed inset-0 bg-black bg-opacity-60 z-[60] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full transform transition-all">
+        <div class="p-6">
+            <!-- Success Icon -->
+            <div class="flex justify-center mb-4">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center">
+                    <i class="fas fa-check-circle text-green-500 text-4xl"></i>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">Success!</h3>
+
+            <!-- Message -->
+            <p id="successMessage" class="text-gray-600 text-center mb-2"></p>
+            <p id="newBalanceText" class="text-lg font-bold text-green-600 text-center mb-6"></p>
+
+            <!-- Button -->
+            <button type="button" id="closeSuccessBtn"
+                class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 rounded-xl hover:from-green-600 hover:to-green-700 active:scale-95 transition-all duration-200">
+                Continue
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Insufficient Balance Modal -->
+<div id="insufficientBalanceModal"
+    class="fixed inset-0 bg-black bg-opacity-60 z-[60] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full transform transition-all">
+        <div class="p-6">
+            <!-- Warning Icon -->
+            <div class="flex justify-center mb-4">
+                <div
+                    class="w-20 h-20 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-red-500 text-4xl"></i>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">Insufficient Balance</h3>
+
+            <!-- Message -->
+            <p id="insufficientBalanceMessage" class="text-gray-600 text-center mb-6"></p>
+
+            <!-- Buttons -->
+            <div class="flex flex-col gap-3">
+                <a href="{{ route('deposit') }}"
+                    class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 rounded-xl hover:from-green-600 hover:to-green-700 active:scale-95 transition-all duration-200 text-center">
+                    <i class="fas fa-plus-circle mr-2"></i>Deposit Now
+                </a>
+                <button type="button" id="closeInsufficientBalanceBtn"
+                    class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 active:scale-95 transition-all duration-200">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Modal -->
+<div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <!-- Modal Header -->
+        <div
+            class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-3xl">
+            <h3 class="text-xl font-bold text-gray-900">Successful Order</h3>
+            <button type="button" id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6">
+            <!-- Order Number -->
+            <div class="text-center mb-6">
+                <p class="text-sm text-gray-600 mb-1">Order No:</p>
+                <p id="orderNumber" class="text-2xl font-bold text-red-600"></p>
+            </div>
+
+            <!-- Products List -->
+            <div id="productsList" class="space-y-4 mb-6">
+                <!-- Products will be dynamically inserted here -->
+            </div>
+
+            <!-- Transaction Details -->
+            <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-700 font-medium">Transaction Time</span>
+                    <span id="transactionTime" class="text-gray-900 font-semibold text-sm"></span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-700 font-medium">Order Amount</span>
+                    <span id="orderAmount" class="text-gray-900 font-bold"></span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-700 font-medium">Commission</span>
+                    <span id="commission" class="text-green-600 font-bold"></span>
+                </div>
+                <div class="flex items-center justify-between border-t border-gray-300 pt-3">
+                    <span class="text-gray-900 font-bold text-lg">Expected Income</span>
+                    <span id="expectedIncome" class="text-orange-500 font-bold text-xl"></span>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="button" id="submitOrderBtn"
+                class="w-full mt-6 bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:from-red-600 hover:to-red-700 active:scale-95 transition-all duration-200">
+                Submit Order
+            </button>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
     <script>
-        document.getElementById('grabOrderBtn').addEventListener('click', function () {
-            // Placeholder for grab order functionality
-            alert('Order functionality will be implemented soon!');
+        let currentOrder = null;
+        let currentButton = null;
+        const modal = document.getElementById('orderModal');
+        const confirmModal = document.getElementById('confirmModal');
+        const successModal = document.getElementById('successModal');
+        const insufficientBalanceModal = document.getElementById('insufficientBalanceModal');
+        const grabBtn = document.getElementById('grabOrderBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const submitBtn = document.getElementById('submitOrderBtn');
+        const cancelConfirmBtn = document.getElementById('cancelConfirmBtn');
+        const proceedConfirmBtn = document.getElementById('proceedConfirmBtn');
+        const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+        const closeInsufficientBalanceBtn = document.getElementById('closeInsufficientBalanceBtn');
+
+        // Submit existing unpaid orders
+        document.querySelectorAll('.submit-order-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                currentButton = this;
+                confirmModal.classList.remove('hidden');
+                confirmModal.classList.add('flex');
+            });
         });
+
+        // Cancel confirmation
+        if (cancelConfirmBtn) {
+            cancelConfirmBtn.addEventListener('click', function () {
+                confirmModal.classList.add('hidden');
+                confirmModal.classList.remove('flex');
+                currentButton = null;
+            });
+        }
+
+        // Proceed with submission
+        if (proceedConfirmBtn) {
+            proceedConfirmBtn.addEventListener('click', async function () {
+                if (!currentButton) return;
+
+                const orderId = currentButton.dataset.orderId;
+
+                confirmModal.classList.add('hidden');
+                confirmModal.classList.remove('flex');
+
+                currentButton.disabled = true;
+                currentButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+                try {
+                    const response = await fetch(`/menu/order/${orderId}/submit`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        document.getElementById('successMessage').textContent = data.message;
+                        document.getElementById('newBalanceText').textContent = 'New Balance: $' + data.new_balance;
+                        successModal.classList.remove('hidden');
+                        successModal.classList.add('flex');
+                    } else {
+                        // Check if it's an insufficient balance error
+                        if (data.message && data.message.includes('Insufficient balance')) {
+                            document.getElementById('insufficientBalanceMessage').textContent = data.message;
+                            insufficientBalanceModal.classList.remove('hidden');
+                            insufficientBalanceModal.classList.add('flex');
+                        } else {
+                            alert(data.message);
+                        }
+                        currentButton.disabled = false;
+                        currentButton.innerHTML = '<i class="fas fa-check-circle text-xl"></i><span>Submit Order</span>';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                    currentButton.disabled = false;
+                    currentButton.innerHTML = '<i class="fas fa-check-circle text-xl"></i><span>Submit Order</span>';
+                }
+            });
+        }
+
+        // Close success modal and reload
+        if (closeSuccessBtn) {
+            closeSuccessBtn.addEventListener('click', function () {
+                successModal.classList.add('hidden');
+                successModal.classList.remove('flex');
+                location.reload();
+            });
+        }
+
+        // Close insufficient balance modal
+        if (closeInsufficientBalanceBtn) {
+            closeInsufficientBalanceBtn.addEventListener('click', function () {
+                insufficientBalanceModal.classList.add('hidden');
+                insufficientBalanceModal.classList.remove('flex');
+            });
+        }
+
+        // Grab Order
+        if (grabBtn) {
+            grabBtn.addEventListener('click', async function () {
+                const platformId = this.dataset.platformId;
+                const btn = this;
+
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin text-2xl"></i><span class="text-lg">Loading...</span>';
+
+                try {
+                    const response = await fetch(`/menu/platform/${platformId}/grab-order`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        currentOrder = data.order;
+                        window.currentOrderId = data.order.id;
+                        showOrderModal(data.order);
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-hand-holding-usd text-2xl"></i><span class="text-lg">Grab the order immediately</span>';
+                }
+            });
+        }
+
+        // Show Modal
+        function showOrderModal(order) {
+            document.getElementById('orderNumber').textContent = order.order_number;
+            document.getElementById('transactionTime').textContent = new Date().toLocaleString();
+            document.getElementById('orderAmount').textContent = order.order_amount + ' USDT';
+            document.getElementById('commission').textContent = order.commission + ' USDT';
+            document.getElementById('expectedIncome').textContent = order.expected_income + ' USDT';
+
+            // Build products list
+            const productsList = document.getElementById('productsList');
+            productsList.innerHTML = '';
+
+            if (order.manage_crypto && order.manage_crypto.length > 0) {
+                order.manage_crypto.forEach(product => {
+                    const productDiv = document.createElement('div');
+                    productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
+                    productDiv.innerHTML = `
+                                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                            <i class="fas fa-box text-white text-2xl"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                            <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                        </div>
+                                    `;
+                    productsList.appendChild(productDiv);
+                });
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        // Close Modal
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                modal.classList.add('hidden');
+            });
+        }
+
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+
+        // Submit Order from modal
+        if (submitBtn) {
+            submitBtn.addEventListener('click', async function () {
+                if (!currentOrder) return;
+
+                const btn = this;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+                try {
+                    const response = await fetch(`/menu/order/${window.currentOrderId}/submit`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        modal.classList.add('hidden');
+                        document.getElementById('successMessage').textContent = data.message;
+                        document.getElementById('newBalanceText').textContent = 'New Balance: $' + data.new_balance;
+                        successModal.classList.remove('hidden');
+                        successModal.classList.add('flex');
+                    } else {
+                        modal.classList.add('hidden');
+                        // Check if it's an insufficient balance error
+                        if (data.message && data.message.includes('Insufficient balance')) {
+                            document.getElementById('insufficientBalanceMessage').textContent = data.message;
+                            insufficientBalanceModal.classList.remove('hidden');
+                            insufficientBalanceModal.classList.add('flex');
+                        } else {
+                            alert(data.message);
+                        }
+                        btn.disabled = false;
+                        btn.innerHTML = 'Submit Order';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Submit Order';
+                }
+            });
+        }
     </script>
 @endpush

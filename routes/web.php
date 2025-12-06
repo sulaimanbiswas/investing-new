@@ -32,6 +32,8 @@ Route::get('/platform-rules/{id}', [\App\Http\Controllers\PlatformRulesControlle
 
 Route::get('/menu', [\App\Http\Controllers\MenuController::class, 'index'])->middleware(['auth', 'verified'])->name('menu.index');
 Route::get('/menu/platform/{platform}', [\App\Http\Controllers\MenuController::class, 'show'])->middleware(['auth', 'verified'])->name('menu.platform.show');
+Route::post('/menu/platform/{platform}/grab-order', [\App\Http\Controllers\MenuController::class, 'grabOrder'])->middleware(['auth', 'verified'])->name('menu.platform.grab-order');
+Route::post('/menu/order/{order}/submit', [\App\Http\Controllers\MenuController::class, 'submitOrder'])->middleware(['auth', 'verified'])->name('menu.order.submit');
 
 Route::get('/service', [\App\Http\Controllers\ServiceController::class, 'index'])->middleware(['auth', 'verified'])->name('service.index');
 Route::get('/help', [\App\Http\Controllers\HelpController::class, 'index'])->middleware(['auth', 'verified'])->name('help.index');
