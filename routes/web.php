@@ -101,6 +101,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Logo and Favicon upload endpoints
         Route::post('/uploads/logo', [\App\Http\Controllers\Admin\UploadController::class, 'logo'])->name('uploads.logo');
         Route::post('/uploads/favicon', [\App\Http\Controllers\Admin\UploadController::class, 'favicon'])->name('uploads.favicon');
+        Route::post('/uploads/og-image', [\App\Http\Controllers\Admin\UploadController::class, 'ogImage'])->name('uploads.og-image');
 
         // Users management pages (views first)
         Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
@@ -204,6 +205,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Settings
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+        Route::get('/settings/seo', [\App\Http\Controllers\Admin\SettingController::class, 'seo'])->name('settings.seo');
+        Route::post('/settings/seo', [\App\Http\Controllers\Admin\SettingController::class, 'updateSeo'])->name('settings.update-seo');
     });
 });
 

@@ -24,7 +24,7 @@
   <script src="{{ asset('admin/js/custom.min.js') }}" type="text/javascript"></script>
   <script src="{{ asset('admin/js/deznav-init.js') }}" type="text/javascript"></script>
   <script src="{{ asset('admin/js/demo.js') }}" type="text/javascript"></script>
-  <script src="{{ asset('admin/js/styleSwitcher.js') }}" type="text/javascript"></script>
+  {{-- <script src="{{ asset('admin/js/styleSwitcher.js') }}" type="text/javascript"></script> --}}
 
   @yield('scripts')
 

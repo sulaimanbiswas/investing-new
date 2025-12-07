@@ -8,6 +8,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
+    <!-- SEO Meta Tags -->
+    @if(setting('meta_description'))
+        <meta name="description" content="{{ setting('meta_description') }}">
+    @endif
+    @if(setting('meta_keywords'))
+        <meta name="keywords" content="{{ setting('meta_keywords') }}">
+    @endif
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="{{ setting('social_title') ?: setting('site_title') ?: 'Admin Dashboard' }}">
+    @if(setting('social_description'))
+        <meta property="og:description" content="{{ setting('social_description') }}">
+    @elseif(setting('meta_description'))
+        <meta property="og:description" content="{{ setting('meta_description') }}">
+    @endif
+    @if(setting('og_image_path'))
+        <meta property="og:image" content="{{ asset(setting('og_image_path')) }}">
+        <meta property="og:image:type" content="image/jpeg">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+    @endif
+    <meta property="og:type" content="website">
+
     @if(setting('favicon_path'))
         <link rel="shortcut icon" type="image/x-icon" href="{{ asset(setting('favicon_path')) }}" />
     @else
@@ -639,7 +662,8 @@
     <script src="{{ asset('admin/js/custom.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('admin/js/deznav-init.js') }}" type="text/javascript"></script>
     <script src="{{ asset('admin/js/demo.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('admin/js/styleSwitcher.js') }}" type="text/javascript"></script>
+    {{--
+    <script src="{{ asset('admin/js/styleSwitcher.js') }}" type="text/javascript"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/@ckeditor/ckeditor5-build-classic@41.4.2/build/ckeditor.js"></script>
 
     @stack('scripts')

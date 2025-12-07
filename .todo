@@ -1,21 +1,8 @@
-ekhon admin e er sidebar e settings name ekta section add korba sekhane general settings name ekta option thakbe.
+ekhon ar ekta sidebar e setting er moddhe option add koro seta holo SEO setting. 
 
-okhane screenshot er moto ekta page thakbe jekhane
+ekhane ekta image uploader thakbe ei image ta hobe website er default og image jeta use kora hobe jokhon kono page share kora hobe social media te jodi oi page er specific og image na thake.
+tarpor thakbe meta description ar meta keywords er field gula.
+er por thakbe meta keywords ekhane select2 use koro jate multiple keywords add kora jai.
+social title  ar social description er field thakbe.
 
-1. site title -> title er input field thakbe- ei title ta website er header e dekhabe ar seo purpose e o use hobe
-2. currency -> ekta dropdown thakbe jekhane available currency gulo theke select korte parbe admin.
-3. currency symbol -> input field thakbe jekhane currency symbol dite parbe admin.
-4. timezone -> ekta dropdown thakbe jekhane available timezone gulo theke select korte parbe admin.
-5. daily default user order limit -> input field thakbe jekhane admin default daily order limit set korte parbe prottek user er jonno.
-6. capcha enable/disable -> ekta toggle button thakbe jekhane admin captcha on/off korte parbe form gulo te.
-7. Telegram cate center link -> input field thakbe jekhane admin tar telegram support group er link dite parbe.
-8. whatsapp cate center link -> input field thakbe jekhane admin tar whatsapp support er link dite parbe.
-
-ei gulo thakbe ebong ei gulo proper functionality soho implement korte hobe.
-
-jemon site title ei website er sob page er header e dekhabe ar seo purpose e o use hobe.
-currency and currency symbol website er product price show korar somoy use hobe.
-timezone user er timezone set korar jonno use hobe. ei site sokol time related kaj e timezone consider korbe.
-daily default user order limit ei limit ta prottek user er jonno default hisebe set korbe. mane jodi admin 5 set kore, tahole prottek user daily maximum 5 ta order korte parbe.
-captcha enable/disable jodi admin on kore, tahole website er sob form e captcha show korbe. jodi off kore, tahole captcha show korbe na. eta implement hobe login page ar registration page e.
-telegram ar whatsapp support link gulo website er user panel er service page e show korbe jekhane user ra support pete parbe.
+ei gulo properly implement korba jekhane jhekha lagbe sei gulo te.

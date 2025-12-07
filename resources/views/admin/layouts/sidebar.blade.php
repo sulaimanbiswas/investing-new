@@ -87,6 +87,7 @@
                 </a>
                 <ul aria-expanded="false">
                     <li><a href="{{ route('admin.settings.index') }}">General Settings</a></li>
+                    <li><a href="{{ route('admin.settings.seo') }}">SEO Configuration</a></li>
                 </ul>
             </li>
         </ul>

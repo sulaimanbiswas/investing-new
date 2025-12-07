@@ -73,4 +73,38 @@ class SettingController extends Controller
         return redirect()->route('admin.settings.index')
             ->with('success', 'Settings updated successfully!');
     }
+
+    public function seo(): View
+    {
+        $settings = Setting::all()->keyBy('key');
+
+        $data = [
+            'og_image_path' => $settings->get('og_image_path')?->value ?? '',
+            'meta_description' => $settings->get('meta_description')?->value ?? '',
+            'meta_keywords' => $settings->get('meta_keywords')?->value ?? '',
+            'social_title' => $settings->get('social_title')?->value ?? '',
+            'social_description' => $settings->get('social_description')?->value ?? '',
+        ];
+
+        return view('admin.settings.seo', compact('data'));
+    }
+
+    public function updateSeo(Request $request)
+    {
+        $validated = $request->validate([
+            'og_image_path' => 'nullable|string',
+            'meta_description' => 'nullable|string|max:160',
+            'meta_keywords' => 'nullable|string',
+            'social_title' => 'nullable|string|max:255',
+            'social_description' => 'nullable|string|max:200',
+        ]);
+
+        // Save settings
+        foreach ($validated as $key => $value) {
+            Setting::setValue($key, $value, 'string');
+        }
+
+        return redirect()->route('admin.settings.seo')
+            ->with('success', 'SEO settings updated successfully!');
+    }
 }
