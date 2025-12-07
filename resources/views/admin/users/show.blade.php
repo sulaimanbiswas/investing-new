@@ -288,7 +288,7 @@
 
     <!-- User Information Card -->
     <div class="row">
-        <div class="col-xl-6 col-lg-6">
+        <div class="col-xl-8 ">
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">User Information</h4>
@@ -448,7 +448,7 @@
 
         </div>
 
-        <div class="col-xl-6 col-lg-6">
+        <div class="col-xl-4 ">
             <!-- User Management -->
             <div class="card">
                 <div class="card-header">
@@ -533,6 +533,7 @@
 
 
         </div>
+
         @if($userOrders->count() > 0)
             <div class="col-12">
                 <div class="card">
