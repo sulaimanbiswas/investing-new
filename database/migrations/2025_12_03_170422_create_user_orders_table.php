@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('user_orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_order_set_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_package_item_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('product_package_item_id')->nullable();
             $table->string('order_number')->unique();
             $table->enum('type', ['normal', 'combo'])->default('normal');
             $table->string('product_name'); // Cached product name
