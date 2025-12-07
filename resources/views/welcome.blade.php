@@ -226,7 +226,7 @@
 
     <!-- Header/Navigation -->
     <header class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
-        <nav class="container-lg mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 md:h-20">
                 <!-- Logo -->
                 <div class="flex items-center space-x-2">
