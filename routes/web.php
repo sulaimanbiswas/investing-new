@@ -98,6 +98,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/uploads/gateways', [\App\Http\Controllers\Admin\UploadController::class, 'gateway'])->name('uploads.gateway');
         Route::post('/uploads/gateways/delete', [\App\Http\Controllers\Admin\UploadController::class, 'deleteGateway'])->name('uploads.gateway.delete');
 
+        // Logo and Favicon upload endpoints
+        Route::post('/uploads/logo', [\App\Http\Controllers\Admin\UploadController::class, 'logo'])->name('uploads.logo');
+        Route::post('/uploads/favicon', [\App\Http\Controllers\Admin\UploadController::class, 'favicon'])->name('uploads.favicon');
+
         // Users management pages (views first)
         Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
         Route::get('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
@@ -196,6 +200,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Orders (Completed User Orders)
         Route::get('/orders', [\App\Http\Controllers\Admin\AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{user_order}', [\App\Http\Controllers\Admin\AdminOrderController::class, 'show'])->name('orders.show');
+
+        // Settings
+        Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
     });
 });
 

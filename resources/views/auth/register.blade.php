@@ -79,24 +79,26 @@
         </div>
 
         <div class="mb-5">
-            <div class="flex gap-3">
-                <div class="relative flex-1">
-                    <i class="fas fa-shield-alt absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-                    <input type="text" id="verification_code" name="verification_code" placeholder="Verification Code"
-                        value="{{ old('verification_code') }}"
-                        class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
-                        required>
+            @if(captcha_enabled())
+                <div class="flex gap-3">
+                    <div class="relative flex-1">
+                        <i class="fas fa-shield-alt absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
+                        <input type="text" id="verification_code" name="verification_code" placeholder="Verification Code"
+                            value="{{ old('verification_code') }}"
+                            class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
+                            required>
+                    </div>
+                    <div class="bg-gray-200 px-5 py-3 rounded-xl text-xl font-bold tracking-widest text-gray-800 min-w-[120px] text-center select-none"
+                        id="captcha_display"></div>
+                    <button type="button" onclick="generateCaptcha()"
+                        class="bg-indigo-500 text-white px-4 rounded-xl hover:bg-indigo-600 transition-all">
+                        <i class="fas fa-sync-alt hover:rotate-180"></i>
+                    </button>
                 </div>
-                <div class="bg-gray-200 px-5 py-3 rounded-xl text-xl font-bold tracking-widest text-gray-800 min-w-[120px] text-center select-none"
-                    id="captcha_display"></div>
-                <button type="button" onclick="generateCaptcha()"
-                    class="bg-indigo-500 text-white px-4 rounded-xl hover:bg-indigo-600 transition-all">
-                    <i class="fas fa-sync-alt hover:rotate-180"></i>
-                </button>
-            </div>
-            <p id="captchaError" class="text-red-600 text-sm mt-2 ml-1 hidden">
-                <i class="fas fa-exclamation-circle"></i> Invalid verification code. Please try again.
-            </p>
+                <p id="captchaError" class="text-red-600 text-sm mt-2 ml-1 hidden">
+                    <i class="fas fa-exclamation-circle"></i> Invalid verification code. Please try again.
+                </p>
+            @endif
         </div>
 
         <button type="submit"
@@ -111,50 +113,52 @@
 
 @section('scripts')
     <script>
-        let captchaCode = '';
+        @if(captcha_enabled())
+            let captchaCode = '';
 
-        function generateCaptcha() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            captchaCode = '';
-            for (let i = 0; i < 4; i++) {
-                captchaCode += chars.charAt(Math.floor(Math.random() * chars.length));
+            function generateCaptcha() {
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+                captchaCode = '';
+                for (let i = 0; i < 4; i++) {
+                    captchaCode += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                document.getElementById('captcha_display').textContent = captchaCode;
             }
-            document.getElementById('captcha_display').textContent = captchaCode;
-        }
 
-        // Generate captcha on page load
-        generateCaptcha();
+            // Generate captcha on page load
+            generateCaptcha();
 
-        document.querySelector('form').addEventListener('submit', function (e) {
-            const captchaInput = document.getElementById('verification_code');
-            const captchaError = document.getElementById('captchaError');
-            const userCaptcha = captchaInput.value.toUpperCase();
+            document.querySelector('form').addEventListener('submit', function (e) {
+                const captchaInput = document.getElementById('verification_code');
+                const captchaError = document.getElementById('captchaError');
+                const userCaptcha = captchaInput.value.toUpperCase();
 
-            if (userCaptcha !== captchaCode) {
-                e.preventDefault();
+                if (userCaptcha !== captchaCode) {
+                    e.preventDefault();
 
-                // Show inline error and red border
-                captchaInput.classList.remove('border-gray-200', 'focus:border-indigo-500');
-                captchaInput.classList.add('border-red-500', 'focus:border-red-500');
-                captchaError.classList.remove('hidden');
+                    // Show inline error and red border
+                    captchaInput.classList.remove('border-gray-200', 'focus:border-indigo-500');
+                    captchaInput.classList.add('border-red-500', 'focus:border-red-500');
+                    captchaError.classList.remove('hidden');
 
-                generateCaptcha();
-                captchaInput.value = '';
-                captchaInput.focus();
-            } else {
-                // Reset error state
-                captchaInput.classList.remove('border-red-500', 'focus:border-red-500');
-                captchaInput.classList.add('border-gray-200', 'focus:border-indigo-500');
-                captchaError.classList.add('hidden');
-            }
-        });
+                    generateCaptcha();
+                    captchaInput.value = '';
+                    captchaInput.focus();
+                } else {
+                    // Reset error state
+                    captchaInput.classList.remove('border-red-500', 'focus:border-red-500');
+                    captchaInput.classList.add('border-gray-200', 'focus:border-indigo-500');
+                    captchaError.classList.add('hidden');
+                }
+            });
 
-        // Clear error on input
-        document.getElementById('verification_code').addEventListener('input', function () {
-            this.classList.remove('border-red-500', 'focus:border-red-500');
-            this.classList.add('border-gray-200', 'focus:border-indigo-500');
-            document.getElementById('captchaError').classList.add('hidden');
-        });
+            // Clear error on input
+            document.getElementById('verification_code').addEventListener('input', function () {
+                this.classList.remove('border-red-500', 'focus:border-red-500');
+                this.classList.add('border-gray-200', 'focus:border-indigo-500');
+                document.getElementById('captchaError').classList.add('hidden');
+            });
+        @endif
 
         // Toggle password visibility
         function togglePassword(fieldId) {

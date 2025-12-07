@@ -165,4 +165,79 @@ class UploadController extends Controller
         }
         return response()->json(['deleted' => false, 'message' => 'File not found'], 404);
     }
+
+    public function logo(Request $request)
+    {
+        if (!$request->hasFile('logo')) {
+            return response()->json(['error' => ['message' => 'No file uploaded']], 422);
+        }
+
+        $file = $request->file('logo');
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        // Accept jpg, jpeg, png, webp files
+        if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'])) {
+            return response()->json(['error' => ['message' => 'Invalid file type. Only jpg, jpeg, png and webp files are allowed.']], 422);
+        }
+
+        // Check file size (max 5MB)
+        if ($file->getSize() > 5120 * 1024) {
+            return response()->json(['error' => ['message' => 'File size exceeds 5MB limit.']], 422);
+        }
+
+        // Save under public/uploads/logos
+        $publicDir = public_path('uploads/logos');
+        if (!is_dir($publicDir)) {
+            if (!mkdir($publicDir, 0775, true) && !is_dir($publicDir)) {
+                return response()->json(['error' => ['message' => 'Failed to create upload directory']], 500);
+            }
+        }
+
+        $filename = 'logo.' . $extension;
+        try {
+            $file->move($publicDir, $filename);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => ['message' => 'Failed to store file', 'detail' => $e->getMessage()]], 500);
+        }
+
+        $relative = '/uploads/logos/' . $filename;
+        $url = asset('uploads/logos/' . $filename);
+
+        return response()->json(['url' => $url, 'path' => $relative, 'uploaded' => true], 201);
+    }
+
+    public function favicon(Request $request)
+    {
+        if (!$request->hasFile('favicon')) {
+            return response()->json(['error' => ['message' => 'No file uploaded']], 422);
+        }
+
+        $file = $request->file('favicon');
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        // Accept ico and png files
+        if (!in_array($extension, ['ico', 'png'])) {
+            return response()->json(['error' => ['message' => 'Invalid file type. Only .ico and .png files are allowed.']], 422);
+        }
+
+        // Save under public/uploads/favicons
+        $publicDir = public_path('uploads/favicons');
+        if (!is_dir($publicDir)) {
+            if (!mkdir($publicDir, 0775, true) && !is_dir($publicDir)) {
+                return response()->json(['error' => ['message' => 'Failed to create upload directory']], 500);
+            }
+        }
+
+        $filename = 'favicon.' . $extension;
+        try {
+            $file->move($publicDir, $filename);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => ['message' => 'Failed to store file', 'detail' => $e->getMessage()]], 500);
+        }
+
+        $relative = '/uploads/favicons/' . $filename;
+        $url = asset('uploads/favicons/' . $filename);
+
+        return response()->json(['url' => $url, 'path' => $relative, 'uploaded' => true], 201);
+    }
 }

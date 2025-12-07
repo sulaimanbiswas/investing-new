@@ -79,6 +79,16 @@
                     <li><a href="javascript:void(0)">Notification History</a></li>
                 </ul>
             </li>
+
+            <li>
+                <a href="javascript:void(0);" class="ai-icon has-arrow" aria-expanded="false">
+                    <i class="flaticon-381-settings"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+                <ul aria-expanded="false">
+                    <li><a href="{{ route('admin.settings.index') }}">General Settings</a></li>
+                </ul>
+            </li>
         </ul>
 
         <div class="plus-box">

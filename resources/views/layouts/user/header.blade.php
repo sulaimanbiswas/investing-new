@@ -3,10 +3,15 @@
     <div class="px-4 py-3 flex items-center justify-between">
         <!-- Logo -->
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-            <div
-                class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center shadow-lg">
-                <span class="text-white font-bold text-xl">$</span>
-            </div>
+            @if(setting('logo_path'))
+                <img src="{{ asset(setting('logo_path')) }}" alt="Logo"
+                    class="w-10 h-10 rounded-lg shadow-lg object-contain">
+            @else
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center shadow-lg">
+                    <span class="text-white font-bold text-xl">$</span>
+                </div>
+            @endif
             <span class="font-bold text-gray-800 text-lg hidden sm:block">{{ config('app.name', 'MALL') }}</span>
         </a>
 

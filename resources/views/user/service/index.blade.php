@@ -41,38 +41,44 @@
     <!-- Service Options -->
     <div class="space-y-3">
         <!-- Telegram Care Center -->
-        <a href="#" class="block bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-            <div class="p-5 flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div
-                        class="bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl w-12 h-12 flex items-center justify-center shadow-md">
-                        <i class="fab fa-telegram-plane text-white text-2xl"></i>
+        @if(setting('telegram_support_link'))
+            <a href="{{ setting('telegram_support_link') }}" target="_blank"
+                class="block bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
+                <div class="p-5 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl w-12 h-12 flex items-center justify-center shadow-md">
+                            <i class="fab fa-telegram-plane text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">Telegram Care Center</h3>
+                            <p class="text-gray-500 text-sm">Contact us on Telegram</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">Telegram Care Center</h3>
-                        <p class="text-gray-500 text-sm">Contact us on Telegram</p>
-                    </div>
+                    <i class="fas fa-chevron-right text-gray-400 text-xl"></i>
                 </div>
-                <i class="fas fa-chevron-right text-gray-400 text-xl"></i>
-            </div>
-        </a>
+            </a>
+        @endif
 
         <!-- WhatsApp Care Center -->
-        <a href="#" class="block bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-            <div class="p-5 flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div
-                        class="bg-gradient-to-br from-green-400 to-green-600 rounded-xl w-12 h-12 flex items-center justify-center shadow-md">
-                        <i class="fab fa-whatsapp text-white text-2xl"></i>
+        @if(setting('whatsapp_support_link'))
+            <a href="{{ setting('whatsapp_support_link') }}" target="_blank"
+                class="block bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
+                <div class="p-5 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="bg-gradient-to-br from-green-400 to-green-600 rounded-xl w-12 h-12 flex items-center justify-center shadow-md">
+                            <i class="fab fa-whatsapp text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">WhatsApp Care Center</h3>
+                            <p class="text-gray-500 text-sm">Contact us on WhatsApp</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">WhatsApp Care Center</h3>
-                        <p class="text-gray-500 text-sm">Contact us on WhatsApp</p>
-                    </div>
+                    <i class="fas fa-chevron-right text-gray-400 text-xl"></i>
                 </div>
-                <i class="fas fa-chevron-right text-gray-400 text-xl"></i>
-            </div>
-        </a>
+            </a>
+        @endif
 
         <!-- Help -->
         <a href="{{ route('help.index') }}"
