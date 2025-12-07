@@ -26,6 +26,11 @@ class UserController extends Controller
             });
         }
 
+        // Status filter
+        if ($status = $request->string('status')->toString()) {
+            $query->where('status', $status);
+        }
+
         // Date range filter
         if ($from = $request->input('date_from')) {
             $query->whereDate('created_at', '>=', $from);
@@ -362,9 +367,9 @@ class UserController extends Controller
             'ban_reason' => 'required|string|max:500',
         ]);
 
-        // Ban the user
+        // Ban the user by changing status to banned
         $user->update([
-            'is_banned' => true,
+            'status' => 'banned',
             'ban_reason' => $request->ban_reason,
             'banned_at' => now(),
         ]);
@@ -379,9 +384,9 @@ class UserController extends Controller
 
     public function unbanUser(User $user)
     {
-        // Unban the user
+        // Unban the user by changing status to active
         $user->update([
-            'is_banned' => false,
+            'status' => 'active',
             'ban_reason' => null,
             'banned_at' => null,
         ]);

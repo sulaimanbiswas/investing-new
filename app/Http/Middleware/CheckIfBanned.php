@@ -18,7 +18,7 @@ class CheckIfBanned
     {
         $user = Auth::user();
 
-        if ($user && $user->is_banned) {
+        if ($user && $user->status === 'banned') {
             Auth::logout();
 
             $request->session()->invalidate();

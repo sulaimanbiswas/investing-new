@@ -265,7 +265,7 @@
                 </a>
 
                 <!-- Ban/Unban User -->
-                @if($user->is_banned)
+                @if($user->status === 'banned')
                     <button type="button" class="btn btn-sm btn-success rounded-pill px-4" id="unbanUserBtn"
                         data-username="{{ $user->username }}" data-user-id="{{ $user->id }}">
                         <i class="fas fa-check-circle me-2"></i>Unban User
@@ -367,7 +367,7 @@
                             <p class="mb-0 fw-semibold">{{ $user->withdrawal_address ?? 'N/A' }}</p>
                         </div>
 
-                        @if($user->is_banned)
+                        @if($user->status === 'banned')
                             <div class="col-12">
                                 <div class="alert alert-danger mb-0">
                                     <h6 class="alert-heading mb-2"><i class="fas fa-ban me-2"></i>Account Banned</h6>
@@ -404,7 +404,46 @@
                 </div>
             </div>
 
-
+            <!-- Order Set Assigned -->
+            @if($userOrderSets->count() > 0)
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h4 class="card-title">Order Set Assigned</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive recentOrderTable">
+                            <table class="table verticle-middle table-responsive-md">
+                                <thead>
+                                    <tr>
+                                        <th>Order Set</th>
+                                        <th>Completed</th>
+                                        <th>Status</th>
+                                        <th>Assigned</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($userOrderSets as $userOrderSet)
+                                        <tr>
+                                            <td>{{ $userOrderSet->orderSet->name }}</td>
+                                            <td>{{ $userOrderSet->completionPercentage() }}%</td>
+                                            <td>
+                                                @if($userOrderSet->status === 'active')
+                                                    <span class="badge badge-primary">Active</span>
+                                                @elseif($userOrderSet->status === 'completed')
+                                                    <span class="badge badge-success">Completed</span>
+                                                @else
+                                                    <span class="badge badge-secondary">{{ ucfirst($userOrderSet->status) }}</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $userOrderSet->assigned_at->format('M d, Y') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
 
         </div>
@@ -492,46 +531,7 @@
                 </div>
             </div>
 
-            <!-- Order Set Assigned -->
-            @if($userOrderSets->count() > 0)
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h4 class="card-title">Order Set Assigned</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive recentOrderTable">
-                            <table class="table verticle-middle table-responsive-md">
-                                <thead>
-                                    <tr>
-                                        <th>Order Set</th>
-                                        <th>Completed</th>
-                                        <th>Status</th>
-                                        <th>Assigned</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($userOrderSets as $userOrderSet)
-                                        <tr>
-                                            <td>{{ $userOrderSet->orderSet->name }}</td>
-                                            <td>{{ $userOrderSet->completionPercentage() }}%</td>
-                                            <td>
-                                                @if($userOrderSet->status === 'active')
-                                                    <span class="badge badge-primary">Active</span>
-                                                @elseif($userOrderSet->status === 'completed')
-                                                    <span class="badge badge-success">Completed</span>
-                                                @else
-                                                    <span class="badge badge-secondary">{{ ucfirst($userOrderSet->status) }}</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ $userOrderSet->assigned_at->format('M d, Y') }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            @endif
+
         </div>
         @if($userOrders->count() > 0)
             <div class="col-12">

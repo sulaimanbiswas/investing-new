@@ -11,6 +11,7 @@ use App\Observers\WithdrawalObserver;
 use App\Models\Notification;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,6 +29,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Set custom pagination view for admin with ellipsis window
+        Paginator::useBootstrapFive();
+
+        // Configure pagination to show links around current page
+        // This will show ellipsis (...) when there are many pages
+        Paginator::currentPathResolver(function () {
+            return request()->url();
+        });
+
+        Paginator::currentPageResolver(function ($pageName = 'page') {
+            return request()->query($pageName);
+        });
+
         User::observe(UserObserver::class);
         Deposit::observe(DepositObserver::class);
         Withdrawal::observe(WithdrawalObserver::class);

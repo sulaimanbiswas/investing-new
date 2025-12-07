@@ -34,6 +34,7 @@ class User extends Authenticatable
         'is_banned',
         'ban_reason',
         'banned_at',
+        'status',
     ];
 
     /**
@@ -63,6 +64,7 @@ class User extends Authenticatable
             'freeze_amount' => 'decimal:2',
             'daily_order_limit' => 'integer',
             'banned_at' => 'datetime',
+            'status' => 'string',
         ];
     }
 

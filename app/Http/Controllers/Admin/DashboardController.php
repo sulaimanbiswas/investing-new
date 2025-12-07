@@ -17,10 +17,7 @@ class DashboardController extends Controller
         $totalUsers = User::where('is_admin', 0)->count();
 
         $activeUsers = User::where('is_admin', 0)
-            ->whereHas('loginHistories', function ($query) {
-                $query->where('status', 'success');
-            })
-            ->distinct()
+            ->where('status', 'active')
             ->count();
 
         $loginLast24h = LoginHistory::where('status', 'success')

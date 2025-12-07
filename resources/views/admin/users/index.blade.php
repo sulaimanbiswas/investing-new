@@ -40,6 +40,16 @@
                                         placeholder="Search by username or email">
                                 </div>
                                 <div class="col-12">
+                                    <label class="form-label">Status</label>
+                                    <select name="status" class="form-control">
+                                        <option value="">All Status</option>
+                                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active
+                                        </option>
+                                        <option value="banned" {{ request('status') === 'banned' ? 'selected' : '' }}>Banned
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
                                     <label class="form-label">From Date</label>
                                     <input type="date" name="date_from" value="{{ request('date_from') }}"
                                         class="form-control">
@@ -59,19 +69,26 @@
 
             <!-- Desktop/tablet: inline filter form -->
             <form method="GET" class="row mb-3 g-2 d-none d-md-flex">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <input type="text" name="search" value="{{ request('search') }}" class="form-control"
                         placeholder="Search by username or email">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <select name="status" class="form-control">
+                        <option value="">All Status</option>
+                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="banned" {{ request('status') === 'banned' ? 'selected' : '' }}>Banned</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control"
                         placeholder="From Date">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control"
                         placeholder="To Date">
                 </div>
-                <div class="col-md-2 d-grid">
+                <div class="col-md-1 d-grid">
                     <button class="btn btn-secondary" type="submit">Filter</button>
                 </div>
             </form>
@@ -84,6 +101,7 @@
                             <th>User</th>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Status</th>
                             <th>Join Date</th>
                             <th>Current Balance</th>
                             <th>Task Status</th>
@@ -97,6 +115,13 @@
                                 <td><span class="text-primary">@</span>{{ $user->username }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
+                                <td>
+                                    @if($user->status === 'active')
+                                        <span class="badge bg-success">Active</span>
+                                    @else
+                                        <span class="badge bg-danger">Banned</span>
+                                    @endif
+                                </td>
                                 <td>{{ $user->created_at->format('F j, Y') }}</td>
                                 <td>{{ number_format($user->balance ?? 0, 2) }}</td>
                                 <td>
