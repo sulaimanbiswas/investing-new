@@ -6,8 +6,8 @@
 @section('content')
     <div class="form-head d-flex mb-3 mb-md-4 align-items-start">
         <div class="me-auto d-none d-lg-block">
-            <h3 class="text-black font-w600">Welcome to Eres!</h3>
-            <p class="mb-0 fs-18">Hospital Admin Dashboard Template</p>
+            <h3 class="text-black font-w600">Welcome to Admin Dashboard!</h3>
+            <p class="mb-0 fs-18">{{ setting('site_title') ?? 'Investment Platform' }} - Administration Center</p>
         </div>
 
         <div class="input-group search-area ms-auto d-inline-flex">
@@ -25,10 +25,10 @@
                 <div class="card-body">
                     <div class="media align-items-center">
                         <div class="media-body">
-                            <p class="mb-1">Total Patient</p>
+                            <p class="mb-1">Total Users</p>
                             <div class="d-flex flex-wrap">
                                 <h2 class="fs-40 font-w600 text-white mb-0 me-3">
-                                    783k
+                                    {{ $totalUsers }}
                                 </h2>
                                 <div>
                                     <svg width="28" height="19" viewBox="0 0 28 19" fill="none"
@@ -67,9 +67,9 @@
                 <div class="card-body">
                     <div class="media align-items-center">
                         <div class="media-body">
-                            <p class="mb-1">Doctor</p>
+                            <p class="mb-1">Active Users</p>
                             <div class="d-flex flex-wrap">
-                                <h2 class="fs-40 font-w600 text-white mb-0 me-3">76</h2>
+                                <h2 class="fs-40 font-w600 text-white mb-0 me-3">{{ $activeUsers }}</h2>
                                 <div>
                                     <svg width="28" height="19" viewBox="0 0 28 19" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -107,9 +107,9 @@
                 <div class="card-body">
                     <div class="media align-items-center">
                         <div class="media-body">
-                            <p class="mb-1">Appointment</p>
+                            <p class="mb-1">Pending Deposits</p>
                             <div class="d-flex flex-wrap">
-                                <h2 class="fs-40 font-w600 text-white mb-0 me-3">76</h2>
+                                <h2 class="fs-40 font-w600 text-white mb-0 me-3">{{ $pendingDeposits }}</h2>
                                 <div>
                                     <svg width="28" height="19" viewBox="0 0 28 19" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">

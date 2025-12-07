@@ -636,9 +636,7 @@
         <div class="footer">
             <div class="copyright">
                 <p>
-                    Copyright © Designed &amp; Developed by
-                    <a href="https://dexignzone.com/" target="_blank">DexignZone</a>
-                    {{ now()->year }}
+                    Copyright © {{ now()->year }} All rights reserved.
                 </p>
             </div>
         </div>

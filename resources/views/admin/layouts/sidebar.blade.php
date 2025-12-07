@@ -92,10 +92,10 @@
             </li>
         </ul>
 
-        <div class="plus-box">
+        {{-- <div class="plus-box">
             <p class="fs-16 font-w500 mb-1">Check your job schedule</p>
             <a class="text-white fs-26" href="javascript:;"><i class="las la-long-arrow-alt-right"></i>
             </a>
-        </div>
+        </div> --}}
     </div>
 </div>

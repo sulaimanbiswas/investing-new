@@ -84,7 +84,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'store'])->name('login.store');
 
     Route::middleware('auth:admin')->group(function () {
-        Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
 
         // CKEditor upload endpoint
