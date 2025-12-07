@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Deposit;
 use App\Models\Notification;
 use App\Models\Transaction;
+use App\Services\ReferralCommissionService;
 
 class DepositObserver
 {
@@ -30,23 +31,32 @@ class DepositObserver
                     'is_for_admin' => true
                 ]);
             } elseif ($newStatus === 'approved') {
-                // Add balance to user account
+                // Add balance to user account (use approved_amount if set, otherwise use amount)
                 $user = $deposit->user;
+                $approvedAmount = (float) ($deposit->approved_amount ?? $deposit->amount);
                 $balanceBefore = (float) $user->balance;
-                $balanceAfter = $balanceBefore + (float) $deposit->amount;
+                $balanceAfter = $balanceBefore + $approvedAmount;
 
-                $user->increment('balance', (float) $deposit->amount);
+                $user->increment('balance', $approvedAmount);
 
                 // Create transaction record
                 Transaction::create([
                     'user_id' => $deposit->user_id,
                     'type' => 'deposit',
                     'reference_id' => $deposit->id,
-                    'amount' => (float) $deposit->amount,
+                    'amount' => $approvedAmount,
                     'balance_before' => $balanceBefore,
                     'balance_after' => $balanceAfter,
-                    'remarks' => 'Deposit of ' . number_format((float) $deposit->amount, 2) . ' ' . $deposit->currency . ' approved',
+                    'remarks' => 'Deposit of ' . number_format($approvedAmount, 2) . ' ' . $deposit->currency . ' approved',
                 ]);
+
+                // Distribute referral commissions
+                try {
+                    $commissionService = app(ReferralCommissionService::class);
+                    $commissionService->distributeCommissions($deposit);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to distribute referral commissions: ' . $e->getMessage());
+                }
 
                 // Notify user about approval
                 Notification::create([

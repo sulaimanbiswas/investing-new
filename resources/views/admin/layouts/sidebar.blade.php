@@ -74,7 +74,7 @@
                 </a>
                 <ul aria-expanded="false">
                     <li><a href="{{ route('admin.transactions.index') }}">Transaction Log</a></li>
-                    <li><a href="javascript:void(0)">Referral Commission</a></li>
+                    <li><a href="{{ route('admin.reports.referral-commissions') }}">Referral Commission</a></li>
                     <li><a href="{{ route('admin.reports.login-history') }}">Login History</a></li>
                     <li><a href="javascript:void(0)">Notification History</a></li>
                 </ul>

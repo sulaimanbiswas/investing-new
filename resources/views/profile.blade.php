@@ -105,11 +105,11 @@
                 </div>
                 <span class="text-xs">Record</span>
             </a>
-            <a href="{{ route('wallet.edit') }}" class="flex flex-col items-center gap-2">
-                <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
-                    <i class="fas fa-wallet"></i>
+            <a href="{{ route('commissions.index') }}" class="flex flex-col items-center gap-2">
+                <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
+                    <i class="fas fa-coins"></i>
                 </div>
-                <span class="text-xs">Wallet Mgmt</span>
+                <span class="text-xs">Commission</span>
             </a>
             <a href="{{ route('invitation') }}" class="flex flex-col items-center gap-2">
                 <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
@@ -157,6 +157,20 @@
                         </div>
                         <div>
                             <div class="font-semibold text-gray-800">Withdrawal Records</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('commissions.index') }}" class="flex items-center justify-between p-4">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-coins text-purple-600"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-800">Referral Commissions</div>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right text-gray-400"></i>

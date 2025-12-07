@@ -34,6 +34,9 @@ class SettingController extends Controller
             'help_link' => $settings->get('help_link')?->value ?? '',
             'logo_path' => $settings->get('logo_path')?->value ?? '',
             'favicon_path' => $settings->get('favicon_path')?->value ?? '',
+            'default_level1_commission' => $settings->get('default_level1_commission')?->value ?? '5',
+            'default_level2_commission' => $settings->get('default_level2_commission')?->value ?? '3',
+            'default_level3_commission' => $settings->get('default_level3_commission')?->value ?? '2',
         ];
 
         return view('admin.settings.general', compact('data', 'currencies', 'timezones'));
@@ -57,6 +60,9 @@ class SettingController extends Controller
             'help_link' => 'nullable|url',
             'logo_path' => 'nullable|string',
             'favicon_path' => 'nullable|string',
+            'default_level1_commission' => 'required|numeric|min:0|max:100',
+            'default_level2_commission' => 'required|numeric|min:0|max:100',
+            'default_level3_commission' => 'required|numeric|min:0|max:100',
         ]);
 
         // Save settings
@@ -64,6 +70,7 @@ class SettingController extends Controller
             $type = match ($key) {
                 'enable_captcha' => 'boolean',
                 'daily_order_limit' => 'integer',
+                'default_level1_commission', 'default_level2_commission', 'default_level3_commission' => 'decimal',
                 default => 'string',
             };
 

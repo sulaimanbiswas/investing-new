@@ -440,6 +440,58 @@
                 </div>
             </div>
 
+            <!-- Referral Commission Settings -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h4 class="card-title">Referral Commission Settings</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('admin.users.update-commissions', $user) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="alert alert-info mb-3">
+                            <small>
+                                <i class="fas fa-info-circle me-1"></i>
+                                Set custom commission rates for this user. Leave at 0 to use default system rates.
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="level1_commission" class="form-label">
+                                Level 1 Commission (%)
+                                <small class="text-muted">(Direct Referrals)</small>
+                            </label>
+                            <input type="number" step="0.01" class="form-control" id="level1_commission"
+                                name="level1_commission" value="{{ $user->level1_commission }}" min="0" max="100"
+                                placeholder="0.00">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="level2_commission" class="form-label">
+                                Level 2 Commission (%)
+                                <small class="text-muted">(2nd Level Referrals)</small>
+                            </label>
+                            <input type="number" step="0.01" class="form-control" id="level2_commission"
+                                name="level2_commission" value="{{ $user->level2_commission }}" min="0" max="100"
+                                placeholder="0.00">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="level3_commission" class="form-label">
+                                Level 3 Commission (%)
+                                <small class="text-muted">(3rd Level Referrals)</small>
+                            </label>
+                            <input type="number" step="0.01" class="form-control" id="level3_commission"
+                                name="level3_commission" value="{{ $user->level3_commission }}" min="0" max="100"
+                                placeholder="0.00">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Update Commissions</button>
+                    </form>
+                </div>
+            </div>
+
             <!-- Order Set Assigned -->
             @if($userOrderSets->count() > 0)
                 <div class="card mt-3">

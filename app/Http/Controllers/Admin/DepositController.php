@@ -105,19 +105,13 @@ class DepositController extends Controller
         // Determine the amount to approve
         $approvedAmount = $request->filled('approved_amount') ? (float)$request->approved_amount : (float)$deposit->amount;
 
-        // Check if this is a new approval (status changing from non-approved to approved)
-        $wasNotApproved = $deposit->status !== 'approved';
-
         $deposit->update([
             'status' => $request->status,
             'admin_note' => $request->admin_note,
             'approved_amount' => $request->status === 'approved' ? $approvedAmount : null,
         ]);
 
-        // If approved for the first time, add balance to user
-        if ($request->status === 'approved' && $wasNotApproved) {
-            $deposit->user->increment('balance', $approvedAmount);
-        }
+        // Note: Balance update is handled by DepositObserver when status changes to 'approved'
 
         flash()->success('Deposit status updated successfully');
 

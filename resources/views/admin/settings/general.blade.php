@@ -204,6 +204,84 @@
                         </div>
                     </div>
 
+                    <!-- Referral Commission Settings -->
+                    <div class="col-12 mb-4">
+                        <div class="card border border-success">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0 text-white">
+                                    <i class="fas fa-users-cog me-2"></i>Referral Commission Settings
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Set default referral commission percentages for all users. Individual user commissions
+                                    can be customized in their profile.
+                                </p>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="default_level1_commission" class="form-label">
+                                            <i class="fas fa-user text-success me-1"></i>Level 1 Commission (%)
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="number" step="0.01"
+                                            class="form-control @error('default_level1_commission') is-invalid @enderror"
+                                            id="default_level1_commission" name="default_level1_commission"
+                                            value="{{ old('default_level1_commission', $data['default_level1_commission']) }}"
+                                            placeholder="5.00" min="0" max="100" required>
+                                        <small class="text-muted d-block mt-1">
+                                            Direct referral commission (when user directly refers someone)
+                                        </small>
+                                        @error('default_level1_commission')
+                                            <span class="invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-4 mb-3">
+                                        <label for="default_level2_commission" class="form-label">
+                                            <i class="fas fa-users text-primary me-1"></i>Level 2 Commission (%)
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="number" step="0.01"
+                                            class="form-control @error('default_level2_commission') is-invalid @enderror"
+                                            id="default_level2_commission" name="default_level2_commission"
+                                            value="{{ old('default_level2_commission', $data['default_level2_commission']) }}"
+                                            placeholder="3.00" min="0" max="100" required>
+                                        <small class="text-muted d-block mt-1">
+                                            Second level referral commission (referral's referral)
+                                        </small>
+                                        @error('default_level2_commission')
+                                            <span class="invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-4 mb-3">
+                                        <label for="default_level3_commission" class="form-label">
+                                            <i class="fas fa-sitemap text-info me-1"></i>Level 3 Commission (%)
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="number" step="0.01"
+                                            class="form-control @error('default_level3_commission') is-invalid @enderror"
+                                            id="default_level3_commission" name="default_level3_commission"
+                                            value="{{ old('default_level3_commission', $data['default_level3_commission']) }}"
+                                            placeholder="2.00" min="0" max="100" required>
+                                        <small class="text-muted d-block mt-1">
+                                            Third level referral commission (referral's referral's referral)
+                                        </small>
+                                        @error('default_level3_commission')
+                                            <span class="invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="alert alert-info mb-0" role="alert">
+                                    <i class="fas fa-lightbulb me-2"></i>
+                                    <strong>Example:</strong> If Level 1 = 5%, when your direct referral deposits $100, you
+                                    earn $5 commission.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Security & Features -->
                     <div class="col-12 mb-4">
                         <div class="card border">

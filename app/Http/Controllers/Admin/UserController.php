@@ -54,7 +54,7 @@ class UserController extends Controller
             'total_withdrawals' => 0, // TODO: Implement when withdrawal system is ready
             'total_transactions' => $user->deposits()->count(),
             'total_invest' => 0, // TODO: Implement when investment system is ready
-            'total_referral_commission' => 0, // TODO: Implement when commission system is ready
+            'total_referral_commission' => \App\Models\ReferralCommission::where('user_id', $user->id)->sum('commission_amount'),
             'total_binary_commission' => 0, // TODO: Implement when binary system is ready
             'total_bv' => 0, // TODO: Implement when BV system is ready
         ];
@@ -270,6 +270,25 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.show', $user)
             ->with('success', 'User management settings updated successfully!');
+    }
+
+    public function updateCommissions(Request $request, User $user)
+    {
+        $request->validate([
+            'level1_commission' => 'required|numeric|min:0|max:100',
+            'level2_commission' => 'required|numeric|min:0|max:100',
+            'level3_commission' => 'required|numeric|min:0|max:100',
+        ]);
+
+        $user->update([
+            'level1_commission' => $request->level1_commission,
+            'level2_commission' => $request->level2_commission,
+            'level3_commission' => $request->level3_commission,
+        ]);
+
+        return redirect()
+            ->route('admin.users.show', $user)
+            ->with('success', 'Referral commission rates updated successfully for ' . $user->username . '!');
     }
 
     public function loginAsUser(User $user)

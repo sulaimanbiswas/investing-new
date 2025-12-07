@@ -58,6 +58,9 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
 
     // Withdrawal routes
     Route::get('/withdrawal', [\App\Http\Controllers\WithdrawalController::class, 'index'])->name('withdrawal');
+
+    // Referral Commission routes
+    Route::get('/commissions', [\App\Http\Controllers\ReferralCommissionController::class, 'index'])->name('commissions.index');
     Route::post('/withdrawal', [\App\Http\Controllers\WithdrawalController::class, 'store'])->name('withdrawal.store');
     Route::get('/withdrawal/records', [\App\Http\Controllers\WithdrawalController::class, 'records'])->name('withdrawal.records');
 
@@ -111,6 +114,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/users/{user}/change-password', [\App\Http\Controllers\Admin\UserController::class, 'changePassword'])->name('users.change-password');
         Route::post('/users/{user}/assign-order-set', [\App\Http\Controllers\Admin\UserController::class, 'assignOrderSet'])->name('users.assign-order-set');
         Route::put('/users/{user}/update-management', [\App\Http\Controllers\Admin\UserController::class, 'updateManagement'])->name('users.update-management');
+        Route::put('/users/{user}/update-commissions', [\App\Http\Controllers\Admin\UserController::class, 'updateCommissions'])->name('users.update-commissions');
         Route::post('/users/{user}/login-as-user', [\App\Http\Controllers\Admin\UserController::class, 'loginAsUser'])->name('users.login-as-user');
         Route::post('/users/{user}/ban', [\App\Http\Controllers\Admin\UserController::class, 'banUser'])->name('users.ban');
         Route::post('/users/{user}/unban', [\App\Http\Controllers\Admin\UserController::class, 'unbanUser'])->name('users.unban');
@@ -194,6 +198,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Reports
         Route::get('/reports/login-history', [\App\Http\Controllers\Admin\ReportController::class, 'loginHistory'])->name('reports.login-history');
+        Route::get('/reports/referral-commissions', [\App\Http\Controllers\Admin\ReferralCommissionReportController::class, 'index'])->name('reports.referral-commissions');
 
         // Transaction Logs
         Route::get('/transactions', [TransactionLogController::class, 'index'])->name('transactions.index');
