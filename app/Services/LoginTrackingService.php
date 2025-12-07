@@ -101,6 +101,14 @@ class LoginTrackingService
             ];
         }
 
+        // Skip geolocation if CURL is not properly configured
+        if (!defined('CURL_SSLVERSION_TLSv1_2')) {
+            Log::warning('CURL SSL constants not available, skipping geolocation', [
+                'ip' => $ipAddress,
+            ]);
+            return [];
+        }
+
         try {
             // Using ip-api.com (free, no API key needed, 45 req/min limit)
             $response = Http::timeout(5)->get("http://ip-api.com/json/{$ipAddress}", [
