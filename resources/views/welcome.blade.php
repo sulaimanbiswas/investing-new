@@ -247,8 +247,6 @@
                     <a href="#features" class="text-gray-700 hover:text-indigo-600 transition font-medium">Features</a>
                     <a href="#how-it-works" class="text-gray-700 hover:text-indigo-600 transition font-medium">How It
                         Works</a>
-                    {{-- <a href="#pricing"
-                        class="text-gray-700 hover:text-indigo-600 transition font-medium">Pricing</a> --}}
                     <a href="#testimonials"
                         class="text-gray-700 hover:text-indigo-600 transition font-medium">Testimonials</a>
                 </div>
