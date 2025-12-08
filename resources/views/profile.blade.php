@@ -73,16 +73,16 @@
                     <span class="text-3xl font-bold">{{ number_format(auth()->user()->balance ?? 0, 2) }}</span>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-6 justify-end">
                 <a href="{{ route('deposit') }}" class="flex flex-col items-center justify-center">
-                    <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                        <i class="fas fa-wallet text-white"></i>
+                    <div class="w-16 h-16 rounded-xl bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-wallet text-white text-3xl"></i>
                     </div>
                     <span class="text-sm">Deposit</span>
                 </a>
                 <a href="{{ route('withdrawal') }}" class="flex flex-col items-center justify-center">
-                    <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                        <i class="fas fa-money-bill-wave text-white"></i>
+                    <div class="w-16 h-16 rounded-xl bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-money-bill-wave text-white text-3xl"></i>
                     </div>
                     <span class="text-sm">Withdraw</span>
                 </a>
