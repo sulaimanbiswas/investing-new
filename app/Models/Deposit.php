@@ -16,7 +16,6 @@ class Deposit extends Model
         'amount',
         'approved_amount',
         'currency',
-        'protocol',
         'txn_id',
         'screenshot_path',
         'status',

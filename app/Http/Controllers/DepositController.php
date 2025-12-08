@@ -28,8 +28,7 @@ class DepositController extends Controller
     {
         $request->validate([
             'gateway' => 'required|exists:gateways,id',
-            'amount' => 'required|numeric|min:0.01',
-            'protocol' => 'nullable|string'
+            'amount' => 'required|numeric|min:0.01'
         ]);
 
         $gateway = Gateway::findOrFail($request->gateway);
@@ -45,7 +44,6 @@ class DepositController extends Controller
             'gateway_id' => $gateway->id,
             'amount' => $request->amount,
             'currency' => $gateway->currency,
-            'protocol' => $request->protocol,
             'status' => 'initialed',
             'order_number' => 'DEP' . time() . rand(1000, 9999)
         ]);
