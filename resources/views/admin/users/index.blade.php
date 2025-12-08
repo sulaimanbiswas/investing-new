@@ -160,26 +160,6 @@
                                             <a class="dropdown-item" href="{{ route('admin.users.show', $user) }}">
                                                 <i class="fas fa-eye me-2"></i>View Details
                                             </a>
-                                            <a class="dropdown-item" href="javascript:void(0)">
-                                                <i class="fas fa-sign-in-alt me-2"></i>Login as User
-                                            </a>
-                                            <a class="dropdown-item" href="javascript:void(0)">
-                                                <i class="fas fa-plus-circle me-2"></i>Add Balance
-                                            </a>
-                                            <a class="dropdown-item" href="javascript:void(0)">
-                                                <i class="fas fa-minus-circle me-2"></i>Deduct Balance
-                                            </a>
-                                            <a class="dropdown-item" href="javascript:void(0)">
-                                                <i class="fas fa-history me-2"></i>Logins
-                                            </a>
-                                            <button type="button" class="dropdown-item user-ban-btn"
-                                                data-name="{{ $user->username }}">
-                                                <i class="fas fa-ban me-2"></i>Ban User
-                                            </button>
-                                            <button type="button" class="dropdown-item user-delete-btn text-danger"
-                                                data-name="{{ $user->username }}">
-                                                <i class="fas fa-trash me-2"></i>Delete User
-                                            </button>
                                         </div>
                                     </div>
                                 </td>
