@@ -176,7 +176,7 @@
             </div>
         </div>
 
-        <div class="chatbox">
+        {{-- <div class="chatbox">
             <div class="chatbox-close"></div>
             <div class="custom-tab-1">
                 <ul class="nav nav-tabs">
@@ -456,7 +456,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="header">
             <div class="header-content">
@@ -556,7 +556,7 @@
                                     @endif
                                 </div>
                             </li>
-                            <li class="nav-item dropdown notification_dropdown">
+                            {{-- <li class="nav-item dropdown notification_dropdown">
                                 <a class="nav-link bell bell-link ai-icon" href="javascript:;">
                                     <svg width="23" height="28" viewBox="0 0 23 22" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -572,7 +572,7 @@
                                     </svg>
                                     <span class="badge light text-white bg-primary">5</span>
                                 </a>
-                            </li>
+                            </li> --}}
 
                             <li class="nav-item dropdown notification_dropdown">
                                 <a class="nav-link bell dz-theme-mode" href="javascript:void(0);">
