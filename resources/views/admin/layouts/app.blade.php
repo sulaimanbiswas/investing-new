@@ -584,25 +584,30 @@
                                 @php
                                     $adminUser = auth('admin')->user();
                                     $displayName = $adminUser->name ?? $adminUser->username ?? 'Admin';
-                                    // If later an avatar path/column is added, use that; for now fallback to bundled image.
-                                    $avatarPath = asset('admin/images/profile/12.png');
                                 @endphp
                                 <a class="nav-link" href="javascript:;" role="button" data-bs-toggle="dropdown">
-                                    <img src="{{ $avatarPath }}" width="32" height="32" class="rounded-circle"
-                                        alt="Admin Avatar" />
+                                    @if($adminUser->avatar)
+                                        <img src="{{ asset('uploads/avatar/' . $adminUser->avatar) }}" width="32"
+                                            height="32" class="rounded-circle" alt="Admin Avatar" />
+                                    @else
+                                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
+                                            style="width: 32px; height: 32px;">
+                                            <i class="fas fa-user" style="font-size: 16px;"></i>
+                                        </div>
+                                    @endif
                                     <div class="header-info">
                                         <span>Hello,<strong> {{ $displayName }}</strong></span>
                                     </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
-                                    <a href="{{ route('admin.dashboard') }}" class="dropdown-item ai-icon">
+                                    <a href="{{ route('admin.profile.index') }}" class="dropdown-item ai-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="text-primary" width="18"
                                             height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                             <circle cx="12" cy="7" r="4" />
                                         </svg>
-                                        <span class="ms-2">Dashboard</span>
+                                        <span class="ms-2">Profile</span>
                                     </a>
                                     <form method="POST" action="{{ route('admin.logout') }}">
                                         @csrf

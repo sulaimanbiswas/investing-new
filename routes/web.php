@@ -90,6 +90,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
 
+        // Profile management
+        Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile.index');
+        Route::put('/profile/update', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+
         // CKEditor upload endpoint
         Route::post('/uploads/ckeditor', [\App\Http\Controllers\Admin\UploadController::class, 'ckeditor'])->name('ckeditor.upload');
 
