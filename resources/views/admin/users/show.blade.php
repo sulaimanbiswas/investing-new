@@ -852,6 +852,27 @@
         // Track opened user tabs
         let openedUserTabs = {};
 
+        // Keep the admin session warm while this page stays open to avoid surprise expirations
+        const sessionPingUrl = '{{ route("admin.session.ping") }}';
+        const sessionPingIntervalMs = 180000; // 3 minutes
+
+        function pingAdminSession() {
+            fetch(sessionPingUrl, {
+                method: 'GET',
+                credentials: 'same-origin',
+                cache: 'no-store',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).catch((err) => {
+                console.warn('Session ping failed', err);
+            });
+        }
+
+        // Fire once on load, then keepalive
+        pingAdminSession();
+        setInterval(pingAdminSession, sessionPingIntervalMs);
+
         // Clean up stale tabs from localStorage (older than 5 seconds)
         function cleanupStaleTabs() {
             const openTabs = JSON.parse(localStorage.getItem('impersonated_user_tabs') || '{}');
@@ -968,47 +989,64 @@
                     // Make AJAX call to get login URL
                     fetch('{{ route("admin.users.login-as-user", $user) }}', {
                         method: 'POST',
+                        credentials: 'same-origin',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Accept': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         }
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Close loading modal
-                                Swal.close();
+                        .then(async (response) => {
+                            let data = null;
+                            try {
+                                data = await response.clone().json();
+                            } catch (jsonError) {
+                                // Non-JSON responses (e.g. expired admin session) should not crash the flow
+                                console.warn('Non-JSON response when generating login link', jsonError);
+                            }
 
-                                // Open in new tab with a name for tracking
-                                const tabName = 'user_' + userId;
-                                const newTab = window.open(data.url, tabName);
-
-                                // Store reference to the tab
-                                openedUserTabs[userId] = newTab;
-
-                                // Check if tab was opened successfully
-                                if (newTab) {
-                                    // Show success message
-                                    Swal.fire({
-                                        title: 'Success!',
-                                        text: 'User login opened in new tab',
-                                        icon: 'success',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-
-                                    // Periodically check if tab is still open
-                                    const checkInterval = setInterval(() => {
-                                        if (newTab.closed) {
-                                            delete openedUserTabs[userId];
-                                            clearInterval(checkInterval);
-                                        }
-                                    }, 1000);
-                                } else {
-                                    Swal.fire('Error', 'Failed to open new tab. Please check your popup blocker.', 'error');
+                            if (!response.ok || !data?.success) {
+                                // If admin session expired or CSRF failed, ask to refresh so we can re-auth and retry
+                                if (response.status === 401 || response.status === 419) {
+                                    Swal.fire('Session expired', 'Please refresh this page and sign in again to continue.', 'warning');
+                                    return;
                                 }
+
+                                const message = data?.message || 'Failed to generate login link';
+                                Swal.fire('Error', message, 'error');
+                                return;
+                            }
+
+                            // Close loading modal
+                            Swal.close();
+
+                            // Open in new tab with a name for tracking
+                            const tabName = 'user_' + userId;
+                            const newTab = window.open(data.url, tabName);
+
+                            // Store reference to the tab
+                            openedUserTabs[userId] = newTab;
+
+                            // Check if tab was opened successfully
+                            if (newTab) {
+                                // Show success message
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'User login opened in new tab',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+
+                                // Periodically check if tab is still open
+                                const checkInterval = setInterval(() => {
+                                    if (newTab.closed) {
+                                        delete openedUserTabs[userId];
+                                        clearInterval(checkInterval);
+                                    }
+                                }, 1000);
                             } else {
-                                Swal.fire('Error', 'Failed to generate login link', 'error');
+                                Swal.fire('Error', 'Failed to open new tab. Please check your popup blocker.', 'error');
                             }
                         })
                         .catch(error => {

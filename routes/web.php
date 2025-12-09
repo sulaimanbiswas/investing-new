@@ -116,6 +116,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/users/{user}/add-balance', [\App\Http\Controllers\Admin\UserController::class, 'addBalance'])->name('users.add-balance');
         Route::post('/users/{user}/subtract-balance', [\App\Http\Controllers\Admin\UserController::class, 'subtractBalance'])->name('users.subtract-balance');
         Route::post('/users/{user}/change-password', [\App\Http\Controllers\Admin\UserController::class, 'changePassword'])->name('users.change-password');
+        // Lightweight ping to keep the admin session active while the page is open
+        Route::get('/session/ping', function () {
+            return response()->noContent();
+        })->name('session.ping');
         Route::post('/users/{user}/assign-order-set', [\App\Http\Controllers\Admin\UserController::class, 'assignOrderSet'])->name('users.assign-order-set');
         Route::delete('/users/{user}/order-set/{userOrderSet}', [\App\Http\Controllers\Admin\UserController::class, 'deleteUserOrderSet'])->name('users.delete-order-set');
         Route::put('/users/{user}/update-management', [\App\Http\Controllers\Admin\UserController::class, 'updateManagement'])->name('users.update-management');
