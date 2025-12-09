@@ -50,8 +50,12 @@ class AppServiceProvider extends ServiceProvider
         View::composer('layouts.user.*', function ($view) {
             if (Auth::check()) {
                 $userId = Auth::id();
-                $unreadCount = Notification::where('user_id', $userId)->where('is_read', false)->count();
+                $unreadCount = Notification::where('user_id', $userId)
+                    ->where('is_for_admin', false)
+                    ->where('is_read', false)
+                    ->count();
                 $latestNotifications = Notification::where('user_id', $userId)
+                    ->where('is_for_admin', false)
                     ->latest()
                     ->take(5)
                     ->get();

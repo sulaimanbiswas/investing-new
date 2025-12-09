@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\{User, Deposit, ReferralCommission, Transaction};
+use App\Models\{User, Deposit, ReferralCommission, Transaction, Notification};
 use App\Helpers\SettingHelper;
 use Illuminate\Support\Facades\DB;
 
@@ -144,6 +144,22 @@ class ReferralCommissionService
             'balance_before' => $balanceBefore,
             'balance_after' => $balanceAfter,
             'remarks' => "Level {$level} referral commission from {$referredUser->name}'s deposit of \${$deposit->approved_amount}",
+        ]);
+
+        // Create notification for referral commission
+        Notification::create([
+            'user_id' => $earner->id,
+            'type' => 'referral_commission',
+            'title' => "Level {$level} Referral Commission Earned",
+            'message' => "{$referredUser->name} deposited \${$deposit->approved_amount} and you earned \${$commissionAmount} commission.",
+            'data' => [
+                'deposit_id' => $deposit->id,
+                'commission_amount' => $commissionAmount,
+                'level' => $level,
+                'referred_user_id' => $referredUser->id,
+            ],
+            'is_read' => false,
+            'is_for_admin' => false,
         ]);
     }
 

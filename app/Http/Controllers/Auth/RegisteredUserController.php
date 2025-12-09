@@ -30,15 +30,21 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $validationRules = [
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', Rules\Password::defaults()],
             'withdrawal_password' => ['nullable', 'string', 'min:6', 'max:255'],
             'invitation_code' => ['required', 'string', 'max:255', 'exists:users,referral_code'],
-            'verification_code' => ['required', 'string'],
-        ], [
+        ];
+
+        // Add captcha validation only if captcha is enabled
+        if (captcha_enabled()) {
+            $validationRules['verification_code'] = ['required', 'string'];
+        }
+
+        $request->validate($validationRules, [
             'invitation_code.exists' => 'Invalid invitation code. Please enter a valid referral code from an existing user.',
         ]);
 

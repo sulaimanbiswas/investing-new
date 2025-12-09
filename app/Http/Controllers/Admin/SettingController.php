@@ -65,6 +65,11 @@ class SettingController extends Controller
             'default_level3_commission' => 'required|numeric|min:0|max:100',
         ]);
 
+        // Handle checkbox: if not present in request, set to false
+        if (!$request->has('enable_captcha')) {
+            $validated['enable_captcha'] = false;
+        }
+
         // Save settings
         foreach ($validated as $key => $value) {
             $type = match ($key) {
