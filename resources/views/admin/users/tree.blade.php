@@ -22,7 +22,7 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <div class="tree-container">
+                    <div class="tree-container d-flex flex-column gap-3">
                         <div class="tree">
                             <!-- Root User -->
                             <ul>
