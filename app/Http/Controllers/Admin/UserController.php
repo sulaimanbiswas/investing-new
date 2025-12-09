@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -328,8 +329,8 @@ class UserController extends Controller
 
     public function loginAsUser(User $user)
     {
-        // Generate a temporary token for user login
-        $token = base64_encode(random_bytes(32));
+        // Generate a URL-safe token for user login to avoid "/" or "+" in the path
+        $token = Str::random(64);
 
         // Store token in cache for 5 minutes with user ID
         Cache::put('admin_login_as_' . $token, [
