@@ -597,7 +597,7 @@
                                         </div>
                                     @endif
                                     <div class="header-info">
-                                        <span>Hello,<strong> {{ $displayName }}</strong></span>
+                                        <span><strong>{{ $displayName }}</strong></span>
                                     </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
