@@ -581,6 +581,7 @@
                                 </a>
                             </li>
                             <li class="nav-item dropdown header-profile">
+
                                 @php
                                     $adminUser = auth('admin')->user();
                                     $displayName = $adminUser->name ?? $adminUser->username ?? 'Admin';
@@ -591,8 +592,8 @@
                                             height="32" class="rounded-circle" alt="Admin Avatar" />
                                     @else
                                         <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
-                                            style="width: 32px; height: 32px;">
-                                            <i class="fas fa-user" style="font-size: 16px;"></i>
+                                            style="width: 50px; height: 50px;">
+                                            <i class="fas fa-user" style="font-size: 32px;"></i>
                                         </div>
                                     @endif
                                     <div class="header-info">

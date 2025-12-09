@@ -31,36 +31,7 @@
                             </div>
                             <div class="profile-email px-2 pt-2">
                                 <h4 class="text-muted mb-0">{{ auth('admin')->user()->email }}</h4>
-                                <p>Email</p>
-                            </div>
-                            <div class="dropdown ms-auto">
-                                <a href="javascript:void(0);" class="btn btn-primary light sharp" data-bs-toggle="dropdown"
-                                    aria-expanded="true">
-                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                        width="18px" height="18px" viewBox="0 0 24 24" version="1.1">
-                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                            <rect x="0" y="0" width="24" height="24"></rect>
-                                            <circle fill="#000000" cx="5" cy="12" r="2"></circle>
-                                            <circle fill="#000000" cx="12" cy="12" r="2"></circle>
-                                            <circle fill="#000000" cx="19" cy="12" r="2"></circle>
-                                        </g>
-                                    </svg>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li class="dropdown-item">
-                                        <a href="#profile-settings" data-bs-toggle="tab">
-                                            <i class="fa fa-cog text-primary me-2"></i>Edit Profile
-                                        </a>
-                                    </li>
-                                    <li class="dropdown-item">
-                                        <form method="POST" action="{{ route('admin.logout') }}">
-                                            @csrf
-                                            <button type="submit" class="border-0 bg-transparent w-100 text-start">
-                                                <i class="fa fa-sign-out-alt text-danger me-2"></i>Logout
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
+                                <p>{{"@" . auth('admin')->user()->username }}</p>
                             </div>
                         </div>
                     </div>
@@ -70,7 +41,7 @@
     </div>
 
     <div class="row">
-        <div class="col-xl-4">
+        <div class="col-xl-5">
             <div class="card">
                 <div class="card-body">
                     <div class="profile-statistics">
@@ -143,7 +114,7 @@
             </div>
         </div>
 
-        <div class="col-xl-8">
+        <div class="col-xl-7">
             <div class="card h-auto">
                 <div class="card-body">
                     <div class="profile-tab">
