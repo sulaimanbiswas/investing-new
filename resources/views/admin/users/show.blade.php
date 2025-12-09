@@ -438,14 +438,21 @@
                                             </td>
                                             <td>{{ $userOrderSet->assigned_at->format('M d, Y') }}</td>
                                             <td>
-                                                <form action="{{ route('admin.users.delete-order-set', [$user, $userOrderSet]) }}"
-                                                    method="POST" style="display: inline;" class="deleteOrderSetForm">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete Order Set">
-                                                        <i class="fas fa-trash"></i>
+                                                @if($userOrderSet->completionPercentage() == 0)
+                                                    <form action="{{ route('admin.users.delete-order-set', [$user, $userOrderSet]) }}"
+                                                        method="POST" style="display: inline;" class="deleteOrderSetForm">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete Order Set">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <button type="button" class="btn btn-sm btn-secondary" disabled
+                                                        title="Cannot delete - orders in progress">
+                                                        <i class="fas fa-ban"></i>
                                                     </button>
-                                                </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

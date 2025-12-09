@@ -122,10 +122,17 @@
                     <div class="space-y-3 mb-4">
                         @foreach($unpaidOrder->manage_crypto as $product)
                             <div class="flex items-start gap-4 p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
-                                <div
-                                    class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-box text-white text-xl"></i>
-                                </div>
+                                @if(!empty($product['image']))
+                                    <div class="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden">
+                                        <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] ?? 'Product' }}"
+                                            class="w-full h-full object-cover">
+                                    </div>
+                                @else
+                                    <div
+                                        class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-box text-white text-xl"></i>
+                                    </div>
+                                @endif
                                 <div class="flex-1">
                                     <h4 class="font-bold text-gray-900 mb-1">{{ $product['name'] ?? 'Product' }}</h4>
                                     <div class="flex items-center gap-4 text-sm">
@@ -551,14 +558,14 @@
                     const productDiv = document.createElement('div');
                     productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
                     productDiv.innerHTML = `
-                                                                                                    <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                                                                        <i class="fas fa-box text-white text-2xl"></i>
-                                                                                                    </div>
-                                                                                                    <div class="flex-1">
-                                                                                                        <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
-                                                                                                        <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
-                                                                                                    </div>
-                                                                                                `;
+                                                                                                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                                                                            <i class="fas fa-box text-white text-2xl"></i>
+                                                                                                        </div>
+                                                                                                        <div class="flex-1">
+                                                                                                            <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                                                                                            <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                                                                                        </div>
+                                                                                                    `;
                     productsList.appendChild(productDiv);
                 });
             }

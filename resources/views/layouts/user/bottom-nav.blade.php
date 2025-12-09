@@ -16,7 +16,7 @@
             <span class="text-xs font-medium">Menu</span>
         </a>
         <a href="{{ route('records.index') }}"
-            class="flex flex-col items-center gap-1 text-gray-500 hover:text-yellow-500 transition">
+            class="flex flex-col items-center gap-1 {{ request()->routeIs('records.*') ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500' }} transition">
             <i class="fas fa-file-alt text-xl"></i>
             <span class="text-xs font-medium">Record</span>
         </a>

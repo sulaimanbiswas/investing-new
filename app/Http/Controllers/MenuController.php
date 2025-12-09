@@ -259,6 +259,7 @@ class MenuController extends Controller
                     'name' => $productPackageItem->product->name,
                     'quantity' => $productPackageItem->quantity,
                     'price' => $productPackageItem->price,
+                    'image' => $productPackageItem->product->image,
                 ]
             ],
         ]);

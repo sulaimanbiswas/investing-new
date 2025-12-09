@@ -224,6 +224,7 @@ class UserController extends Controller
                         'name' => $item->product->name,
                         'quantity' => $item->quantity,
                         'price' => $item->price,
+                        'image' => $item->product->image,
                     ];
                 }
 

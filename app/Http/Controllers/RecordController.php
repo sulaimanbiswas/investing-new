@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\UserOrder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -11,7 +12,7 @@ class RecordController extends Controller
     public function index(): View
     {
         $userId = Auth::id();
-        $activeTab = request('tab', 'all');
+        $activeTab = request('tab', 'incomplete');
 
         // Get transaction statistics
         $stats = [
@@ -33,16 +34,39 @@ class RecordController extends Controller
             'net_balance' => Transaction::where('user_id', $userId)->sum('amount'),
         ];
 
-        // Get transactions based on active tab
-        $query = Transaction::where('user_id', $userId)->latest();
+        // Get data based on active tab
+        $incompleteOrders = collect();
+        $completeOrders = collect();
+        $transactions = collect();
 
-        if ($activeTab !== 'all') {
-            $query->where('type', $activeTab);
+        if ($activeTab === 'incomplete') {
+            $incompleteOrders = UserOrder::whereHas('userOrderSet', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+                ->where('status', 'unpaid')
+                ->with(['productPackageItem.productPackage'])
+                ->latest()
+                ->paginate(15)
+                ->withQueryString();
+        } elseif ($activeTab === 'complete') {
+            $completeOrders = UserOrder::whereHas('userOrderSet', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+                ->where('status', 'paid')
+                ->with(['productPackageItem.productPackage'])
+                ->latest('paid_at')
+                ->paginate(15)
+                ->withQueryString();
+        } elseif ($activeTab === 'transactions') {
+            $transactions = Transaction::where('user_id', $userId)
+                ->latest()
+                ->paginate(15)
+                ->withQueryString();
         }
 
-        $transactions = $query->paginate(15)->withQueryString();
-
         return view('user.records.index', compact(
+            'incompleteOrders',
+            'completeOrders',
             'transactions',
             'stats',
             'activeTab'
