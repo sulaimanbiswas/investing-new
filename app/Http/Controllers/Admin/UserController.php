@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
@@ -258,6 +259,34 @@ class UserController extends Controller
         }
     }
 
+    public function deleteUserOrderSet(Request $request, User $user, UserOrderSet $userOrderSet)
+    {
+        // Verify the order set belongs to this user
+        if ($userOrderSet->user_id !== $user->id) {
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('error', 'Unauthorized action.');
+        }
+
+        try {
+            $orderSetName = $userOrderSet->orderSet->name;
+
+            // Delete all user orders associated with this order set
+            UserOrder::where('user_order_set_id', $userOrderSet->id)->delete();
+
+            // Delete the user order set
+            $userOrderSet->delete();
+
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('success', "Order set '{$orderSetName}' and its associated orders have been removed successfully.");
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('error', 'Failed to delete order set: ' . $e->getMessage());
+        }
+    }
+
     public function updateManagement(Request $request, User $user)
     {
         $request->validate([
@@ -298,39 +327,68 @@ class UserController extends Controller
 
     public function loginAsUser(User $user)
     {
-        // Store admin ID and user ID in session to allow returning
-        $adminId = Auth::guard('admin')->id();
+        // Generate a temporary token for user login
+        $token = base64_encode(random_bytes(32));
 
-        // Logout from admin guard
-        Auth::guard('admin')->logout();
+        // Store token in cache for 5 minutes with user ID
+        Cache::put('admin_login_as_' . $token, [
+            'user_id' => $user->id,
+            'admin_id' => Auth::id(),
+        ], now()->addMinutes(5));
 
-        // Store admin ID and target user ID after logout
-        Session::put('admin_logged_in_as_user', $adminId);
-        Session::put('admin_viewing_user_id', $user->id);
+        // Return URL to open in new tab
+        $loginUrl = route('admin.users.impersonate', ['token' => $token]);
 
-        // Login as the user using web guard
+        return response()->json([
+            'success' => true,
+            'url' => $loginUrl
+        ]);
+    }
+
+    public function impersonate($token)
+    {
+        // Get data from cache
+        $data = Cache::get('admin_login_as_' . $token);
+
+        if (!$data) {
+            return redirect()->route('login')->with('error', 'Invalid or expired login token.');
+        }
+
+        // Delete token from cache (one-time use)
+        Cache::forget('admin_login_as_' . $token);
+
+        // Find user
+        $user = User::find($data['user_id']);
+
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'User not found.');
+        }
+
+        // Store admin info in session for return button
+        Session::put('impersonated_by_admin', $data['admin_id']);
+        Session::put('original_user_id', $user->id);
+
+        // Login as user
         Auth::guard('web')->login($user);
-
-        // Regenerate session
         request()->session()->regenerate();
 
         return redirect()->route('dashboard')->with('success', 'You are now logged in as ' . $user->username);
     }
     public function returnToAdmin()
     {
-        $adminId = Session::get('admin_logged_in_as_user');
-        $viewingUserId = Session::get('admin_viewing_user_id');
+        $adminId = Session::get('impersonated_by_admin');
+        $userId = Session::get('original_user_id');
 
         if (!$adminId) {
-            return redirect()->route('dashboard')->with('error', 'No admin session found.');
+            return redirect()->route('dashboard')->with('error', 'No admin impersonation session found.');
         }
 
         // Find admin before any logout
         $admin = User::find($adminId);
 
         if (!$admin || !$admin->is_admin) {
-            Session::forget('admin_logged_in_as_user');
-            Session::forget('admin_viewing_user_id');
+            Session::forget('impersonated_by_admin');
+            Session::forget('original_user_id');
             return redirect()->route('admin.login')->with('error', 'Admin account not found.');
         }
 
@@ -338,8 +396,8 @@ class UserController extends Controller
         Auth::guard('web')->logout();
 
         // Clear the session markers before logging in as admin
-        Session::forget('admin_logged_in_as_user');
-        Session::forget('admin_viewing_user_id');
+        Session::forget('impersonated_by_admin');
+        Session::forget('original_user_id');
 
         // Login as admin using admin guard
         Auth::guard('admin')->login($admin);
@@ -348,8 +406,8 @@ class UserController extends Controller
         request()->session()->regenerate();
 
         // Redirect back to user details page if we have the user ID
-        if ($viewingUserId) {
-            return redirect()->route('admin.users.show', $viewingUserId)->with('success', 'Returned to admin panel.');
+        if ($userId) {
+            return redirect()->route('admin.users.show', $userId)->with('success', 'Returned to admin panel.');
         }
 
         return redirect()->route('admin.dashboard')->with('success', 'Returned to admin panel.');

@@ -387,7 +387,7 @@
                     <h4 class="card-title">Order Set Assign</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.users.assign-order-set', $user) }}" method="POST">
+                    <form action="{{ route('admin.users.assign-order-set', $user) }}" method="POST" id="assignOrderSetForm">
                         @csrf
                         <div class="mb-3">
                             <label for="order_set_id" class="form-label">Order Set <span
@@ -419,6 +419,7 @@
                                         <th>Completed</th>
                                         <th>Status</th>
                                         <th>Assigned</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -436,6 +437,16 @@
                                                 @endif
                                             </td>
                                             <td>{{ $userOrderSet->assigned_at->format('M d, Y') }}</td>
+                                            <td>
+                                                <form action="{{ route('admin.users.delete-order-set', [$user, $userOrderSet]) }}"
+                                                    method="POST" style="display: inline;" class="deleteOrderSetForm">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete Order Set">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -761,12 +772,172 @@
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Assign Order Set Form - Success Modal
+        document.getElementById('assignOrderSetForm').addEventListener('submit', function (e) {
+            const orderSetId = document.getElementById('order_set_id').value;
+
+            if (!orderSetId) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Please select an order set',
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+
+            // Show success modal after form submits
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Assigning Order Set...',
+                text: 'Please wait while we assign the order set to this user.',
+                icon: 'info',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    // Submit the form after showing loading
+                    setTimeout(() => {
+                        this.submit();
+                    }, 500);
+                }
+            });
+        });
+
+        // Delete Order Set Form - Confirmation
+        document.querySelectorAll('.deleteOrderSetForm').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const orderSetName = this.closest('tr').querySelector('td:first-child').textContent.trim();
+
+                Swal.fire({
+                    title: 'Delete Order Set?',
+                    html: `<strong>This action cannot be undone!</strong><br><br>You are about to delete the order set:<br><strong>${orderSetName}</strong><br><br>All associated orders will also be deleted.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Delete',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Deleting...',
+                            text: 'Please wait while we delete the order set.',
+                            icon: 'info',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                setTimeout(() => {
+                                    this.submit();
+                                }, 500);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        // Track opened user tabs
+        let openedUserTabs = {};
+
+        // Clean up stale tabs from localStorage (older than 5 seconds)
+        function cleanupStaleTabs() {
+            const openTabs = JSON.parse(localStorage.getItem('impersonated_user_tabs') || '{}');
+            const now = Date.now();
+            let changed = false;
+
+            for (const userId in openTabs) {
+                for (const tabId in openTabs[userId]) {
+                    if (now - openTabs[userId][tabId] > 5000) {
+                        delete openTabs[userId][tabId];
+                        changed = true;
+                    }
+                }
+                if (Object.keys(openTabs[userId]).length === 0) {
+                    delete openTabs[userId];
+                    changed = true;
+                }
+            }
+
+            if (changed) {
+                localStorage.setItem('impersonated_user_tabs', JSON.stringify(openTabs));
+            }
+        }
+
+        // Run cleanup every 3 seconds
+        setInterval(cleanupStaleTabs, 3000);
+
+        // Check if user is already open in localStorage
+        function isUserTabOpen(userId) {
+            cleanupStaleTabs();
+            const openTabs = JSON.parse(localStorage.getItem('impersonated_user_tabs') || '{}');
+            return openTabs[userId] && Object.keys(openTabs[userId]).length > 0;
+        }
+
+        // Listen for messages from other tabs
+        window.addEventListener('storage', function (e) {
+            if (e.key === 'user_tab_focused' && e.newValue) {
+                const data = JSON.parse(e.newValue);
+                if (openedUserTabs[data.userId]) {
+                    // Remove the tab reference if it was focused from another window
+                    delete openedUserTabs[data.userId];
+                }
+            }
+        });
+
         document.getElementById('loginAsUserBtn').addEventListener('click', function () {
             const username = this.dataset.username;
+            const userId = this.dataset.userId;
+
+            // Check if this user is already open in localStorage
+            if (isUserTabOpen(userId)) {
+                // Send message to focus that tab
+                localStorage.setItem('user_tab_focus_request', JSON.stringify({
+                    userId: userId,
+                    timestamp: Date.now()
+                }));
+                localStorage.removeItem('user_tab_focus_request');
+
+                Swal.fire({
+                    title: 'Tab Already Open',
+                    html: `<strong>${username}</strong> is already logged in another tab.<br><br>Attempting to switch to that tab...`,
+                    icon: 'info',
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+                return;
+            }
+
+            // Check if this user is already open in a window reference
+            if (openedUserTabs[userId] && !openedUserTabs[userId].closed) {
+                // Focus the existing tab
+                openedUserTabs[userId].focus();
+
+                // Send message to that tab to focus
+                localStorage.setItem('user_tab_focus_request', JSON.stringify({
+                    userId: userId,
+                    timestamp: Date.now()
+                }));
+                localStorage.removeItem('user_tab_focus_request');
+
+                Swal.fire({
+                    title: 'Tab Already Open',
+                    text: `${username} is already logged in. Switching to that tab.`,
+                    icon: 'info',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                return;
+            }
 
             Swal.fire({
                 title: 'Login as User?',
-                html: `You will be logged in as <strong>${username}</strong>.<br><br>You can return to admin panel using the "Back to Admin" button.`,
+                html: `You will be logged in as <strong>${username}</strong> in a new tab.<br><br>Your admin session will remain active in this tab.`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#0dcaf0',
@@ -775,12 +946,71 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('loginAsUserForm').submit();
+                    // Show loading
+                    Swal.fire({
+                        title: 'Generating login link...',
+                        text: 'Please wait',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Make AJAX call to get login URL
+                    fetch('{{ route("admin.users.login-as-user", $user) }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Close loading modal
+                                Swal.close();
+
+                                // Open in new tab with a name for tracking
+                                const tabName = 'user_' + userId;
+                                const newTab = window.open(data.url, tabName);
+
+                                // Store reference to the tab
+                                openedUserTabs[userId] = newTab;
+
+                                // Check if tab was opened successfully
+                                if (newTab) {
+                                    // Show success message
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: 'User login opened in new tab',
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+
+                                    // Periodically check if tab is still open
+                                    const checkInterval = setInterval(() => {
+                                        if (newTab.closed) {
+                                            delete openedUserTabs[userId];
+                                            clearInterval(checkInterval);
+                                        }
+                                    }, 1000);
+                                } else {
+                                    Swal.fire('Error', 'Failed to open new tab. Please check your popup blocker.', 'error');
+                                }
+                            } else {
+                                Swal.fire('Error', 'Failed to generate login link', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire('Error', 'Failed to login as user', 'error');
+                        });
                 }
             });
-        });
-
-        // Ban User Modal
+        });        // Ban User Modal
         const banUserBtn = document.getElementById('banUserBtn');
         if (banUserBtn) {
             banUserBtn.addEventListener('click', function () {

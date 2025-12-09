@@ -113,37 +113,37 @@
 
 <body class="bg-gray-50">
     <!-- Back to Admin Alert -->
-    @if(session()->has('admin_logged_in_as_user'))
-        <div
-            class="bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 fixed top-0 left-0 right-0 z-[60] shadow-lg">
-            <div class="max-w-6xl mx-auto flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="bg-white/20 rounded-full p-2">
-                        <i class="fas fa-user-shield text-lg"></i>
-                    </div>
-                    <div>
-                        <span class="text-sm font-bold block">Admin Mode</span>
-                        <span class="text-xs opacity-90">Viewing as {{ Auth::user()->username }}</span>
-                    </div>
+    {{-- @if(session()->has('impersonated_by_admin'))
+    <div
+        class="bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 fixed top-0 left-0 right-0 z-[60] shadow-lg">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 rounded-full p-2">
+                    <i class="fas fa-user-shield text-lg"></i>
                 </div>
-                <form action="{{ route('return-to-admin') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit"
-                        class="bg-white text-orange-600 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg transition duration-200 flex items-center gap-2 shadow-md">
-                        <i class="fas fa-arrow-left"></i>
-                        <span class="hidden sm:inline">Back to Admin</span>
-                        <span class="sm:hidden">Back</span>
-                    </button>
-                </form>
+                <div>
+                    <span class="text-sm font-bold block">Admin Mode</span>
+                    <span class="text-xs opacity-90">Viewing as {{ Auth::user()->username }}</span>
+                </div>
             </div>
+            <form action="{{ route('return-to-admin') }}" method="POST" class="inline">
+                @csrf
+                <button type="submit"
+                    class="bg-white text-orange-600 hover:bg-gray-100 font-bold py-2 px-4 rounded-lg transition duration-200 flex items-center gap-2 shadow-md">
+                    <i class="fas fa-arrow-left"></i>
+                    <span class="hidden sm:inline">Back to Admin</span>
+                    <span class="sm:hidden">Back</span>
+                </button>
+            </form>
         </div>
-    @endif
+    </div>
+    @endif --}}
 
     <!-- Header -->
     @include('layouts.user.header')
 
     <!-- Main Content -->
-    <main class="{{ session()->has('admin_logged_in_as_user') ? 'pt-36 md:pt-40' : 'pt-20 md:pt-24' }} pb-24 px-4">
+    <main class="{{ session()->has('impersonated_by_admin') ? 'pt-20 md:pt-24' : 'pt-20 md:pt-24' }} pb-24 px-4">
         <div class="max-w-6xl mx-auto py-4">
             @yield('content')
         </div>
@@ -157,6 +157,58 @@
 
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    @if(session()->has('impersonated_by_admin'))
+        <script>
+            // Listen for focus requests from admin panel
+            window.addEventListener('storage', function (e) {
+                if (e.key === 'user_tab_focus_request' && e.newValue) {
+                    const data = JSON.parse(e.newValue);
+                    const currentUserId = '{{ Auth::id() }}';
+
+                    if (data.userId == currentUserId) {
+                        // Focus this window
+                        window.focus();
+
+                        // Notify that this tab was focused
+                        localStorage.setItem('user_tab_focused', JSON.stringify({
+                            userId: currentUserId,
+                            timestamp: Date.now()
+                        }));
+                        localStorage.removeItem('user_tab_focused');
+                    }
+                }
+            });
+
+            // Send heartbeat to track this tab
+            const userId = '{{ Auth::id() }}';
+            const tabId = 'tab_' + Date.now() + '_' + Math.random();
+
+            function sendHeartbeat() {
+                const openTabs = JSON.parse(localStorage.getItem('impersonated_user_tabs') || '{}');
+                openTabs[userId] = openTabs[userId] || {};
+                openTabs[userId][tabId] = Date.now();
+                localStorage.setItem('impersonated_user_tabs', JSON.stringify(openTabs));
+            }
+
+            // Send heartbeat every 2 seconds
+            sendHeartbeat();
+            const heartbeatInterval = setInterval(sendHeartbeat, 2000);
+
+            // Clean up on window close
+            window.addEventListener('beforeunload', function () {
+                clearInterval(heartbeatInterval);
+                const openTabs = JSON.parse(localStorage.getItem('impersonated_user_tabs') || '{}');
+                if (openTabs[userId]) {
+                    delete openTabs[userId][tabId];
+                    if (Object.keys(openTabs[userId]).length === 0) {
+                        delete openTabs[userId];
+                    }
+                    localStorage.setItem('impersonated_user_tabs', JSON.stringify(openTabs));
+                }
+            });
+        </script>
+    @endif
 
     @stack('scripts')
 </body>

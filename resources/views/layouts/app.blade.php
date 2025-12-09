@@ -65,7 +65,7 @@
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
         <!-- Back to Admin Button -->
-        @if(session()->has('admin_logged_in_as_user'))
+        @if(session()->has('impersonated_by_admin'))
             <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-3" role="alert">
                 <div class="max-w-7xl mx-auto flex items-center justify-between">
                     <div class="flex items-center">
@@ -74,7 +74,7 @@
                                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span class="font-medium">You are viewing as user</span>
+                        <span class="font-medium">You are viewing as user (Impersonated by Admin)</span>
                     </div>
                     <form action="{{ route('return-to-admin') }}" method="POST" class="inline">
                         @csrf

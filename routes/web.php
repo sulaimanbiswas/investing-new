@@ -113,9 +113,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/users/{user}/subtract-balance', [\App\Http\Controllers\Admin\UserController::class, 'subtractBalance'])->name('users.subtract-balance');
         Route::post('/users/{user}/change-password', [\App\Http\Controllers\Admin\UserController::class, 'changePassword'])->name('users.change-password');
         Route::post('/users/{user}/assign-order-set', [\App\Http\Controllers\Admin\UserController::class, 'assignOrderSet'])->name('users.assign-order-set');
+        Route::delete('/users/{user}/order-set/{userOrderSet}', [\App\Http\Controllers\Admin\UserController::class, 'deleteUserOrderSet'])->name('users.delete-order-set');
         Route::put('/users/{user}/update-management', [\App\Http\Controllers\Admin\UserController::class, 'updateManagement'])->name('users.update-management');
         Route::put('/users/{user}/update-commissions', [\App\Http\Controllers\Admin\UserController::class, 'updateCommissions'])->name('users.update-commissions');
         Route::post('/users/{user}/login-as-user', [\App\Http\Controllers\Admin\UserController::class, 'loginAsUser'])->name('users.login-as-user');
+        Route::get('/impersonate/{token}', [\App\Http\Controllers\Admin\UserController::class, 'impersonate'])->name('users.impersonate');
         Route::post('/users/{user}/ban', [\App\Http\Controllers\Admin\UserController::class, 'banUser'])->name('users.ban');
         Route::post('/users/{user}/unban', [\App\Http\Controllers\Admin\UserController::class, 'unbanUser'])->name('users.unban');
         Route::get('/users/{user}/tree', [\App\Http\Controllers\Admin\UserController::class, 'userTree'])->name('users.tree');
