@@ -56,7 +56,7 @@
             @foreach($tabs as $key => $tab)
                 <a href="{{ route('records.index', ['tab' => $key]) }}"
                     class="flex-shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition
-                                                                            {{ $activeTab === $key ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                                                                                    {{ $activeTab === $key ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     <i class="fas {{ $tab['icon'] }} mr-1"></i>{{ $tab['label'] }}
                 </a>
             @endforeach
