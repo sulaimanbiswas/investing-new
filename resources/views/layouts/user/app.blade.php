@@ -210,6 +210,28 @@
         </script>
     @endif
 
+    <!-- Smart Back Navigation -->
+    <script>
+        // Store current page in sessionStorage for back button
+        (function() {
+            const currentPage = window.location.pathname;
+            const previousPage = sessionStorage.getItem('previousPage');
+            
+            // Store the current page for next navigation
+            sessionStorage.setItem('previousPage', currentPage);
+            
+            // Make previousPage globally available
+            window.getPreviousPage = function() {
+                return previousPage || '{{ route("dashboard") }}';
+            };
+            
+            // Listen to back button clicks
+            window.addEventListener('popstate', function() {
+                sessionStorage.setItem('previousPage', window.location.pathname);
+            });
+        })();
+    </script>
+
     @stack('scripts')
 </body>
 

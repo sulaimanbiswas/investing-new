@@ -3,6 +3,12 @@
 @section('title', 'Withdrawal Records - ' . config('app.name'))
 
 @section('content')
+    <!-- Header with Back Button -->
+    <div class="mb-6 flex items-center gap-3">
+        @include('components.back-button')
+        <h1 class="text-2xl font-bold text-gray-800">Withdrawal Records</h1>
+    </div>
+
     <div class="bg-gradient-to-br from-green-600 to-teal-700 rounded-xl shadow-lg p-5 text-white mb-5">
         <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">

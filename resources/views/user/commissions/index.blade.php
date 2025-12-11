@@ -5,10 +5,7 @@
 @section('content')
     <!-- Header -->
     <div class="mb-6 flex items-center gap-3">
-        <a href="{{ route('dashboard') }}"
-            class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
-            <i class="fas fa-arrow-left text-gray-700"></i>
-        </a>
+        @include('components.back-button')
         <h1 class="text-2xl font-bold text-gray-800">Referral Commissions</h1>
     </div>
 

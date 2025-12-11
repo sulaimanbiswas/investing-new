@@ -4,6 +4,12 @@
 
 @section('content')
     <div class="max-w-4xl mx-auto space-y-8">
+        <!-- Header with Back Button -->
+        <div class="mb-6 flex items-center gap-3">
+            @include('components.back-button')
+            <h1 class="text-2xl font-bold text-gray-800">Profile Settings</h1>
+        </div>
+
         <!-- Header Card (Preview Info) -->
         <div
             class="bg-gradient-to-br from-rose-600 to-purple-700 rounded-2xl shadow-lg p-6 text-white flex items-start gap-5">
