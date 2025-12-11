@@ -3,6 +3,14 @@
 @section('title', 'Records - ' . config('app.name'))
 
 @section('content')
+    <!-- Header with Back Button -->
+    <div class="mb-6 flex items-center gap-3">
+        <a href="{{ route('dashboard') }}" class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
+            <i class="fas fa-arrow-left text-gray-700"></i>
+        </a>
+        <h1 class="text-2xl font-bold text-gray-800">Records</h1>
+    </div>
+
     <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl shadow-lg p-5 text-white mb-5">
         <div class="mb-4">
             <p class="text-sm text-white/80">Overview</p>

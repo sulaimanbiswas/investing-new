@@ -3,6 +3,14 @@
 @section('title', 'Invitation Program - ' . config('app.name'))
 
 @section('content')
+    <!-- Header with Back Button -->
+    <div class="mb-6 flex items-center gap-3">
+        <a href="{{ route('dashboard') }}" class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
+            <i class="fas fa-arrow-left text-gray-700"></i>
+        </a>
+        <h1 class="text-2xl font-bold text-gray-800">Invitation Program</h1>
+    </div>
+
     <!-- Page Header -->
     <div class="mb-6">
         <div class="flex items-center gap-3 mb-2">

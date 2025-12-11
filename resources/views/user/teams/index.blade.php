@@ -3,6 +3,14 @@
 @section('title', 'My Teams - ' . config('app.name'))
 
 @section('content')
+    <!-- Header with Back Button -->
+    <div class="mb-6 flex items-center gap-3">
+        <a href="{{ route('dashboard') }}" class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
+            <i class="fas fa-arrow-left text-gray-700"></i>
+        </a>
+        <h1 class="text-2xl font-bold text-gray-800">My Teams</h1>
+    </div>
+
     <!-- Header Banner -->
     <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg p-6 mb-6 text-white">
         <h1 class="text-2xl sm:text-3xl font-bold mb-2">Invite friends!</h1>
