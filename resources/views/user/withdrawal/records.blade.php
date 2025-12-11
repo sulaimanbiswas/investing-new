@@ -39,7 +39,7 @@
                 <div class="bg-white rounded-xl shadow-sm p-5">
                     <div class="flex items-start justify-between mb-3">
                         <div>
-                            <p class="text-sm text-gray-600 mb-1">Order No: <span
+                            <p class="text-sm text-gray-600 mb-1">Withdraw No: <span
                                     class="font-semibold text-gray-900">{{ $withdrawal->order_number }}</span></p>
                             <p class="text-xs text-gray-500">{{ $withdrawal->created_at->format('M d, Y h:i A') }}</p>
                         </div>
@@ -64,11 +64,11 @@
                             <span class="font-bold text-gray-900">{{ number_format($withdrawal->amount, 2) }}
                                 {{ $withdrawal->currency }}</span>
                         </div>
-                        <div class="flex justify-between text-sm">
+                        {{-- <div class="flex justify-between text-sm">
                             <span class="text-gray-600">Wallet Address:</span>
-                            <span
-                                class="font-mono text-xs text-gray-900 break-all">{{ Str::limit($withdrawal->wallet_address, 20, '...') }}</span>
-                        </div>
+                            <span class="font-mono text-xs text-gray-900 break-all">{{ Str::limit($withdrawal->wallet_address, 20,
+                                '...') }}</span>
+                        </div> --}}
                         @if($withdrawal->admin_note)
                             <div class="bg-gray-50 rounded-lg p-3 mt-2">
                                 <p class="text-xs text-gray-600 mb-1">Admin Note:</p>

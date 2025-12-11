@@ -147,6 +147,56 @@
                             </div>
                         </div>
 
+                        <!-- Custom Fields -->
+                        @if(!empty($withdrawal->custom_data))
+                            <div class="col-12 mb-3">
+                                <div class="media align-items-start">
+                                    <span class="p-3 border border-primary-light rounded-circle me-3">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M3 5H21V7H3V5ZM3 17H21V19H3V17ZM3 11H21V13H3V11Z" fill="#2BC155" />
+                                        </svg>
+                                    </span>
+                                    <div class="media-body w-100">
+                                        <span class="d-block text-black font-w600 mb-2">Submitted Details</span>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-bordered mb-0">
+                                                <tbody>
+                                                    @foreach($withdrawal->custom_data as $field => $value)
+                                                        @php
+                                                            $displayValue = is_array($value)
+                                                                ? implode(', ', array_filter($value, fn($v) => $v !== null && $v !== ''))
+                                                                : $value;
+
+                                                            $path = is_string($displayValue) ? parse_url($displayValue, PHP_URL_PATH) : null;
+                                                            $isImage = is_string($displayValue)
+                                                                && $path
+                                                                && preg_match('/\.(png|jpe?g|gif|webp|svg)$/i', $path)
+                                                                && (\Illuminate\Support\Str::startsWith($displayValue, ['http://', 'https://', '/', 'storage', 'uploads']));
+                                                        @endphp
+                                                        <tr>
+                                                            <th class="w-50 text-capitalize">{{ $field }}</th>
+                                                            <td class="font-monospace text-break">
+                                                                @if($isImage)
+                                                                    <img src="{{ asset($displayValue) }}" alt="{{ $field }}"
+                                                                        class="img-fluid rounded"
+                                                                        style="max-width: 240px; max-height: 240px; object-fit: contain;">
+                                                                @elseif($displayValue === null || $displayValue === '')
+                                                                    <span class="text-muted">—</span>
+                                                                @else
+                                                                    {{ $displayValue }}
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Admin Note -->
                         @if($withdrawal->admin_note)
                             <div class="col-12">

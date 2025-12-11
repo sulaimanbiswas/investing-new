@@ -58,7 +58,7 @@ class UserController extends Controller
         $stats = [
             'balance' => $user->balance,
             'total_deposits' => $user->deposits()->where('status', 'approved')->sum('amount'),
-            'total_withdrawals' => 0, // TODO: Implement when withdrawal system is ready
+            'total_withdrawals' => $user->withdrawals()->where('status', 'approved')->sum('amount'),
             'total_transactions' => $user->deposits()->count(),
             'total_invest' => 0, // TODO: Implement when investment system is ready
             'total_referral_commission' => \App\Models\ReferralCommission::where('user_id', $user->id)->sum('commission_amount'),

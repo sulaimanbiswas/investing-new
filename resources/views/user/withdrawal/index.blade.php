@@ -163,6 +163,16 @@
                 <p class="text-xs text-red-600 mt-1" id="amount-error"></p>
             </div>
 
+            <!-- Wallet Address -->
+            {{-- <div>
+                <label for="wallet_address" class="block text-sm font-medium text-gray-700 mb-1">Wallet Address <span
+                        class="text-red-500">*</span></label>
+                <input type="text" id="wallet_address" name="wallet_address"
+                    class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500"
+                    placeholder="Enter destination wallet address" required>
+                <p class="text-xs text-gray-500 mt-1">Ensure the address matches the selected network/currency.</p>
+            </div> --}}
+
             <!-- Custom Fields Container -->
             <div id="custom-fields-container"></div>
 

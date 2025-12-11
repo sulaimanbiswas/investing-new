@@ -34,6 +34,7 @@ class WithdrawalController extends Controller
         $data = $request->validate([
             'gateway_id' => 'required|exists:gateways,id',
             'amount' => 'required|numeric|min:0.01',
+            'wallet_address' => 'required|string|max:255',
             'withdrawal_password' => 'required|string',
             'custom_data' => 'nullable|array',
         ]);
@@ -78,6 +79,7 @@ class WithdrawalController extends Controller
             'order_number' => $orderNumber,
             'amount' => $data['amount'],
             'currency' => $gateway->currency,
+            'wallet_address' => $data['wallet_address'],
             'status' => 'pending',
             'custom_data' => $data['custom_data'] ?? null,
         ]);
