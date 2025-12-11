@@ -6,6 +6,7 @@ use App\Models\Deposit;
 use App\Models\Notification;
 use App\Models\Transaction;
 use App\Services\ReferralCommissionService;
+use Illuminate\Support\Facades\Log;
 
 class DepositObserver
 {
@@ -55,7 +56,7 @@ class DepositObserver
                     $commissionService = app(ReferralCommissionService::class);
                     $commissionService->distributeCommissions($deposit);
                 } catch (\Exception $e) {
-                    \Log::error('Failed to distribute referral commissions: ' . $e->getMessage());
+                    Log::error('Failed to distribute referral commissions: ' . $e->getMessage());
                 }
 
                 // Notify user about approval

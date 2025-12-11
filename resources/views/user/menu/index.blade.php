@@ -2,17 +2,17 @@
 
 @section('content')
     <!-- Header with Back Button -->
-    <div class="mb-6 flex items-center gap-3">
-        <a href="{{ route('dashboard') }}" class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
+    <div class="mb-5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('dashboard') }}"
+            class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
             <i class="fas fa-arrow-left text-gray-700"></i>
         </a>
-        <h1 class="text-2xl font-bold text-gray-800">Platform Menu</h1>
-    </div>
-
-    <!-- Page Title -->
-    <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">Platform Menu</h2>
-        <p class="text-gray-600 text-sm">Choose your VIP level and start earning commission</p>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Platform Menu</h1>
+                <p class="text-gray-500 text-sm mt-0.5">Choose your VIP level and start earning</p>
+            </div>
+        </div>
     </div>
 
     <!-- Current Boost Badge -->

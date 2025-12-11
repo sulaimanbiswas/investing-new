@@ -15,7 +15,8 @@
     <!-- Guidelines Grid -->
     <div class="grid grid-cols-1 gap-5">
         @forelse($platformRules as $rule)
-            <a href="{{ route('platform-rules.show', $rule->id) }}" class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition block">
+            <a href="{{ route('platform-rules.show', $rule->id) }}"
+                class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition block">
                 @if($rule->image)
                     <img src="{{ asset($rule->image) }}" alt="{{ $rule->name }}" class="w-full h-48 sm:h-64 object-cover">
                 @else
@@ -39,7 +40,8 @@
                                 <span>{{ $rule->created_at->format('M d, Y') }}</span>
                             </div>
                         @endif
-                        <span class="text-sm text-indigo-600 font-medium">Read More <i class="fas fa-arrow-right ml-1"></i></span>
+                        <span class="text-sm text-indigo-600 font-medium">Read More <i
+                                class="fas fa-arrow-right ml-1"></i></span>
                     </div>
                 </div>
             </a>
