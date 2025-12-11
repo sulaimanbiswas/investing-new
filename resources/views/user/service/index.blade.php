@@ -1,18 +1,15 @@
 @extends('layouts.user.app')
 
+@section('title', 'Customer Service - ' . config('app.name'))
+
 @section('content')
     <!-- Header with Back Button -->
     <div class="mb-6 flex items-center gap-3">
-        <a href="{{ route('dashboard') }}" class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
+        <a href="{{ route('dashboard') }}"
+            class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
             <i class="fas fa-arrow-left text-gray-700"></i>
         </a>
         <h1 class="text-2xl font-bold text-gray-800">Customer Service</h1>
-    </div>
-
-    <!-- Page Title -->
-    <div class="mb-6 text-center">
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">Customer Service Center</h2>
-        <p class="text-gray-600 text-sm">Online Customer Service Time</p>
     </div>
 
     <!-- Customer Service Illustration -->

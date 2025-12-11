@@ -5,24 +5,11 @@
 @section('content')
     <!-- Header with Back Button -->
     <div class="mb-6 flex items-center gap-3">
-        <a href="{{ route('dashboard') }}" class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
+        <a href="{{ route('dashboard') }}"
+            class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
             <i class="fas fa-arrow-left text-gray-700"></i>
         </a>
         <h1 class="text-2xl font-bold text-gray-800">Invitation Program</h1>
-    </div>
-
-    <!-- Page Header -->
-    <div class="mb-6">
-        <div class="flex items-center gap-3 mb-2">
-            <div
-                class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center">
-                <i class="fas fa-user-plus text-white text-xl"></i>
-            </div>
-            <div>
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Invitation Program</h1>
-                <p class="text-gray-600 text-sm">Share and earn rewards together!</p>
-            </div>
-        </div>
     </div>
 
     <!-- Referral System Section -->

@@ -5,7 +5,8 @@
 @section('content')
     <!-- Header with Back Button -->
     <div class="mb-6 flex items-center gap-3">
-        <a href="{{ route('dashboard') }}" class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
+        <a href="{{ route('dashboard') }}"
+            class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
             <i class="fas fa-arrow-left text-gray-700"></i>
         </a>
         <h1 class="text-2xl font-bold text-gray-800">Records</h1>
@@ -59,7 +60,7 @@
             @foreach($tabs as $key => $tab)
                 <a href="{{ route('records.index', ['tab' => $key]) }}"
                     class="flex-shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition
-                                                                    {{ $activeTab === $key ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                                                                            {{ $activeTab === $key ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     <i class="fas {{ $tab['icon'] }} mr-1"></i>{{ $tab['label'] }}
                 </a>
             @endforeach
