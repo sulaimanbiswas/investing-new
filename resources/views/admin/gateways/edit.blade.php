@@ -148,6 +148,39 @@
                                 </div>
                             </div>
 
+                            <!-- Logo Upload (both payment and withdrawal) -->
+                            <div class="col-12 mb-4">
+                                <div class="card border">
+                                    <div class="card-header bg-primary">
+                                        <h5 class="mb-0 text-white">Gateway Logo</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Logo</label>
+                                                <input type="text" name="logo_path" id="logo_path" class="form-control"
+                                                    placeholder="e.g. /uploads/gateways/logo.png"
+                                                    value="{{ $gateway->logo_path }}" />
+                                                <div id="logo-dropzone" class="dropzone mt-2 border rounded p-3">
+                                                    <div class="dz-message text-center">
+                                                        <i class="fas fa-cloud-upload-alt text-primary"
+                                                            style="font-size: 48px; margin-bottom: 10px;"></i>
+                                                        <p class="mb-0">Drag & drop logo image here or click to upload</p>
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB.</small>
+                                                @if($gateway->logo_path)
+                                                    <div class="mt-2">
+                                                        <img src="{{ asset($gateway->logo_path) }}" alt="Current Logo"
+                                                            class="img-thumbnail" style="max-height: 100px;">
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Deposit Details (payment only) -->
                             <div class="col-12 mb-4 type-payment">
                                 <div class="card border">
@@ -190,20 +223,12 @@
                                                     </div>
                                                 </div>
                                                 <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB.</small>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">Logo</label>
-                                                <input type="text" name="logo_path" id="logo_path" class="form-control"
-                                                    placeholder="e.g. /uploads/gateways/logo.png"
-                                                    value="{{ $gateway->logo_path }}" />
-                                                <div id="logo-dropzone" class="dropzone mt-2 border rounded p-3">
-                                                    <div class="dz-message text-center">
-                                                        <i class="fas fa-cloud-upload-alt text-primary"
-                                                            style="font-size: 48px; margin-bottom: 10px;"></i>
-                                                        <p class="mb-0">Drag & drop logo image here or click to upload</p>
+                                                @if($gateway->qr_path)
+                                                    <div class="mt-2">
+                                                        <img src="{{ asset($gateway->qr_path) }}" alt="Current QR"
+                                                            class="img-thumbnail" style="max-height: 100px;">
                                                     </div>
-                                                </div>
-                                                <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB.</small>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -541,7 +566,7 @@
             }
             // Modal logic for add/edit user data
             const modalHtml = `
-                    <div class=\"modal fade\" id=\"editGenerateFormModal\" tabindex=\"-1\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h5 class=\"modal-title\">User Field</h5>\n        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>\n      </div>\n      <div class=\"modal-body\">\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Type <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-type\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"text\">Text</option>\n            <option value=\"textarea\">Textarea</option>\n            <option value=\"select\">Select</option>\n            <option value=\"checkbox\">Checkbox</option>\n            <option value=\"radio\">Radio</option>\n            <option value=\"file\">File</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Required <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-required\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"true\">Yes</option>\n            <option value=\"false\">No</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Label <span class=\"text-danger\">*</span></label>\n          <input type=\"text\" id=\"ud-label\" class=\"form-control\" placeholder=\"Label\" />\n        </div>\n        <div class=\"mb-3\" id=\"ud-options-wrap\" style=\"display:none;\">\n          <label class=\"form-label\">Options (comma separated)</label>\n          <input type=\"text\" id=\"ud-options\" class=\"form-control\" placeholder=\"Option1, Option2\" />\n        </div>\n        <div class=\"alert alert-danger d-none\" id=\"ud-error\"></div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-danger light\" data-bs-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary\" id=\"ud-save-btn\">Save</button>\n      </div>\n    </div>\n  </div>\n</div>`;
+                        <div class=\"modal fade\" id=\"editGenerateFormModal\" tabindex=\"-1\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h5 class=\"modal-title\">User Field</h5>\n        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>\n      </div>\n      <div class=\"modal-body\">\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Type <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-type\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"text\">Text</option>\n            <option value=\"textarea\">Textarea</option>\n            <option value=\"select\">Select</option>\n            <option value=\"checkbox\">Checkbox</option>\n            <option value=\"radio\">Radio</option>\n            <option value=\"file\">File</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Required <span class=\"text-danger\">*</span></label>\n          <select id=\"ud-required\" class=\"default-select form-control wide\">\n            <option value=\"\" selected>Select One</option>\n            <option value=\"true\">Yes</option>\n            <option value=\"false\">No</option>\n          </select>\n        </div>\n        <div class=\"mb-3\">\n          <label class=\"form-label\">Label <span class=\"text-danger\">*</span></label>\n          <input type=\"text\" id=\"ud-label\" class=\"form-control\" placeholder=\"Label\" />\n        </div>\n        <div class=\"mb-3\" id=\"ud-options-wrap\" style=\"display:none;\">\n          <label class=\"form-label\">Options (comma separated)</label>\n          <input type=\"text\" id=\"ud-options\" class=\"form-control\" placeholder=\"Option1, Option2\" />\n        </div>\n        <div class=\"alert alert-danger d-none\" id=\"ud-error\"></div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-danger light\" data-bs-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary\" id=\"ud-save-btn\">Save</button>\n      </div>\n    </div>\n  </div>\n</div>`;
             document.body.insertAdjacentHTML('beforeend', modalHtml);
             const typeEl = document.getElementById('ud-type');
             const reqEl = document.getElementById('ud-required');

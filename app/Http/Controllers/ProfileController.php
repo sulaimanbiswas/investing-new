@@ -149,4 +149,32 @@ class ProfileController extends Controller
 
         return Redirect::route('wallet.edit');
     }
+
+    /**
+     * Update the user's withdrawal password.
+     */
+    public function updateWithdrawalPassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('updateWithdrawalPassword', [
+            'current_withdrawal_password' => 'required|string',
+            'withdrawal_password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = $request->user();
+
+        // Verify current withdrawal password
+        if (!\Illuminate\Support\Facades\Hash::check($validated['current_withdrawal_password'], $user->withdrawal_password)) {
+            return Redirect::route('profile.edit')->withErrors([
+                'current_withdrawal_password' => 'The current withdrawal password is incorrect.',
+            ], 'updateWithdrawalPassword');
+        }
+
+        // Update withdrawal password
+        $user->withdrawal_password = \Illuminate\Support\Facades\Hash::make($validated['withdrawal_password']);
+        $user->save();
+
+        flash()->success('Withdrawal password updated successfully.');
+
+        return Redirect::route('profile.edit')->with('status', 'withdrawal-password-updated');
+    }
 }

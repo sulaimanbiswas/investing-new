@@ -97,33 +97,79 @@
         </div>
     @endif
 
+    <!-- Withdrawal Gateway Selection -->
+    <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
+        <h3 class="text-sm font-medium text-gray-700 mb-3">Withdrawal Method</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            @forelse($gateways as $gateway)
+                <label class="gateway-card cursor-pointer">
+                    <input type="radio" name="gateway" value="{{ $gateway->id }}" class="hidden gateway-radio"
+                        data-min="{{ $gateway->min_limit }}" data-max="{{ $gateway->max_limit }}"
+                        data-currency="{{ $gateway->currency }}"
+                        data-custom-fields="{{ json_encode($gateway->custom_fields ?? []) }}">
+                    <div
+                        class="border-2 border-gray-200 rounded-xl p-4 text-center transition hover:border-green-400 hover:bg-green-50">
+                        @if($gateway->logo_path)
+                            <img src="{{ asset($gateway->logo_path) }}" alt="{{ $gateway->name }}"
+                                class="w-12 h-12 mx-auto mb-2 object-contain">
+                        @else
+                            <div
+                                class="w-12 h-12 mx-auto mb-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-wallet text-white"></i>
+                            </div>
+                        @endif
+                        <div class="font-semibold text-gray-800 text-sm">{{ $gateway->name }}</div>
+                        <div class="text-xs text-gray-500 mt-1">{{ $gateway->currency }}</div>
+                    </div>
+                </label>
+            @empty
+                <div class="col-span-full text-center py-8 text-gray-500">
+                    <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+                    <p>No withdrawal methods available</p>
+                </div>
+            @endforelse
+        </div>
+        <p class="text-xs text-gray-500 mt-3" id="gateway-error"></p>
+    </div>
+
     <!-- Withdrawal Form -->
     <div class="bg-white rounded-xl shadow-sm p-5">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Withdrawal Request</h3>
 
         <form id="withdrawalForm" class="space-y-4">
             @csrf
-            <div>
-                <label for="wallet_address" class="block text-sm font-medium text-gray-700 mb-1">Wallet Address (USDT
-                    TRC20)</label>
-                <input type="text" id="wallet_address" name="wallet_address"
-                    class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500"
-                    value="{{ old('wallet_address', $user->withdrawal_address) }}" required>
-                <p class="text-xs text-gray-500 mt-1">You can edit your default wallet address here</p>
-            </div>
+            <input type="hidden" id="gateway_id" name="gateway_id">
 
+            <!-- Withdrawal Amount -->
             <div>
-                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Withdrawal Amount (USDT)</label>
-                <div class="relative">
+                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Withdrawal Amount</label>
+                <div
+                    class="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden focus-within:border-green-500 transition">
+                    <span class="px-4 py-3 bg-gray-50 text-gray-700 font-semibold" id="currency-label">USDT</span>
                     <input type="number" id="amount" name="amount" step="0.01" min="0.01"
-                        class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500 pr-16"
-                        placeholder="Enter amount" required>
+                        class="flex-1 px-4 py-3 border-0 focus:ring-0 focus:outline-none" placeholder="Enter amount"
+                        required>
                     <button type="button" id="maxBtn"
-                        class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-md hover:bg-green-600 transition-colors">
+                        class="px-4 py-3 bg-green-500 text-white text-xs font-semibold hover:bg-green-600 transition-colors">
                         MAX
                     </button>
                 </div>
-                <p class="text-xs text-gray-500 mt-1">Available: {{ number_format($availableBalance, 2) }} USDT</p>
+                <p class="text-xs text-gray-500 mt-2" id="amount-hint">Please select a withdrawal method first</p>
+                <p class="text-xs text-red-600 mt-1" id="amount-error"></p>
+            </div>
+
+            <!-- Custom Fields Container -->
+            <div id="custom-fields-container"></div>
+
+            <!-- Withdrawal Password -->
+            <div>
+                <label for="withdrawal_password" class="block text-sm font-medium text-gray-700 mb-1">
+                    Withdrawal Password <span class="text-red-500">*</span>
+                </label>
+                <input type="password" id="withdrawal_password" name="withdrawal_password"
+                    class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500"
+                    placeholder="Enter your withdrawal password" required>
+                <p class="text-xs text-gray-500 mt-1">Enter the password you set during registration</p>
             </div>
 
             <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
@@ -132,7 +178,7 @@
                     <div class="text-sm text-yellow-800">
                         <p class="font-semibold mb-1">Important Notes:</p>
                         <ul class="list-disc list-inside space-y-1 text-xs">
-                            <li>Please ensure your wallet address is correct</li>
+                            <li>Please ensure all information is correct</li>
                             <li>Withdrawal will be processed after admin approval</li>
                             <li>Processing time: 1-24 hours</li>
                         </ul>
@@ -143,8 +189,8 @@
             <div class="flex gap-3">
                 <a href="{{ route('profile.home') }}"
                     class="flex-1 px-4 py-3 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-center">Cancel</a>
-                <button type="submit"
-                    class="flex-1 px-4 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 shadow font-semibold">
+                <button type="submit" id="submit-btn" disabled
+                    class="flex-1 px-4 py-3 rounded-lg bg-gray-400 text-white shadow font-semibold disabled:cursor-not-allowed transition">
                     Submit Request
                 </button>
             </div>
@@ -215,19 +261,227 @@
         const closeErrorBtn = document.getElementById('closeErrorBtn');
         const maxBtn = document.getElementById('maxBtn');
         const amountInput = document.getElementById('amount');
+        const customFieldsContainer = document.getElementById('custom-fields-container');
+        const submitBtn = document.getElementById('submit-btn');
+
+        let selectedGateway = null;
+        let minLimit = 0;
+        let maxLimit = 0;
+        let customFields = [];
+
+        // Gateway selection
+        document.querySelectorAll('.gateway-radio').forEach(radio => {
+            radio.addEventListener('change', function () {
+                selectedGateway = this.value;
+                minLimit = parseFloat(this.dataset.min);
+                maxLimit = parseFloat(this.dataset.max);
+                const currency = this.dataset.currency;
+                customFields = JSON.parse(this.dataset.customFields || '[]');
+
+                // Update UI
+                document.querySelectorAll('.gateway-card > div').forEach(card => {
+                    card.classList.remove('border-green-500', 'bg-green-50');
+                    card.classList.add('border-gray-200');
+                });
+                this.parentElement.querySelector('div').classList.remove('border-gray-200');
+                this.parentElement.querySelector('div').classList.add('border-green-500', 'bg-green-50');
+
+                document.getElementById('gateway_id').value = selectedGateway;
+                document.getElementById('currency-label').textContent = currency;
+                document.getElementById('amount-hint').textContent = `Available: {{ number_format($availableBalance, 2) }} USDT | Min: ${minLimit} ${currency} | Max: ${maxLimit} ${currency}`;
+                document.getElementById('gateway-error').textContent = '';
+
+                // Render custom fields
+                renderCustomFields();
+                validateForm();
+            });
+        });
+
+        // Render custom fields based on selected gateway
+        function renderCustomFields() {
+            customFieldsContainer.innerHTML = '';
+
+            if (!customFields || customFields.length === 0) {
+                return;
+            }
+
+            customFields.forEach((field, index) => {
+                const fieldDiv = document.createElement('div');
+                fieldDiv.className = 'space-y-1';
+
+                const label = document.createElement('label');
+                label.className = 'block text-sm font-medium text-gray-700';
+                label.textContent = field.label;
+                if (field.required) {
+                    const required = document.createElement('span');
+                    required.className = 'text-red-500';
+                    required.textContent = ' *';
+                    label.appendChild(required);
+                }
+
+                fieldDiv.appendChild(label);
+
+                let input;
+                const fieldName = `custom_data[${field.label}]`;
+
+                switch (field.type) {
+                    case 'textarea':
+                        input = document.createElement('textarea');
+                        input.rows = 3;
+                        break;
+                    case 'select':
+                        input = document.createElement('select');
+                        const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.textContent = 'Select...';
+                        input.appendChild(defaultOption);
+
+                        if (field.options) {
+                            field.options.forEach(opt => {
+                                const option = document.createElement('option');
+                                option.value = opt;
+                                option.textContent = opt;
+                                input.appendChild(option);
+                            });
+                        }
+                        break;
+                    case 'checkbox':
+                        const checkboxContainer = document.createElement('div');
+                        checkboxContainer.className = 'space-y-2';
+                        if (field.options) {
+                            field.options.forEach(opt => {
+                                const checkDiv = document.createElement('div');
+                                checkDiv.className = 'flex items-center';
+                                const checkbox = document.createElement('input');
+                                checkbox.type = 'checkbox';
+                                checkbox.name = fieldName + '[]';
+                                checkbox.value = opt;
+                                checkbox.className = 'rounded border-gray-300 text-green-600 focus:ring-green-500';
+                                const checkLabel = document.createElement('label');
+                                checkLabel.className = 'ml-2 text-sm text-gray-700';
+                                checkLabel.textContent = opt;
+                                checkDiv.appendChild(checkbox);
+                                checkDiv.appendChild(checkLabel);
+                                checkboxContainer.appendChild(checkDiv);
+                            });
+                        }
+                        fieldDiv.appendChild(checkboxContainer);
+                        break;
+                    case 'radio':
+                        const radioContainer = document.createElement('div');
+                        radioContainer.className = 'space-y-2';
+                        if (field.options) {
+                            field.options.forEach(opt => {
+                                const radioDiv = document.createElement('div');
+                                radioDiv.className = 'flex items-center';
+                                const radio = document.createElement('input');
+                                radio.type = 'radio';
+                                radio.name = fieldName;
+                                radio.value = opt;
+                                radio.className = 'border-gray-300 text-green-600 focus:ring-green-500';
+                                const radioLabel = document.createElement('label');
+                                radioLabel.className = 'ml-2 text-sm text-gray-700';
+                                radioLabel.textContent = opt;
+                                radioDiv.appendChild(radio);
+                                radioDiv.appendChild(radioLabel);
+                                radioContainer.appendChild(radioDiv);
+                            });
+                        }
+                        fieldDiv.appendChild(radioContainer);
+                        break;
+                    case 'file':
+                        input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.className = 'block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100';
+                        break;
+                    default:
+                        input = document.createElement('input');
+                        input.type = 'text';
+                }
+
+                if (input && field.type !== 'checkbox' && field.type !== 'radio') {
+                    input.name = fieldName;
+                    if (field.required) {
+                        input.required = true;
+                    }
+                    if (field.type !== 'file') {
+                        input.className = 'w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500';
+                    }
+                    input.placeholder = field.label;
+                    fieldDiv.appendChild(input);
+                }
+
+                customFieldsContainer.appendChild(fieldDiv);
+            });
+        }
 
         // MAX button click handler
         maxBtn.addEventListener('click', function () {
             const availableBalance = {{ $availableBalance }};
             amountInput.value = availableBalance.toFixed(2);
             amountInput.focus();
+            validateForm();
         });
+
+        // Amount input
+        amountInput.addEventListener('input', validateForm);
+
+        function validateForm() {
+            const amount = parseFloat(amountInput.value);
+            const amountError = document.getElementById('amount-error');
+
+            if (!selectedGateway) {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                submitBtn.classList.add('bg-gray-400');
+                amountError.textContent = '';
+                return;
+            }
+
+            if (isNaN(amount) || amount <= 0) {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                submitBtn.classList.add('bg-gray-400');
+                amountError.textContent = 'Please enter a valid amount';
+                return;
+            }
+
+            if (amount < minLimit) {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                submitBtn.classList.add('bg-gray-400');
+                amountError.textContent = `Minimum withdrawal is ${minLimit} ${document.getElementById('currency-label').textContent}`;
+                return;
+            }
+
+            if (amount > maxLimit) {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                submitBtn.classList.add('bg-gray-400');
+                amountError.textContent = `Maximum withdrawal is ${maxLimit} ${document.getElementById('currency-label').textContent}`;
+                return;
+            }
+
+            const availableBalance = {{ $availableBalance }};
+            if (amount > availableBalance) {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                submitBtn.classList.add('bg-gray-400');
+                amountError.textContent = `Insufficient balance. Available: ${availableBalance.toFixed(2)} USDT`;
+                return;
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('bg-gray-400');
+            submitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+            amountError.textContent = '';
+        }
 
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const formData = new FormData(form);
-            const submitBtn = form.querySelector('button[type="submit"]');
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';

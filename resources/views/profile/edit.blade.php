@@ -46,6 +46,13 @@
             @include('profile.partials.update-password-form')
         </div>
 
+        <!-- Withdrawal Password Update -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-1">Change Withdrawal Password</h2>
+            <p class="text-sm text-gray-500 mb-6">Update your withdrawal password for enhanced security.</p>
+            @include('profile.partials.update-withdrawal-password-form')
+        </div>
+
         <!-- Account Deletion Disabled Notice -->
         {{-- <div class="bg-gray-50 rounded-2xl border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-700 mb-1 flex items-center gap-2">

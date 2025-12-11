@@ -186,6 +186,32 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Logo Upload (both payment and withdrawal) -->
+                            <div class="col-12 mb-4">
+                                <div class="card border">
+                                    <div class="card-header bg-primary">
+                                        <h5 class="mb-0 text-white">Gateway Logo</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Logo</label>
+                                                <input type="text" name="logo_path" id="logo_path" class="form-control"
+                                                    placeholder="e.g. /uploads/gateways/logo.png" />
+                                                <div id="logo-dropzone" class="dropzone mt-2 border rounded p-3">
+                                                    <div class="dz-message text-center">
+                                                        <i class="fas fa-cloud-upload-alt text-primary"
+                                                            style="font-size: 48px; margin-bottom: 10px;"></i>
+                                                        <p class="mb-0">Drag & drop logo image here or click to upload</p>
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Deposit Address & QR (payment only) -->
                             <div class="col-12 mb-4 type-payment">
                                 <div class="card border">
@@ -221,19 +247,6 @@
                                                         <i class="fas fa-cloud-upload-alt text-primary"
                                                             style="font-size: 48px; margin-bottom: 10px;"></i>
                                                         <p class="mb-0">Drag & drop QR image here or click to upload</p>
-                                                    </div>
-                                                </div>
-                                                <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB.</small>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">Logo</label>
-                                                <input type="text" name="logo_path" id="logo_path" class="form-control"
-                                                    placeholder="e.g. /uploads/gateways/logo.png" />
-                                                <div id="logo-dropzone" class="dropzone mt-2 border rounded p-3">
-                                                    <div class="dz-message text-center">
-                                                        <i class="fas fa-cloud-upload-alt text-primary"
-                                                            style="font-size: 48px; margin-bottom: 10px;"></i>
-                                                        <p class="mb-0">Drag & drop logo image here or click to upload</p>
                                                     </div>
                                                 </div>
                                                 <small class="text-muted">Accepted: jpg, jpeg, png, webp. Max 5MB.</small>

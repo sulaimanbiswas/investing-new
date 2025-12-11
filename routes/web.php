@@ -44,6 +44,7 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::put('/profile/withdrawal-password', [ProfileController::class, 'updateWithdrawalPassword'])->name('profile.update-withdrawal-password');
     // Wallet management
     Route::get('/wallet', [ProfileController::class, 'wallet'])->name('wallet.edit');
     Route::post('/wallet', [ProfileController::class, 'updateWallet'])->name('wallet.update');

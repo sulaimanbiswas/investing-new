@@ -125,12 +125,15 @@ class ProductPackageController extends Controller
             'products.*.price' => ['required', 'numeric', 'min:0'],
         ]);
 
+        // Handle checkbox: if not present in request, set to false
+        $data['is_active'] = $request->has('is_active') ? true : false;
+
         $product_package->update([
             'order_set_id' => $data['order_set_id'],
             'type' => $data['type'],
             'platform_id' => $data['platform_id'],
             'profit_percentage' => $data['profit_percentage'],
-            'is_active' => $data['is_active'] ?? $product_package->is_active,
+            'is_active' => $data['is_active'],
         ]);
 
         // Delete old products and add new ones

@@ -98,6 +98,11 @@ class GatewayController extends Controller
             'is_active' => 'sometimes|boolean',
         ]);
 
+        // Handle checkboxes that are not sent when unchecked
+        $data['requires_txn_id'] = $request->has('requires_txn_id') ? true : false;
+        $data['requires_screenshot'] = $request->has('requires_screenshot') ? true : false;
+        $data['is_active'] = $request->has('is_active') ? true : false;
+
         // Normalize custom_fields coming from hidden inputs so that DB always
         // stores a clean array of objects instead of JSON strings.
         if (array_key_exists('custom_fields', $data)) {
