@@ -91,23 +91,13 @@ class WithdrawalController extends Controller
 
         $request->validate($rules);
 
-        // Check if this is a new approval or rejection (status changing from pending)
-        $wasPending = $withdrawal->status === 'pending';
-
         $withdrawal->update([
             'status' => $request->status,
             'admin_note' => $request->admin_note,
         ]);
 
-        // If approved for the first time, deduct balance from user
-        if ($request->status === 'approved' && $wasPending) {
-            $withdrawal->user->decrement('balance', (float)$withdrawal->amount);
-        }
-
-        // If rejected after being approved, refund balance to user
-        if ($request->status === 'rejected' && !$wasPending && $withdrawal->status !== 'pending') {
-            $withdrawal->user->increment('balance', (float)$withdrawal->amount);
-        }
+        // The observer (WithdrawalObserver) handles balance deduction and transaction creation
+        // when status is changed to 'approved', and notifications for both approval and rejection
 
         flash()->success('Withdrawal status updated successfully');
 
