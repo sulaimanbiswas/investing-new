@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InvestPro - Smart Investment Platform</title>
+    <title>{{setting('site_title')}} - {{ setting('app_name') }}</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset(setting('favicon_path')) }}" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         @keyframes float {
@@ -229,17 +230,21 @@
         <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 md:h-20">
                 <!-- Logo -->
-                <div class="flex items-center space-x-2">
+                <a href="/" class="flex items-center space-x-2">
                     <div
                         class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {{-- <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                        </svg>
+                        </svg> --}}
+                        <img src="{{ asset(setting('logo_path')) }}" alt="Logo"
+                            style="max-height: 40px; max-width: 40px; object-fit: contain;">
                     </div>
                     <span
-                        class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">InvestPro</span>
-                </div>
+                        class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        {{ setting('site_title') }}
+                    </span>
+                </a>
 
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-8">
@@ -1077,12 +1082,16 @@
                     <div class="flex items-center space-x-2">
                         <div
                             class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {{-- <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                            </svg>
+                            </svg> --}}
+                            <img src="{{ asset(setting('logo_path')) }}" alt="Logo"
+                                style="max-height: 40px; max-width: 40px; object-fit: contain;">
                         </div>
-                        <span class="text-xl font-bold text-white">InvestPro</span>
+                        <span class="text-xl font-bold text-white">
+                            {{ setting('site_title', config('app.name')) }}
+                        </span>
                     </div>
                     <p class="text-gray-400 text-sm leading-relaxed">
                         Your trusted partner for smart investments. Build wealth with confidence using our advanced

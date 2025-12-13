@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>@yield('title', 'Admin | Dashboard')</title>
+    <title>@yield('title', setting('site_title') . ' | ' . setting('app_name'))</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -139,8 +139,13 @@
         <div class="nav-header">
             <a href="{{ route('admin.dashboard') }}" class="brand-logo">
                 @if(setting('logo_path'))
-                    <img src="{{ asset(setting('logo_path')) }}" alt="Logo"
-                        style="max-height: 52px; max-width: 52px; object-fit: contain;">
+                    <dev class='d-flex  align-items-center'>
+                        <img src="{{ asset(setting('logo_path')) }}" alt="Logo"
+                            style="max-height: 40px; max-width: 40px; object-fit: contain;">
+                        <span class="text-dark brand-title text-primary" style="font-size: 20px; font-weight: 600;">
+                            {{ setting('site_title') ?: config('app.name', 'Admin Dashboard') }}
+                        </span>
+                    </dev>
                 @else
                     <svg class="logo-abbr" width="52" height="52" viewBox="0 0 52 52" fill="none"
                         xmlns="http://www.w3.org/2000/svg">

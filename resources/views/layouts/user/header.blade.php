@@ -9,10 +9,11 @@
             @else
                 <div
                     class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center shadow-lg">
-                    <span class="text-white font-bold text-xl">$</span>
+                    <span class="text-white font-bold text-xl">{{ setting('site_title', config('app.name')) }}</span>
                 </div>
             @endif
-            <span class="font-bold text-gray-800 text-lg hidden sm:block">{{ config('app.name', 'MALL') }}</span>
+            <span
+                class="font-bold text-gray-800 text-lg hidden sm:block">{{ setting('site_title', config('app.name')) }}</span>
         </a>
 
         <div class="flex items-center gap-1">

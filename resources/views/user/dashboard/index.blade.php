@@ -1,6 +1,6 @@
 @extends('layouts.user.app')
 
-@section('title', 'Dashboard - ' . config('app.name'))
+@section('title', 'Home - ' . config('app.name'))
 
 @section('content')
     <!-- Quick Action Icons -->
@@ -10,6 +10,7 @@
             <div
                 class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                 <i class="fas fa-credit-card text-white text-xl"></i>
+
             </div>
             <span class="text-xs font-medium text-gray-700">Recharge</span>
         </a>
