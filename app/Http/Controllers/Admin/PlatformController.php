@@ -10,7 +10,7 @@ class PlatformController extends Controller
 {
     public function index()
     {
-        $platforms = Platform::withCount('products')->orderByDesc('created_at')->paginate(15);
+        $platforms = Platform::withCount('products')->orderBy('created_at', 'asc')->paginate(15);
         return view('admin.platforms.index', compact('platforms'));
     }
 
