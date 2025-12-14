@@ -14,7 +14,7 @@
             <div class="col-md-4 mb-3">
                 <label class="form-label">Quantity <span class="text-danger">*</span></label>
                 <input type="number" name="quantity" class="form-control"
-                    value="{{ old('quantity', $product->quantity ?? '') }}" required>
+                    value="{{ old('quantity', $product->quantity ?? '100000000') }}" required>
             </div>
             <div class="col-md-4 mb-3">
                 <label class="form-label">Platform <span class="text-danger">*</span></label>
