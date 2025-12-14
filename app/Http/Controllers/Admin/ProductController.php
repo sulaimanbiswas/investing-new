@@ -48,9 +48,11 @@ class ProductController extends Controller
 
         Product::create($data);
 
-        flash()->success('Product created successfully.');
+        // flash()->success('Product created successfully.');
 
-        return redirect()->route('admin.products.index');
+        session()->flash('success', 'Product created successfully.');
+
+        return redirect()->route('admin.products.create');
     }
 
     public function edit(Product $product)
