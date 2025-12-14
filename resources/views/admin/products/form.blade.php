@@ -2,14 +2,15 @@
 <div class="row">
     <div class="col-md-5 mb-3">
         <label class="form-label">Name <span class="text-danger">*</span></label>
-        <input type="text" name="name" class="form-control" value="{{ old('name', $product->name ?? '') }}" required>
+        <input type="text" name="name" class="form-control" value="{{ old('name', $product->name ?? '') }}" autofocus
+            required>
     </div>
     <div class="col-md-7 mb-3">
         <div class="row">
             <div class="col-md-4 mb-3">
                 <label class="form-label">Price <span class="text-danger">*</span></label>
                 <input type="number" step="0.01" name="price" class="form-control"
-                    value="{{ old('price', $product->price ?? '') }}" autofocus required>
+                    value="{{ old('price', $product->price ?? '') }}" required>
             </div>
             <div class="col-md-4 mb-3">
                 <label class="form-label">Quantity <span class="text-danger">*</span></label>
