@@ -9,7 +9,7 @@
             <div class="col-md-4 mb-3">
                 <label class="form-label">Price <span class="text-danger">*</span></label>
                 <input type="number" step="0.01" name="price" class="form-control"
-                    value="{{ old('price', $product->price ?? '') }}" required>
+                    value="{{ old('price', $product->price ?? '') }}" autofocus required>
             </div>
             <div class="col-md-4 mb-3">
                 <label class="form-label">Quantity <span class="text-danger">*</span></label>
