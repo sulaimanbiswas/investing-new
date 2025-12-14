@@ -125,7 +125,7 @@
                                     <img src="{{ $product->image }}" alt="image" style="height:40px;">
                                 @endif {{ $product->name }}
                                 </td>
-                                <td>{{ rtrim(rtrim(number_format($product->price, 2, '.', ''), '0'), '.') }}</td>
+                                <td>${{ rtrim(rtrim(number_format($product->price, 2, '.', ''), '0'), '.') }}</td>
                                 <td>{{ $product->platform?->name }}</td>
                                 <td>{{ $product->quantity }}</td>
                                 <td>
