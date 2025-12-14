@@ -21,7 +21,7 @@
                 <select name="platform_id" class="default-select form-control wide" required>
                     <option value="" class="d-none">Select Platform</option>
                     @foreach($platforms as $platform)
-                        <option value="{{ $platform->id }}" {{ (string) old('platform_id', $product->platform_id ?? '1') === (string) $platform->id ? 'selected' : '' }}>
+                        <option value="{{ $platform->id }}" {{ (string) old('platform_id', $product->platform_id ?? '3') === (string) $platform->id ? 'selected' : '' }}>
                             {{ $platform->name }}
                         </option>
                     @endforeach
