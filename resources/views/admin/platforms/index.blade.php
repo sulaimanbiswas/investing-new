@@ -70,7 +70,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
-                                    <th>Commission (%)</th>
+                                    <th>Commission</th>
                                     <th>Start Price</th>
                                     <th>End Price</th>
                                     <th>Total Products</th>
@@ -86,9 +86,10 @@
                                                 style="height:32px;">
                                         @endif {{ $platform->name }}
                                         </td>
-                                        <td>{{ rtrim(rtrim(number_format($platform->commission, 2, '.', ''), '0'), '.') }}</td>
-                                        <td>{{ rtrim(rtrim(number_format($platform->start_price, 2, '.', ''), '0'), '.') }}</td>
-                                        <td>{{ rtrim(rtrim(number_format($platform->end_price, 2, '.', ''), '0'), '.') }}</td>
+                                        <td>{{ rtrim(rtrim(number_format($platform->commission, 2, '.', ''), '0'), '.') }}%</td>
+                                        <td>${{ rtrim(rtrim(number_format($platform->start_price, 2, '.', ''), '0'), '.') }}
+                                        </td>
+                                        <td>${{ rtrim(rtrim(number_format($platform->end_price, 2, '.', ''), '0'), '.') }}</td>
                                         <td>{{ $platform->products_count }}</td>
                                         <td class="text-end">
                                             <div class="dropdown">
