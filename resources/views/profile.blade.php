@@ -66,23 +66,25 @@
             </a> --}}
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-5">
-            <div>
+            <div class="flex flex-col gap-2">
                 <div class="text-white/80 text-xs">Account Balance</div>
-                <div class="flex items-end gap-1">
+                <div class="flex items-center gap-2">
                     <span class="text-xs">USDT</span>
                     <span class="text-3xl font-bold">{{ number_format(auth()->user()->balance ?? 0, 2) }}</span>
                 </div>
             </div>
             <div class="flex items-center gap-6 justify-end">
-                <a href="{{ route('deposit') }}" class="flex flex-col items-center justify-center">
-                    <div class="w-16 h-16 rounded-xl bg-white/20 flex items-center justify-center">
-                        <i class="fas fa-wallet text-white text-3xl"></i>
+                <a href="{{ route('deposit') }}" class="flex flex-col items-center justify-center gap-2 ">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg ring-2 ring-white/30">
+                        <i class="fas fa-credit-card text-white text-3xl"></i>
                     </div>
                     <span class="text-sm">Deposit</span>
                 </a>
-                <a href="{{ route('withdrawal') }}" class="flex flex-col items-center justify-center">
-                    <div class="w-16 h-16 rounded-xl bg-white/20 flex items-center justify-center">
-                        <i class="fas fa-money-bill-wave text-white text-3xl"></i>
+                <a href="{{ route('withdrawal') }}" class="flex flex-col items-center justify-center gap-2 ">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center bg-gradient-to-br to-indigo-500 from-purple-600 shadow-lg ring-2 ring-white/30">
+                        <i class="fas fa-wallet text-white text-3xl"></i>
                     </div>
                     <span class="text-sm">Withdraw</span>
                 </a>

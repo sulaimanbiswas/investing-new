@@ -14000,7 +14000,7 @@ ul {
 .nav-header .brand-title {
     margin-left: 15px;
     max-width: 120px;
-    margin-top: 5px;
+    margin-top: 0px;
 }
 [data-theme-version="dark"] .nav-header .brand-title {
     background-position: 0 120%;
