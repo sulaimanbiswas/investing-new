@@ -9,7 +9,7 @@
             overflow-hidden mt-2 --}}
             class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 hover:shadow-md transition bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
             <div
-                class="w-12 h-12 bg-gradient-to-br to-indigo-500 from-purple-600 ring-2 ring-white rounded-full flex items-center justify-center">
+                class="w-12 h-12 bg-gradient-to-br to-indigo-500 from-purple-600  rounded-full flex items-center justify-center">
                 <i class="fas fa-credit-card text-white text-xl"></i>
 
             </div>
@@ -18,7 +18,7 @@
         <a href="{{ route('withdrawal') }}"
             class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 hover:shadow-md transition bg-gradient-to-br to-indigo-500 from-purple-600 shadow-lg">
             <div
-                class="w-12 h-12 bg-gradient-to-br to-indigo-500 from-purple-600 ring-2 ring-white rounded-full flex items-center justify-center">
+                class="w-12 h-12 bg-gradient-to-br to-indigo-500 from-purple-600  rounded-full flex items-center justify-center">
                 <i class="fas fa-wallet text-white text-xl"></i>
             </div>
             <span class="text-xs font-medium text-white">Withdrawal</span>
