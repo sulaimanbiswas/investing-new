@@ -31,7 +31,7 @@
     </div>
     <div class="col-md-12 mb-3">
         <label class="form-label">Image</label>
-        <input type="text" name="image" id="product_image" class="form-control mb-2"
+        <input type="text" name="image" id="product_image" class="form-control mb-2 d-none"
             value="{{ old('image', $product->image ?? '') }}" placeholder="/uploads/products/product.png">
         <div id="product-image-dropzone" class="dropzone border rounded p-3">
             <div class="dz-message text-center">
