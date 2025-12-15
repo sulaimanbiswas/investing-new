@@ -30,6 +30,13 @@ class ProductController extends Controller
         }
 
         $products = $query->orderByDesc('id')->paginate(20)->withQueryString();
+
+        // Map optimized image URLs for faster index load
+        $products->getCollection()->transform(function ($product) {
+            // Assuming Product has an 'image' relative path under public/
+            $product->optimized_image = optimize_image_path($product->image, 600, 70);
+            return $product;
+        });
         $platforms = Platform::orderBy('name')->get();
 
         return view('admin.products.index', compact('products', 'platforms'));
