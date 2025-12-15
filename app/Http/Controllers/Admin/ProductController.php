@@ -34,7 +34,7 @@ class ProductController extends Controller
         // Map optimized image URLs for faster index load
         $products->getCollection()->transform(function ($product) {
             // Assuming Product has an 'image' relative path under public/
-            $product->optimized_image = optimize_image_path($product->image, 600, 70);
+            $product->optimized_image = optimize_image_path($product->image, 600, 50);
             return $product;
         });
         $platforms = Platform::orderBy('name')->get();
