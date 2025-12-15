@@ -42,8 +42,11 @@
         <label class="form-label">Platform <span class="text-danger">*</span></label>
         <select name="platform_id" id="platform_id" class="form-control" required>
             <option value="">Select Platform</option>
+            @php
+                $selectedPlatformId = old('platform_id', $productPackage->platform_id ?? request('platform_id', ''));
+            @endphp
             @foreach($platforms as $platform)
-                <option value="{{ $platform->id }}" {{ (string) old('platform_id', $productPackage->platform_id ?? '') === (string) $platform->id ? 'selected' : '' }}>
+                <option value="{{ $platform->id }}" {{ (string) $selectedPlatformId === (string) $platform->id ? 'selected' : '' }}>
                     {{ $platform->name }}
                 </option>
             @endforeach
