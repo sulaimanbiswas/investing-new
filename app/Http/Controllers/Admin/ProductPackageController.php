@@ -195,8 +195,7 @@ class ProductPackageController extends Controller
         $minPrice = $request->input('min_price');
         $maxPrice = $request->input('max_price');
 
-        $query = Product::where('platform_id', $platformId)
-            ->where('is_active', true);
+        $query = Product::where('is_active', true);
 
         // Exclude already selected products
         if (!empty($exclude)) {
