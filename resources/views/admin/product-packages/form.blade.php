@@ -37,7 +37,24 @@
             <span class="text-danger">{{ $message }}</span>
         @enderror
     </div>
+
     <div class="col-md-3 mb-3">
+        <label class="form-label">Platform <span class="text-danger">*</span></label>
+        <select name="order_set_id" id="order_set_id" class="form-control" required>
+            <option value="">Select Platform</option>
+            @foreach($platforms as $platform)
+                <option value="{{ $platform->id }}" data-platform-id="{{ $platform->platform_id }}" {{ (string) old('order_set_id', $productPackage->order_set_id ?? $preSelectedOrderSetId ?? '') === (string) $platform->id ? 'selected' : '' }}>
+                    {{ $platform->name }}
+                </option>
+            @endforeach
+        </select>
+        @error('platform_id')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
+
+
+    {{-- <div class="col-md-3 mb-3">
         <label class="form-label">Platform <span class="text-danger">*</span></label>
         <select name="platform_id" id="platform_id" class="form-control" required>
             <option value="">Select Platform</option>
@@ -50,7 +67,7 @@
         @error('platform_id')
             <span class="text-danger">{{ $message }}</span>
         @enderror
-    </div>
+    </div> --}}
 </div>
 
 @if(isset($productPackage))
