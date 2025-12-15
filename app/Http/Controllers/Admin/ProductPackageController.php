@@ -188,12 +188,45 @@ class ProductPackageController extends Controller
     public function getProducts(Request $request)
     {
         $platformId = $request->input('platform_id');
-        $products = Product::where('platform_id', $platformId)
-            ->where('is_active', true)
-            ->orderBy('name')
+        $search = $request->input('search', '');
+        $page = $request->input('page', 1);
+        $perPage = 20;
+        $exclude = $request->input('exclude', []);
+
+        $query = Product::where('platform_id', $platformId)
+            ->where('is_active', true);
+
+        // Exclude already selected products
+        if (!empty($exclude)) {
+            $query->whereNotIn('id', $exclude);
+        }
+
+        // Search by name
+        if (!empty($search)) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        $query->orderBy('name');
+
+        // Paginate results
+        $total = $query->count();
+        $products = $query->skip(($page - 1) * $perPage)
+            ->take($perPage)
             ->get(['id', 'name', 'price']);
 
-        return response()->json($products);
+        // Format for Select2
+        $items = $products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'text' => $product->name,
+                'price' => $product->price
+            ];
+        });
+
+        return response()->json([
+            'items' => $items,
+            'has_more' => ($page * $perPage) < $total
+        ]);
     }
 
     private function generatePackageId(): string

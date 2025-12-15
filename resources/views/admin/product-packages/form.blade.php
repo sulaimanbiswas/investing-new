@@ -129,7 +129,7 @@
 @push('scripts')
     <script src="{{ asset('admin/vendor/select2/js/select2.full.min.js') }}"></script>
     <script>
-        // Initialize Select2 on product selects
+        // Initialize Select2 on product selects with AJAX
         function initializeProductSelect2() {
             $('.product-select').each(function() {
                 const $select = $(this);
@@ -137,11 +137,61 @@
                 if ($select.data('select2')) {
                     $select.select2('destroy');
                 }
-                // Initialize Select2
+                
+                const platformId = $('#platform_id').val();
+                if (!platformId) {
+                    return;
+                }
+                
+                // Get currently selected product IDs to exclude
+                const selectedProductIds = [];
+                $('.product-select').each(function() {
+                    const val = $(this).val();
+                    if (val && val !== $select.val()) {
+                        selectedProductIds.push(val);
+                    }
+                });
+                
+                // Initialize Select2 with AJAX
                 $select.select2({
                     placeholder: 'Select Product',
                     allowClear: true,
-                    width: '100%'
+                    width: '100%',
+                    minimumInputLength: 0,
+                    ajax: {
+                        url: '{{ route('admin.product-packages.products') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                platform_id: platformId,
+                                search: params.term || '',
+                                page: params.page || 1,
+                                exclude: selectedProductIds
+                            };
+                        },
+                        processResults: function(data, params) {
+                            params.page = params.page || 1;
+                            return {
+                                results: data.items,
+                                pagination: {
+                                    more: data.has_more
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                    templateResult: function(item) {
+                        if (item.loading) return item.text;
+                        return $('<span>' + item.text + ' <small class="text-muted">($' + item.price + ')</small></span>');
+                    },
+                    templateSelection: function(item) {
+                        if (item.id) {
+                            // Store price in data attribute for later use
+                            $select.find('option[value="' + item.id + '"]').attr('data-price', item.price);
+                        }
+                        return item.text;
+                    }
                 });
             });
         }
@@ -174,7 +224,7 @@
                 loadProductsByPlatform(platformId);
             } else {
                 availableProducts = [];
-                updateAllProductSelects();
+                loadProductsByPlatform(null);
             }
         });
 
@@ -211,53 +261,16 @@
         function loadProductsByPlatform(platformId) {
             if (!platformId) {
                 availableProducts = [];
-                updateAllProductSelects();
+                // Destroy all Select2 instances
+                $('.product-select').each(function() {
+                    if ($(this).data('select2')) {
+                        $(this).select2('destroy');
+                    }
+                });
                 return;
             }
 
-            fetch(`{{ route('admin.product-packages.products') }}?platform_id=${platformId}`)
-                .then(response => response.json())
-                .then(data => {
-                    availableProducts = data;
-                    updateAllProductSelects();
-                });
-        }
-
-        function updateAllProductSelects() {
-            // Get all currently selected product IDs
-            const selectedProductIds = [];
-            document.querySelectorAll('.product-select').forEach(select => {
-                if (select.value) {
-                    selectedProductIds.push(select.value);
-                }
-            });
-
-            document.querySelectorAll('.product-select').forEach((select, index) => {
-                const currentValue = select.value;
-                select.innerHTML = '<option value="">Select Product</option>';
-
-                availableProducts.forEach(product => {
-                    // Skip if product is already selected in another dropdown
-                    if (selectedProductIds.includes(product.id.toString()) && product.id.toString() !== currentValue) {
-                        return;
-                    }
-
-                    const option = document.createElement('option');
-                    option.value = product.id;
-                    option.textContent = product.name;
-                    option.dataset.price = product.price;
-
-                    if (editMode && existingProducts[index] && existingProducts[index].product_id == product.id) {
-                        option.selected = true;
-                    } else if (currentValue == product.id) {
-                        option.selected = true;
-                    }
-
-                    select.appendChild(option);
-                });
-            });
-
-            // Reinitialize Select2 after updating options
+            // Reinitialize Select2 with new platform
             setTimeout(() => {
                 initializeProductSelect2();
             }, 100);
@@ -315,9 +328,6 @@
 
             attachRowEvents(newRow);
 
-            // Update all product selects to filter out already selected products
-            updateAllProductSelects();
-
             // Initialize Select2 on the new row's select
             setTimeout(() => {
                 initializeProductSelect2();
@@ -335,8 +345,10 @@
                     row.remove();
                     calculateTotals();
 
-                    // Update all product selects to show the removed product again
-                    updateAllProductSelects();
+                    // Refresh Select2 to update available products
+                    setTimeout(() => {
+                        initializeProductSelect2();
+                    }, 100);
 
                     // Show Add Product button if type is single and no products left
                     if (type === 'single' && document.querySelectorAll('.product-row').length === 0) {
@@ -347,8 +359,10 @@
                     row.remove();
                     calculateTotals();
 
-                    // Update all product selects to show the removed product again
-                    updateAllProductSelects();
+                    // Refresh Select2
+                    setTimeout(() => {
+                        initializeProductSelect2();
+                    }, 100);
 
                     // Show Add Product button since no products left
                     if (type === 'single') {
@@ -368,8 +382,10 @@
                 priceInput.value = price;
                 calculateTotals();
 
-                // Update all product selects to hide already selected products
-                updateAllProductSelects();
+                // Refresh other Select2 instances to update excluded products
+                setTimeout(() => {
+                    initializeProductSelect2();
+                }, 100);
             }
         });
 
