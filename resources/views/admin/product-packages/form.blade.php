@@ -1,4 +1,7 @@
 @csrf
+@push('styles')
+    <link href="{{ asset('admin/vendor/select2/css/select2.min.css') }}" rel="stylesheet" />
+@endpush
 <div class="row">
     <div class="col-md-3 mb-3">
         <label class="form-label">Order Set <span class="text-danger">*</span></label>
@@ -124,7 +127,22 @@
 </div>
 
 @push('scripts')
+    <script src="{{ asset('admin/vendor/select2/js/select2.full.min.js') }}"></script>
     <script>
+        function refreshProductSelect2() {
+            if (!window.jQuery) return;
+            $('.product-select').each(function () {
+                var $el = $(this);
+                if ($el.hasClass('select2-hidden-accessible')) {
+                    $el.select2('destroy');
+                }
+                $el.select2({
+                    placeholder: 'Select Product',
+                    width: '100%'
+                });
+            });
+        }
+
         let productIndex = {{ isset($productPackage) && $productPackage->productPackageItems->count() > 0 ? $productPackage->productPackageItems->count() : 1 }};
         let availableProducts = [];
         const editMode = {{ isset($productPackage) ? 'true' : 'false' }};
@@ -235,6 +253,8 @@
                     select.appendChild(option);
                 });
             });
+
+            refreshProductSelect2();
         }
 
         // Add product row
@@ -291,6 +311,7 @@
 
             // Update all product selects to filter out already selected products
             updateAllProductSelects();
+            refreshProductSelect2();
         });
 
         // Remove product row
@@ -429,6 +450,7 @@
             }
 
             calculateTotals();
+            refreshProductSelect2();
         });
     </script>
 @endpush
