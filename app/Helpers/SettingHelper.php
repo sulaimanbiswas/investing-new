@@ -74,8 +74,14 @@ if (!function_exists('optimize_image_path')) {
     /**
      * Create and return a compressed thumbnail URL for a public image path.
      * Stores optimized images under an 'optimized' subfolder next to original.
+     * 
+     * @param string|null $path Original image path
+     * @param int $maxWidth Target width in pixels
+     * @param int $quality JPEG quality (1-100)
+     * @param bool $checkOnly If true, only check for existing optimized file (don't create)
+     * @return string|null Optimized or original image URL, or null if path is null
      */
-    function optimize_image_path(?string $path, int $maxWidth = 600, int $quality = 70): ?string
+    function optimize_image_path(?string $path, int $maxWidth = 600, int $quality = 70, bool $checkOnly = false): ?string
     {
         if (!$path) {
             return null;
@@ -94,10 +100,6 @@ if (!function_exists('optimize_image_path')) {
         $dir = pathinfo($fullPath, PATHINFO_DIRNAME);
 
         $optimizedDir = $dir . DIRECTORY_SEPARATOR . 'optimized';
-        if (!is_dir($optimizedDir)) {
-            @mkdir($optimizedDir, 0755, true);
-        }
-
         $targetName = $basename . "_w{$maxWidth}.jpg";
         $targetPath = $optimizedDir . DIRECTORY_SEPARATOR . $targetName;
 
@@ -105,6 +107,16 @@ if (!function_exists('optimize_image_path')) {
         if (file_exists($targetPath)) {
             $relative = str_replace($publicPath . DIRECTORY_SEPARATOR, '', $targetPath);
             return '/' . str_replace('\\', '/', $relative);
+        }
+
+        // If checkOnly mode, return original (let background job handle compression)
+        if ($checkOnly) {
+            return $path;
+        }
+
+        // Create optimized directory if needed
+        if (!is_dir($optimizedDir)) {
+            @mkdir($optimizedDir, 0755, true);
         }
 
         // Load image using GD

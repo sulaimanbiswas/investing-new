@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\CompressProductImage;
 use App\Models\Platform;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -31,10 +32,16 @@ class ProductController extends Controller
 
         $products = $query->orderByDesc('id')->paginate(20)->withQueryString();
 
-        // Map optimized image URLs for faster index load
+        // Dispatch compression jobs in background (non-blocking)
+        $products->getCollection()->each(function ($product) {
+            if ($product->image) {
+                dispatch(new CompressProductImage($product->id));
+            }
+        });
+
+        // Map optimized image URLs (returns original if not yet compressed)
         $products->getCollection()->transform(function ($product) {
-            // Assuming Product has an 'image' relative path under public/
-            $product->optimized_image = optimize_image_path($product->image, 600, 50);
+            $product->optimized_image = optimize_image_path($product->image, 600, 50, checkOnly: true);
             return $product;
         });
         $platforms = Platform::orderBy('name')->get();
