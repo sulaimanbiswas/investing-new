@@ -374,13 +374,19 @@
         });
 
         // Auto-fill price when product is selected
-        document.addEventListener('change', function (e) {
-            if (e.target.classList.contains('product-select')) {
-                const selectedOption = e.target.options[e.target.selectedIndex];
-                const price = selectedOption.dataset.price || 0;
-                const row = e.target.closest('.product-row');
-                const priceInput = row.querySelector('.price-input');
-                priceInput.value = price;
+        document.addEventListener('select2:select', function (e) {
+            if ($(e.target).hasClass('product-select')) {
+                const $select = $(e.target);
+                const selectedData = $select.select2('data')[0];
+                const row = $select.closest('.product-row');
+                const priceInput = row.find('.price-input');
+                
+                if (selectedData && selectedData.price) {
+                    priceInput.val(selectedData.price);
+                } else {
+                    priceInput.val(0);
+                }
+                
                 calculateTotals();
 
                 // Refresh other Select2 instances to update excluded products
@@ -476,11 +482,25 @@
                 addButton.style.display = 'inline-block';
             }
 
-            calculateTotals();
-
             // Initialize Select2 on all product selects
             setTimeout(() => {
                 initializeProductSelect2();
+                
+                // For existing products in edit mode, set price values if not already set
+                document.querySelectorAll('.product-row').forEach(row => {
+                    const $select = $(row).find('.product-select');
+                    const priceInput = row.querySelector('.price-input');
+                    
+                    // If price is 0 but product is selected, try to get price from Select2 data
+                    if ($select.val() && parseFloat(priceInput.value) === 0) {
+                        const selectedData = $select.select2('data');
+                        if (selectedData && selectedData[0] && selectedData[0].price) {
+                            priceInput.value = selectedData[0].price;
+                        }
+                    }
+                });
+                
+                calculateTotals();
             }, 200);
         });
     </script>
