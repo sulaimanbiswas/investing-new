@@ -128,6 +128,7 @@
 
 @push('scripts')
     <script src="{{ asset('admin/vendor/select2/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('admin/js/plugins-init/select2-init.js') }}"></script>
     <script>
         let productIndex = {{ isset($productPackage) && $productPackage->productPackageItems->count() > 0 ? $productPackage->productPackageItems->count() : 1 }};
         let availableProducts = [];
