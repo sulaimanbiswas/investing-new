@@ -1,5 +1,7 @@
 @csrf
-
+@push('styles')
+    <link href="{{ asset('admin/vendor/select2/css/select2.min.css') }}" rel="stylesheet" />
+@endpush
 <div class="row">
     <div class="col-md-3 mb-3">
         <label class="form-label">Order Set <span class="text-danger">*</span></label>
@@ -125,6 +127,7 @@
 </div>
 
 @push('scripts')
+    <script src="{{ asset('admin/vendor/select2/js/select2.full.min.js') }}"></script>
     <script>
         let productIndex = {{ isset($productPackage) && $productPackage->productPackageItems->count() > 0 ? $productPackage->productPackageItems->count() : 1 }};
         let availableProducts = [];
@@ -258,7 +261,7 @@
                         <div class="row align-items-end">
                             <div class="col-md-5">
                                 <label class="form-label">Product</label>
-                                <select name="products[${productIndex}][product_id]" class="form-control product-select" required>
+                                <select id="single-select" name="products[${productIndex}][product_id]" class="form-control product-select" required>
                                     <option value="">Select Product</option>
                                 </select>
                             </div>
