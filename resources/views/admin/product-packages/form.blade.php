@@ -40,10 +40,10 @@
 
     <div class="col-md-3 mb-3">
         <label class="form-label">Platform <span class="text-danger">*</span></label>
-        <select name="order_set_id" id="order_set_id" class="form-control" required>
+        <select name="platform_id" id="platform_id" class="form-control" required>
             <option value="">Select Platform</option>
             @foreach($platforms as $platform)
-                <option value="{{ $platform->id }}" data-platform-id="{{ $platform->platform_id }}" {{ (string) old('order_set_id', $productPackage->order_set_id ?? $preSelectedOrderSetId ?? '') === (string) $platform->id ? 'selected' : '' }}>
+                <option value="{{ $platform->id }}" {{ (string) old('platform_id', $productPackage->platform_id ?? '') === (string) $platform->id ? 'selected' : '' }}>
                     {{ $platform->name }}
                 </option>
             @endforeach
