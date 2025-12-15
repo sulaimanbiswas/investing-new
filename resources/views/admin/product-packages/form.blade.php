@@ -129,13 +129,28 @@
 @push('scripts')
     <script src="{{ asset('admin/vendor/select2/js/select2.full.min.js') }}"></script>
     <script>
+        let productIndex = {{ isset($productPackage) && $productPackage->productPackageItems->count() > 0 ? $productPackage->productPackageItems->count() : 1 }};
+        
+        @php
+            $existingProductsData = isset($productPackage) ? $productPackage->productPackageItems->map(function ($item) {
+                return [
+                    'product_id' => $item->product_id,
+                    'name' => $item->product->name,
+                    'price' => $item->price,
+                    'quantity' => $item->quantity
+                ];
+            })->toArray() : [];
+        @endphp
+        const existingProducts = @json($existingProductsData);
+
         // Initialize Select2 on product selects with AJAX
         function initializeProductSelect2() {
             $('.product-select').each(function() {
                 const $select = $(this);
-                // Destroy existing Select2 instance if any
+                
+                // Skip if already initialized
                 if ($select.data('select2')) {
-                    $select.select2('destroy');
+                    return;
                 }
                 
                 const platformId = $('#platform_id').val();
@@ -185,89 +200,107 @@
                     templateResult: function(item) {
                         if (item.loading) return item.text;
                         return $('<span>' + item.text + '</span>');
-                    },
-                    templateSelection: function(item) {
-                        if (item.id) {
-                            // Store price in data attribute for later use
-                            $select.find('option[value="' + item.id + '"]').attr('data-price', item.price);
-                        }
-                        return item.text;
                     }
+                }).on('select2:select', function(e) {
+                    handleProductSelect($(this), e.params.data);
                 });
             });
         }
 
-        let productIndex = {{ isset($productPackage) && $productPackage->productPackageItems->count() > 0 ? $productPackage->productPackageItems->count() : 1 }};
-        let availableProducts = [];
-        const editMode = {{ isset($productPackage) ? 'true' : 'false' }};
-        @php
-            $existingProductsData = isset($productPackage) ? $productPackage->productPackageItems->map(function ($item) {
-                return [
-                    'product_id' => $item->product_id,
-                    'name' => $item->product->name,
-                    'price' => $item->price,
-                    'quantity' => $item->quantity
-                ];
-            })->toArray() : [];
-        @endphp
-        const existingProducts = @json($existingProductsData);
+        function handleProductSelect($select, selectedData) {
+            const row = $select.closest('.product-row');
+            const priceInput = row.find('.price-input');
+            
+            console.log('Product selected:', selectedData);
+            
+            if (selectedData && selectedData.price) {
+                priceInput.val(selectedData.price);
+                console.log('Price set to:', selectedData.price);
+            } else {
+                priceInput.val(0);
+            }
+            
+            calculateTotals();
+
+            // Refresh other Select2 instances to update excluded products
+            setTimeout(() => {
+                reinitializeOtherSelects($select);
+            }, 100);
+        }
+
+        function reinitializeOtherSelects($currentSelect) {
+            const platformId = $('#platform_id').val();
+            if (!platformId) return;
+            
+            const selectedProductIds = [];
+            $('.product-select').each(function() {
+                const val = $(this).val();
+                if (val) {
+                    selectedProductIds.push(val);
+                }
+            });
+
+            $('.product-select').each(function() {
+                const $select = $(this);
+                
+                // Skip current select and already initialized ones
+                if ($select.is($currentSelect) || !$select.data('select2')) {
+                    return;
+                }
+                
+                // Update exclude list
+                $select.data('select2').options.options.ajax.data = function(params) {
+                    return {
+                        platform_id: platformId,
+                        search: params.term || '',
+                        page: params.page || 1,
+                        exclude: selectedProductIds.filter(id => id !== $select.val())
+                    };
+                };
+            });
+        }
 
         // Auto-select platform when order set changes
-        document.getElementById('order_set_id').addEventListener('change', function () {
+        $('#order_set_id').on('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             const platformId = selectedOption.dataset.platformId;
 
             if (platformId) {
-                const platformSelect = document.getElementById('platform_id');
-                platformSelect.value = platformId;
-
-                // Trigger platform change to load products
-                loadProductsByPlatform(platformId);
-            } else {
-                availableProducts = [];
-                loadProductsByPlatform(null);
+                $('#platform_id').val(platformId).trigger('change');
             }
         });
 
         // Handle type change for single/combo restriction
-        document.getElementById('type').addEventListener('change', function () {
+        $('#type').on('change', function() {
             const type = this.value;
-            const addButton = document.getElementById('addProductRow');
+            const $addButton = $('#addProductRow');
             const productRows = document.querySelectorAll('.product-row');
 
             if (type === 'single') {
-                // Only hide button if already have 1 product
                 if (productRows.length >= 1) {
-                    addButton.style.display = 'none';
+                    $addButton.hide();
                 } else {
-                    addButton.style.display = 'inline-block';
+                    $addButton.show();
                 }
                 // Remove extra rows if more than 1
-                productRows.forEach((row, index) => {
-                    if (index > 0) {
-                        row.remove();
-                    }
-                });
+                Array.from(productRows).slice(1).forEach(row => row.remove());
             } else {
-                addButton.style.display = 'inline-block';
+                $addButton.show();
             }
         });
 
-        // Fetch products when platform changes (kept for manual changes if needed)
-        document.getElementById('platform_id').addEventListener('change', function () {
+        // Fetch products when platform changes
+        $('#platform_id').on('change', function() {
             const platformId = this.value;
-            loadProductsByPlatform(platformId);
-        });
+            
+            // Destroy all Select2 instances
+            $('.product-select').each(function() {
+                if ($(this).data('select2')) {
+                    $(this).select2('destroy');
+                }
+            });
 
-        function loadProductsByPlatform(platformId) {
             if (!platformId) {
-                availableProducts = [];
-                // Destroy all Select2 instances
-                $('.product-select').each(function() {
-                    if ($(this).data('select2')) {
-                        $(this).select2('destroy');
-                    }
-                });
                 return;
             }
 
@@ -275,14 +308,13 @@
             setTimeout(() => {
                 initializeProductSelect2();
             }, 100);
-        }
+        });
 
         // Add product row
-        document.getElementById('addProductRow').addEventListener('click', function () {
-            const type = document.getElementById('type').value;
+        $('#addProductRow').on('click', function() {
+            const type = $('#type').val();
             const currentProductCount = document.querySelectorAll('.product-row').length;
 
-            // Prevent adding more products if type is single and already has 1 product
             if (type === 'single' && currentProductCount >= 1) {
                 alert('Single type product packages can only have one product');
                 return;
@@ -294,39 +326,39 @@
             newRow.dataset.index = productIndex;
 
             newRow.innerHTML = `
-                        <div class="row align-items-end">
-                            <div class="col-md-5">
-                                <label class="form-label">Product</label>
-                                <select name="products[${productIndex}][product_id]" class="form-control product-select" required>
-                                    <option value="">Select Product</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label">Quantity</label>
-                                <input type="number" name="products[${productIndex}][quantity]" class="form-control quantity-input" 
-                                    value="1" min="1" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Price</label>
-                                <input type="number" name="products[${productIndex}][price]" class="form-control price-input" 
-                                    value="0" min="0" step="0.01" required readonly>
-                            </div>
-                            <div class="col-md-2">
-                                <button type="button" class="btn btn-danger btn-sm remove-product w-100">
-                                    <i class="fas fa-trash"></i> Remove
-                                </button>
-                            </div>
-                        </div>
-                    `;
+                <div class="row align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label">Product</label>
+                        <select name="products[${productIndex}][product_id]" class="form-control product-select" required>
+                            <option value="">Select Product</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="products[${productIndex}][quantity]" class="form-control quantity-input" 
+                            value="1" min="1" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Price</label>
+                        <input type="number" name="products[${productIndex}][price]" class="form-control price-input" 
+                            value="0" min="0" step="0.01" required readonly>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-danger btn-sm remove-product w-100">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            `;
 
             container.appendChild(newRow);
             productIndex++;
 
-            // Hide Add Product button if type is single (just added the 1st product)
             if (type === 'single') {
-                document.getElementById('addProductRow').style.display = 'none';
+                $('#addProductRow').hide();
             }
 
+            // Attach events to new row
             attachRowEvents(newRow);
 
             // Initialize Select2 on the new row's select
@@ -336,89 +368,35 @@
         });
 
         // Remove product row
-        document.addEventListener('click', function (e) {
-            if (e.target.closest('.remove-product')) {
-                const row = e.target.closest('.product-row');
-                const productRows = document.querySelectorAll('.product-row');
-                const type = document.getElementById('type').value;
+        $(document).on('click', '.remove-product', function() {
+            const row = $(this).closest('.product-row');
+            const type = $('#type').val();
+            const productRows = document.querySelectorAll('.product-row');
 
-                if (productRows.length > 1) {
-                    row.remove();
-                    calculateTotals();
+            row.remove();
+            calculateTotals();
 
-                    // Refresh Select2 to update available products
-                    setTimeout(() => {
-                        initializeProductSelect2();
-                    }, 100);
+            // Refresh Select2
+            setTimeout(() => {
+                initializeProductSelect2();
+            }, 100);
 
-                    // Show Add Product button if type is single and no products left
-                    if (type === 'single' && document.querySelectorAll('.product-row').length === 0) {
-                        document.getElementById('addProductRow').style.display = 'inline-block';
-                    }
-                } else {
-                    // Allow removing the last product
-                    row.remove();
-                    calculateTotals();
-
-                    // Refresh Select2
-                    setTimeout(() => {
-                        initializeProductSelect2();
-                    }, 100);
-
-                    // Show Add Product button since no products left
-                    if (type === 'single') {
-                        document.getElementById('addProductRow').style.display = 'inline-block';
-                    }
-                }
-            }
-        });
-
-        // Auto-fill price when product is selected
-        document.addEventListener('select2:select', function (e) {
-            if ($(e.target).hasClass('product-select')) {
-                const $select = $(e.target);
-                const selectedData = $select.select2('data')[0];
-                const row = $select.closest('.product-row');
-                const priceInput = row.find('.price-input');
-                
-                if (selectedData && selectedData.price) {
-                    priceInput.val(selectedData.price);
-                } else {
-                    priceInput.val(0);
-                }
-                
-                calculateTotals();
-
-                // Refresh other Select2 instances to update excluded products
-                setTimeout(() => {
-                    initializeProductSelect2();
-                }, 100);
+            if (type === 'single' && document.querySelectorAll('.product-row').length === 0) {
+                $('#addProductRow').show();
             }
         });
 
         // Calculate totals on quantity/price change
-        document.addEventListener('input', function (e) {
-            if (e.target.classList.contains('quantity-input') ||
-                e.target.classList.contains('price-input') ||
-                e.target.id === 'profit_percentage') {
-                calculateTotals();
-            }
+        $(document).on('input', '.quantity-input, .price-input', function() {
+            calculateTotals();
+        });
+
+        $(document).on('change', '#profit_percentage', function() {
+            calculateTotals();
         });
 
         function attachRowEvents(row) {
-            const select = row.querySelector('.product-select');
-            const quantityInput = row.querySelector('.quantity-input');
-            const priceInput = row.querySelector('.price-input');
-
-            select.addEventListener('change', function () {
-                const selectedOption = this.options[this.selectedIndex];
-                const price = selectedOption.dataset.price || 0;
-                priceInput.value = price;
-                calculateTotals();
-            });
-
-            quantityInput.addEventListener('input', calculateTotals);
-            priceInput.addEventListener('input', calculateTotals);
+            // Events are delegated via document listeners, so we don't need to attach them individually
         }
 
         function calculateTotals() {
@@ -434,74 +412,60 @@
             const profitAmount = (subtotal * profitPercentage) / 100;
             const totalWithProfit = subtotal + profitAmount;
 
-            document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
-            document.getElementById('profitAmount').textContent = '$' + profitAmount.toFixed(2);
-            document.getElementById('totalWithProfit').textContent = '$' + totalWithProfit.toFixed(2);
-            document.getElementById('expectedIncome').textContent = '$' + totalWithProfit.toFixed(2);
+            $('#subtotal').text('$' + subtotal.toFixed(2));
+            $('#profitAmount').text('$' + profitAmount.toFixed(2));
+            $('#totalWithProfit').text('$' + totalWithProfit.toFixed(2));
+            $('#expectedIncome').text('$' + totalWithProfit.toFixed(2));
         }
 
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function () {
+        $(document).ready(function() {
             // Reset product index if no products exist
             if (document.querySelectorAll('.product-row').length === 0) {
                 productIndex = 0;
             }
 
-            // Attach events to existing rows
-            document.querySelectorAll('.product-row').forEach(attachRowEvents);
-
-            // Check if order set is already selected and set platform accordingly
+            // Check if order set is already selected and set platform
             const orderSetSelect = document.getElementById('order_set_id');
             if (orderSetSelect.value) {
                 const selectedOption = orderSetSelect.options[orderSetSelect.selectedIndex];
                 const preselectedPlatformId = selectedOption.getAttribute('data-platform-id');
 
                 if (preselectedPlatformId) {
-                    document.getElementById('platform_id').value = preselectedPlatformId;
-
-                    // Load products for this platform
-                    loadProductsByPlatform(preselectedPlatformId);
+                    $('#platform_id').val(preselectedPlatformId);
                 }
             }
 
-            // Load products if platform is already selected (edit mode without order set)
-            const platformId = document.getElementById('platform_id').value;
-            if (platformId && !orderSetSelect.value) {
-                loadProductsByPlatform(platformId);
+            // Initialize Select2
+            const platformId = $('#platform_id').val();
+            if (platformId) {
+                setTimeout(() => {
+                    initializeProductSelect2();
+                }, 200);
             }
 
             // Check type and hide/show add button
-            const type = document.getElementById('type').value;
-            const addButton = document.getElementById('addProductRow');
+            const type = $('#type').val();
             const productRows = document.querySelectorAll('.product-row');
 
             if (type === 'single' && productRows.length >= 1) {
-                // Only hide if already has 1 product
-                addButton.style.display = 'none';
-            } else {
-                addButton.style.display = 'inline-block';
+                $('#addProductRow').hide();
             }
 
-            // Initialize Select2 on all product selects
-            setTimeout(() => {
-                initializeProductSelect2();
-                
-                // For existing products in edit mode, set price values if not already set
-                document.querySelectorAll('.product-row').forEach(row => {
-                    const $select = $(row).find('.product-select');
-                    const priceInput = row.querySelector('.price-input');
-                    
-                    // If price is 0 but product is selected, try to get price from Select2 data
-                    if ($select.val() && parseFloat(priceInput.value) === 0) {
-                        const selectedData = $select.select2('data');
-                        if (selectedData && selectedData[0] && selectedData[0].price) {
-                            priceInput.value = selectedData[0].price;
+            // Load existing product prices if in edit mode
+            if (existingProducts.length > 0) {
+                setTimeout(() => {
+                    document.querySelectorAll('.product-row').forEach((row, index) => {
+                        if (existingProducts[index]) {
+                            const priceInput = row.querySelector('.price-input');
+                            priceInput.value = existingProducts[index].price;
                         }
-                    }
-                });
-                
+                    });
+                    calculateTotals();
+                }, 400);
+            } else {
                 calculateTotals();
-            }, 200);
+            }
         });
     </script>
 @endpush
