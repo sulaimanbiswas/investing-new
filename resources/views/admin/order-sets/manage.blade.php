@@ -67,7 +67,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">Product Packages</h4>
-                    <a href="{{ route('admin.product-packages.create', ['order_set_id' => $orderSet->id, 'platform' => $orderSet->platform_id]) }}"
+                    <a href="{{ route('admin.product-packages.create', ['order_set_id' => $orderSet->id, 'platform_id' => $orderSet->platform_id]) }}"
                         class="btn btn-sm btn-primary">
                         <i class="fas fa-plus"></i> Create Package
                     </a>
