@@ -190,8 +190,10 @@ class ProductPackageController extends Controller
         $platformId = $request->input('platform_id');
         $search = $request->input('search', '');
         $page = $request->input('page', 1);
-        $perPage = 20;
+        $perPage = 50;
         $exclude = $request->input('exclude', []);
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
 
         $query = Product::where('platform_id', $platformId)
             ->where('is_active', true);
@@ -201,9 +203,21 @@ class ProductPackageController extends Controller
             $query->whereNotIn('id', $exclude);
         }
 
-        // Search by name
+        // Search by name or price
         if (!empty($search)) {
-            $query->where('name', 'like', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('price', $search);
+            });
+        }
+
+        // Filter by price range
+        if (!empty($minPrice) && is_numeric($minPrice)) {
+            $query->where('price', '>=', $minPrice);
+        }
+
+        if (!empty($maxPrice) && is_numeric($maxPrice)) {
+            $query->where('price', '<=', $maxPrice);
         }
 
         $query->orderBy('name');
@@ -218,7 +232,7 @@ class ProductPackageController extends Controller
         $items = $products->map(function ($product) {
             return [
                 'id' => $product->id,
-                'text' => $product->name,
+                'text' => $product->name . ' - $' . number_format($product->price, 2),
                 'price' => $product->price
             ];
         });

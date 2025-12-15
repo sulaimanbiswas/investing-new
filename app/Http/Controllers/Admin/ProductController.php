@@ -15,7 +15,22 @@ class ProductController extends Controller
         $query = Product::with('platform');
 
         if ($search = $request->string('search')->toString()) {
-            $query->where('name', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('price', $search);
+            });
+        }
+
+        if ($minPrice = $request->input('min_price')) {
+            if (is_numeric($minPrice)) {
+                $query->where('price', '>=', $minPrice);
+            }
+        }
+
+        if ($maxPrice = $request->input('max_price')) {
+            if (is_numeric($maxPrice)) {
+                $query->where('price', '<=', $maxPrice);
+            }
         }
 
         if ($status = $request->input('status')) {

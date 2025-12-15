@@ -39,7 +39,17 @@
                             <form method="GET" class="row g-2">
                                 <div class="col-12">
                                     <input type="text" name="search" value="{{ request('search') }}"
-                                        class="form-control form-control-sm" placeholder="Search by name">
+                                        class="form-control form-control-sm" placeholder="Search by name or price">
+                                </div>
+
+                                <div class="col-6">
+                                    <input type="number" name="min_price" value="{{ request('min_price') }}"
+                                        class="form-control form-control-sm" placeholder="Min price" step="0.01">
+                                </div>
+
+                                <div class="col-6">
+                                    <input type="number" name="max_price" value="{{ request('max_price') }}"
+                                        class="form-control form-control-sm" placeholder="Max price" step="0.01">
                                 </div>
 
                                 <div class="col-12">
@@ -75,12 +85,22 @@
 
             <!-- Desktop/tablet: inline filter form -->
             <form method="GET" class="row mb-3 g-2 d-none d-md-flex">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
-                        placeholder="Search by name">
+                        placeholder="Search by name or price">
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <input type="number" name="min_price" value="{{ request('min_price') }}"
+                        class="form-control form-control-sm" placeholder="Min price" step="0.01">
+                </div>
+
+                <div class="col-md-2">
+                    <input type="number" name="max_price" value="{{ request('max_price') }}"
+                        class="form-control form-control-sm" placeholder="Max price" step="0.01">
+                </div>
+
+                <div class="col-md-2">
                     <select name="status" class="default-select form-control form-control-sm wide" required>
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
@@ -88,7 +108,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <select name="platform_id" class="default-select form-control form-control-sm wide" required>
                         <option value="">All Platforms</option>
                         @foreach($platforms as $platform)
@@ -99,7 +119,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-2 d-grid">
+                <div class="col-md-1 d-grid">
                     <button class="btn btn-secondary btn-sm" type="submit">Filter</button>
                 </div>
             </form>

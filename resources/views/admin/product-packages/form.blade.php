@@ -154,10 +154,11 @@
                 
                 // Initialize Select2 with AJAX
                 $select.select2({
-                    placeholder: 'Select Product',
+                    placeholder: 'Search by name or price (e.g., "Product Name" or "$20")',
                     allowClear: true,
                     width: '100%',
                     minimumInputLength: 0,
+                    dropdownAutoWidth: false,
                     ajax: {
                         url: '{{ route('admin.product-packages.products') }}',
                         dataType: 'json',
@@ -179,11 +180,11 @@
                                 }
                             };
                         },
-                        cache: true
+                        cache: false
                     },
                     templateResult: function(item) {
                         if (item.loading) return item.text;
-                        return $('<span>' + item.text + ' <small class="text-muted">($' + item.price + ')</small></span>');
+                        return $('<span>' + item.text + '</span>');
                     },
                     templateSelection: function(item) {
                         if (item.id) {
