@@ -128,8 +128,24 @@
 
 @push('scripts')
     <script src="{{ asset('admin/vendor/select2/js/select2.full.min.js') }}"></script>
-    <script src="{{ asset('admin/js/plugins-init/select2-init.js') }}"></script>
     <script>
+        // Initialize Select2 on product selects
+        function initializeProductSelect2() {
+            $('.product-select').each(function() {
+                const $select = $(this);
+                // Destroy existing Select2 instance if any
+                if ($select.data('select2')) {
+                    $select.select2('destroy');
+                }
+                // Initialize Select2
+                $select.select2({
+                    placeholder: 'Select Product',
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+        }
+
         let productIndex = {{ isset($productPackage) && $productPackage->productPackageItems->count() > 0 ? $productPackage->productPackageItems->count() : 1 }};
         let availableProducts = [];
         const editMode = {{ isset($productPackage) ? 'true' : 'false' }};
@@ -240,6 +256,11 @@
                     select.appendChild(option);
                 });
             });
+
+            // Reinitialize Select2 after updating options
+            setTimeout(() => {
+                initializeProductSelect2();
+            }, 100);
         }
 
         // Add product row
@@ -262,7 +283,7 @@
                         <div class="row align-items-end">
                             <div class="col-md-5">
                                 <label class="form-label">Product</label>
-                                <select id="single-select" name="products[${productIndex}][product_id]" class="form-control product-select" required>
+                                <select name="products[${productIndex}][product_id]" class="form-control product-select" required>
                                     <option value="">Select Product</option>
                                 </select>
                             </div>
@@ -296,6 +317,11 @@
 
             // Update all product selects to filter out already selected products
             updateAllProductSelects();
+
+            // Initialize Select2 on the new row's select
+            setTimeout(() => {
+                initializeProductSelect2();
+            }, 150);
         });
 
         // Remove product row
@@ -434,6 +460,11 @@
             }
 
             calculateTotals();
+
+            // Initialize Select2 on all product selects
+            setTimeout(() => {
+                initializeProductSelect2();
+            }, 200);
         });
     </script>
 @endpush
