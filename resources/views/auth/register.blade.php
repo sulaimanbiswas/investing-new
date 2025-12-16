@@ -50,8 +50,8 @@
 
         <div class="relative mb-5">
             <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-            <input type="password" id="withdrawal_password" name="withdrawal_password"
-                placeholder="Withdrawal Password (optional)" value="{{ old('withdrawal_password') }}"
+            <input type="password" id="withdrawal_password" name="withdrawal_password" placeholder="Withdrawal Password"
+                value="{{ old('withdrawal_password') }}" required
                 class="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50">
             <button type="button" onclick="togglePassword('withdrawal_password')"
                 class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-500 transition-colors">

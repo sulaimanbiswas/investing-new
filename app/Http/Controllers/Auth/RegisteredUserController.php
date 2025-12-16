@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', Rules\Password::defaults()],
-            'withdrawal_password' => ['nullable', 'string', 'min:6', 'max:255'],
+            'withdrawal_password' => ['required', 'string', 'min:6', 'max:255'],
             'invitation_code' => ['required', 'string', 'max:255', 'exists:users,referral_code'],
         ];
 
