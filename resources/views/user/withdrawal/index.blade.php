@@ -111,6 +111,7 @@
                     <input type="radio" name="gateway" value="{{ $gateway->id }}" class="hidden gateway-radio"
                         data-min="{{ $gateway->min_limit }}" data-max="{{ $gateway->max_limit }}"
                         data-currency="{{ $gateway->currency }}"
+                        data-user-address="{{ $user->getWalletAddressForGateway($gateway->id) }}"
                         data-custom-fields="{{ json_encode($gateway->custom_fields ?? []) }}">
                     <div
                         class="border-2 border-gray-200 rounded-xl p-4 text-center transition hover:border-green-400 hover:bg-green-50">
@@ -164,14 +165,14 @@
             </div>
 
             <!-- Wallet Address -->
-            {{-- <div>
+            <div>
                 <label for="wallet_address" class="block text-sm font-medium text-gray-700 mb-1">Wallet Address <span
                         class="text-red-500">*</span></label>
                 <input type="text" id="wallet_address" name="wallet_address"
                     class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500"
                     placeholder="Enter destination wallet address" required>
                 <p class="text-xs text-gray-500 mt-1">Ensure the address matches the selected network/currency.</p>
-            </div> --}}
+            </div>
 
             <!-- Custom Fields Container -->
             <div id="custom-fields-container"></div>
@@ -269,6 +270,7 @@
 
 @push('scripts')
     <script>
+        const defaultWalletAddress = @json($user->withdrawal_address);
         const form = document.getElementById('withdrawalForm');
         const successModal = document.getElementById('successModal');
         const errorModal = document.getElementById('errorModal');
@@ -291,6 +293,7 @@
                 minLimit = parseFloat(this.dataset.min);
                 maxLimit = parseFloat(this.dataset.max);
                 const currency = this.dataset.currency;
+                const userAddress = this.dataset.userAddress || '';
                 customFields = JSON.parse(this.dataset.customFields || '[]');
 
                 // Update UI
@@ -305,6 +308,10 @@
                 document.getElementById('currency-label').textContent = currency;
                 document.getElementById('amount-hint').textContent = `Available: {{ number_format($availableBalance, 2) }} USDT | Min: ${minLimit} ${currency} | Max: ${maxLimit} ${currency}`;
                 document.getElementById('gateway-error').textContent = '';
+
+                // Auto-fill wallet address for selected gateway (fallback to default)
+                const walletInput = document.getElementById('wallet_address');
+                walletInput.value = userAddress || defaultWalletAddress || '';
 
                 // Render custom fields
                 renderCustomFields();

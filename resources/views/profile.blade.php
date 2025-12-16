@@ -107,11 +107,11 @@
                 </div>
                 <span class="text-xs">Record</span>
             </a>
-            <a href="{{ route('commissions.index') }}" class="flex flex-col items-center gap-2">
+            <a href="{{ route('wallet.edit') }}" class="flex flex-col items-center gap-2">
                 <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
-                    <i class="fas fa-coins"></i>
+                    <i class="fas fa-wallet"></i>
                 </div>
-                <span class="text-xs">Commission</span>
+                <span class="text-xs">Wallet Address</span>
             </a>
             <a href="{{ route('invitation') }}" class="flex flex-col items-center gap-2">
                 <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">

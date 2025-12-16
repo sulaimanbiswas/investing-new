@@ -84,6 +84,13 @@ class WithdrawalController extends Controller
             'custom_data' => $data['custom_data'] ?? null,
         ]);
 
+        // Persist/update the user's wallet address for this gateway
+        try {
+            $user->setWalletAddressForGateway($gateway->id, $data['wallet_address']);
+        } catch (\Throwable $e) {
+            // Non-fatal: ignore persistence issues here
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Your withdrawal request has been submitted successfully. Please wait for admin approval.',

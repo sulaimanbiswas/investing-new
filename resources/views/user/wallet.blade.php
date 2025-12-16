@@ -23,7 +23,8 @@
 
     <div class="bg-white rounded-xl shadow-sm p-5">
         <h3 class="text-lg font-semibold text-gray-800 mb-2">Default Wallet Address</h3>
-        <p class="text-sm text-gray-500 mb-4">This address will be used for withdrawals.</p>
+        <p class="text-sm text-gray-500 mb-4">This address will be used for withdrawals if a gateway-specific address is not
+            set.</p>
 
         <form action="{{ route('wallet.update') }}" method="POST" class="space-y-4">
             @csrf
@@ -36,6 +37,26 @@
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
                 @enderror
             </div>
+
+            @if(isset($gateways) && $gateways->count() > 0)
+                <div class="pt-2">
+                    <h4 class="text-md font-semibold text-gray-800 mb-2">Gateway-specific Addresses</h4>
+                    <p class="text-xs text-gray-500 mb-3">Set addresses for each active withdrawal method. These will auto-fill
+                        when you select the method during withdrawal.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @foreach($gateways as $gateway)
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-gray-700">{{ $gateway->name }}
+                                    ({{ $gateway->currency }})</label>
+                                <input type="text" name="gateway_addresses[{{ $gateway->id }}]"
+                                    class="w-full rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500"
+                                    value="{{ old('gateway_addresses.' . $gateway->id, $user->getWalletAddressForGateway($gateway->id)) }}"
+                                    placeholder="Enter address for {{ $gateway->name }}">
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
 
             <div class="flex justify-end gap-3">
                 <a href="{{ route('profile.home') }}"

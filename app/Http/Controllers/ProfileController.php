@@ -127,8 +127,14 @@ class ProfileController extends Controller
      */
     public function wallet(Request $request): View
     {
+        $user = $request->user();
+        $gateways = \App\Models\Gateway::where('type', 'withdrawal')
+            ->where('is_active', 1)
+            ->get();
+
         return view('user.wallet', [
-            'user' => $request->user(),
+            'user' => $user,
+            'gateways' => $gateways,
         ]);
     }
 
@@ -139,11 +145,22 @@ class ProfileController extends Controller
     {
         $data = $request->validate([
             'withdrawal_address' => 'required|string|max:255',
+            'gateway_addresses' => 'nullable|array',
+            'gateway_addresses.*' => 'nullable|string|max:255',
         ]);
 
         $user = $request->user();
         $user->withdrawal_address = $data['withdrawal_address'];
         $user->save();
+
+        // Persist per-gateway addresses if provided
+        if (!empty($data['gateway_addresses'])) {
+            foreach ($data['gateway_addresses'] as $gatewayId => $address) {
+                if (is_string($address) && strlen(trim($address)) > 0) {
+                    $user->setWalletAddressForGateway((int)$gatewayId, trim($address));
+                }
+            }
+        }
 
         flash()->success('Wallet address updated successfully.');
 

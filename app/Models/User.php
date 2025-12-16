@@ -159,4 +159,32 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class);
     }
+
+    /**
+     * Per-gateway wallet addresses.
+     */
+    public function walletAddresses()
+    {
+        return $this->hasMany(UserWalletAddress::class);
+    }
+
+    /**
+     * Get wallet address for a specific gateway, fallback to default.
+     */
+    public function getWalletAddressForGateway(int $gatewayId): ?string
+    {
+        $record = $this->walletAddresses()->where('gateway_id', $gatewayId)->first();
+        return $record?->address ?? $this->withdrawal_address;
+    }
+
+    /**
+     * Set or update wallet address for a specific gateway.
+     */
+    public function setWalletAddressForGateway(int $gatewayId, string $address): void
+    {
+        $this->walletAddresses()->updateOrCreate(
+            ['gateway_id' => $gatewayId],
+            ['address' => $address]
+        );
+    }
 }
