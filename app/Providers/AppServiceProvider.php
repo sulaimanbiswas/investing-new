@@ -29,8 +29,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Set custom pagination view for admin with ellipsis window
-        Paginator::useBootstrapFive();
+        // Dynamically set pagination view: Tailwind for user, Bootstrap for admin
+        if (request()->is('admin*')) {
+            Paginator::defaultView('vendor.pagination.bootstrap-5');
+        } else {
+            Paginator::defaultView('vendor.pagination.tailwind');
+        }
 
         // Configure pagination to show links around current page
         // This will show ellipsis (...) when there are many pages
