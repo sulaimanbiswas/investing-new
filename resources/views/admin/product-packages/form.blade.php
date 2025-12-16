@@ -231,16 +231,32 @@
         function handleProductSelect($select, selectedData) {
             const row = $select.closest('.product-row');
             const priceInput = row.find('.price-input');
-            
-            console.log('Product selected:', selectedData);
-            
+
+            // Update the selected option's text in the select element
+            if (selectedData && selectedData.id && selectedData.text) {
+                // Remove any existing option with the selected id (except the one being selected)
+                $select.find('option').each(function() {
+                    if ($(this).val() === selectedData.id && !$(this).is(':selected')) {
+                        $(this).remove();
+                    }
+                });
+                // If the selected option does not exist, add it
+                if ($select.find('option[value="' + selectedData.id + '"]').length === 0) {
+                    $select.append('<option value="' + selectedData.id + '" selected>' + selectedData.text + '</option>');
+                } else {
+                    // Update the text of the selected option
+                    $select.find('option[value="' + selectedData.id + '"]').text(selectedData.text);
+                }
+                $select.val(selectedData.id).trigger('change.select2');
+            }
+
             if (selectedData && selectedData.price) {
                 priceInput.val(selectedData.price);
-                console.log('Price set to:', selectedData.price);
+                //console.log('Price set to:', selectedData.price);
             } else {
                 priceInput.val(0);
             }
-            
+
             calculateTotals();
 
             // Refresh other Select2 instances to update excluded products
