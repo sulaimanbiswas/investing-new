@@ -100,6 +100,7 @@
                             <label class="form-label">Product</label>
                             <select name="products[{{ $index }}][product_id]" class="form-control product-select" required>
                                 <option value="">Select Product</option>
+                                <option value="{{ $item->product_id }}" selected>{{ $item->product->name ?? 'Selected Product' }}</option>
                             </select>
                         </div>
                         <div class="col-md-2">
