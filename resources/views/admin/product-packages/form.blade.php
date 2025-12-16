@@ -361,7 +361,7 @@
                     <div class="col-md-3">
                         <label class="form-label">Price</label>
                         <input type="number" name="products[${productIndex}][price]" class="form-control price-input" 
-                            value="0" min="0" step="0.01" required readonly>
+                            value="0" min="0" step="0.01" required>
                     </div>
                     <div class="col-md-2">
                         <button type="button" class="btn btn-danger btn-sm remove-product w-100">
