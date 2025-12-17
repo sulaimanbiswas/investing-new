@@ -99,7 +99,6 @@ class MenuController extends Controller
                 $query->where('user_id', $user->id);
             })
                 ->where('status', 'unpaid')
-                // ->orderBy('order_amount', 'asc') // Sort by price ascending
                 ->with(['productPackageItem.product', 'productPackageItem.productPackage'])
                 ->first();
         }
