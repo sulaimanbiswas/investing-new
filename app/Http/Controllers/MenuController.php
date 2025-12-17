@@ -285,13 +285,6 @@ class MenuController extends Controller
     public function submitOrder(Request $request, UserOrder $order)
     {
         $user = Auth::user();
-        \Log::info('SubmitOrder Auth User', [
-            'user_id' => $user ? $user->id : null,
-            'user_email' => $user ? $user->email : null,
-            'order_id' => $order->id,
-            'order_user_order_set_id' => $order->user_order_set_id,
-            'order_set_user_id' => $order->userOrderSet->user_id,
-        ]);
 
         // Verify order belongs to user (cast both to int to avoid type mismatch)
         if ((int)$order->userOrderSet->user_id !== (int)$user->id) {
