@@ -27,8 +27,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Accept either email address or username in the same field
-            'email' => ['required', 'string'],
+            // Accept phone, username, or email in the identifier field
+            'identifier' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -42,13 +42,18 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $identifier = $this->string('email');
+        $identifier = $this->string('identifier');
         $credentials = ['password' => $this->string('password')];
 
-        // Decide whether the identifier is an email or a username
-        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+        // Decide whether the identifier is phone, email, or username
+        if (preg_match('/^[0-9+\-\s()]+$/', $identifier)) {
+            // It's a phone number
+            $credentials['phone'] = preg_replace('/[^0-9+]/', '', $identifier);
+        } elseif (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            // It's an email
             $credentials['email'] = $identifier;
         } else {
+            // It's a username
             $credentials['username'] = $identifier;
         }
 
@@ -56,7 +61,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'identifier' => trans('auth.failed'),
             ]);
         }
 
@@ -66,7 +71,7 @@ class LoginRequest extends FormRequest
             Auth::logout();
 
             throw ValidationException::withMessages([
-                'email' => 'Admin users cannot login through user panel. Please use admin login.',
+                'identifier' => 'Admin users cannot login through user panel. Please use admin login.',
             ]);
         }
 

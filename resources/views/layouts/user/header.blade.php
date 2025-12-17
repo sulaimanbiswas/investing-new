@@ -46,7 +46,7 @@
                     @endif
                     <div class="text-left hidden sm:block">
                         <div class="font-semibold text-gray-800 text-sm">{{ auth()->user()->name }}</div>
-                        <div class="text-xs text-gray-500">{{ auth()->user()->email }}</div>
+                        <div class="text-xs text-gray-500">{{ "@" . auth()->user()->username }}</div>
                     </div>
                     <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
                 </button>

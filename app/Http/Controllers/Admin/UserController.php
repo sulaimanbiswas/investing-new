@@ -20,10 +20,11 @@ class UserController extends Controller
     {
         $query = User::where('is_admin', false);
 
-        // Search by username or email
+        // Search by username, phone, or email
         if ($search = $request->string('search')->toString()) {
             $query->where(function ($q) use ($search) {
                 $q->where('username', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             });
         }

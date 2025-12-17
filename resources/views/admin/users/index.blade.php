@@ -37,7 +37,7 @@
                             <form method="GET" class="row g-2">
                                 <div class="col-12">
                                     <input type="text" name="search" value="{{ request('search') }}" class="form-control"
-                                        placeholder="Search by username or email">
+                                        placeholder="Search by username, phone or email">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Status</label>
@@ -71,7 +71,7 @@
             <form method="GET" class="row mb-3 g-2 d-none d-md-flex">
                 <div class="col-md-3">
                     <input type="text" name="search" value="{{ request('search') }}" class="form-control"
-                        placeholder="Search by username or email">
+                        placeholder="Search by username, phone or email">
                 </div>
                 <div class="col-md-2">
                     <select name="status" class="form-control">
@@ -100,6 +100,7 @@
                             <th>#</th>
                             <th>User</th>
                             <th>Name</th>
+                            <th>Phone</th>
                             <th>Email</th>
                             <th>Status</th>
                             <th>Join Date</th>
@@ -114,7 +115,8 @@
                                 <td>{{ $user->id }}</td>
                                 <td><span class="text-primary">@</span>{{ $user->username }}</td>
                                 <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
+                                <td>{{ $user->phone }}</td>
+                                <td>{{ $user->email ?: 'N/A' }}</td>
                                 <td>
                                     @if($user->status === 'active')
                                         <span class="badge bg-success">Active</span>

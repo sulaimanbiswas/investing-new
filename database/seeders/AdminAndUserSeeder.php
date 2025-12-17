@@ -11,10 +11,11 @@ class AdminAndUserSeeder extends Seeder
     {
         // Admin account
         User::updateOrCreate(
-            ['email' => 'admin@example.com'],
+            ['username' => 'admin'],
             [
                 'name' => 'Admin',
-                'username' => 'admin',
+                'phone' => '+1234567890',
+                'email' => 'admin@example.com',
                 'password' => 'password', // hashed via casts
                 'is_admin' => true,
                 'email_verified_at' => now(),
@@ -23,10 +24,11 @@ class AdminAndUserSeeder extends Seeder
 
         // Normal user account
         User::updateOrCreate(
-            ['email' => 'user@example.com'],
+            ['username' => 'user'],
             [
                 'name' => 'User',
-                'username' => 'user',
+                'phone' => '+1234567891',
+                'email' => 'user@example.com',
                 'password' => 'password', // hashed via casts
                 'is_admin' => false,
                 'email_verified_at' => now(),

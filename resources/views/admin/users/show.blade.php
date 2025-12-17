@@ -308,15 +308,26 @@
                         <div class="ms-4">
                             <h4 class="mb-1">{{ $user->name }}</h4>
                             <p class="text-muted mb-0">
-                                @if($user->username){{ '@' . $user->username }}@else{{ $user->email }}@endif
+                                @if($user->username)
+                                    {{ '@' . $user->username }}
+                                @elseif($user->phone)
+                                    {{ $user->phone }}
+                                @else
+                                    {{ $user->email }}
+                                @endif
                             </p>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-sm-6 mb-3">
+                            <label class="text-muted mb-1">Phone</label>
+                            <p class="mb-0 fw-semibold">{{ $user->phone }}</p>
+                        </div>
+
+                        <div class="col-sm-6 mb-3">
                             <label class="text-muted mb-1">Email</label>
-                            <p class="mb-0 fw-semibold">{{ $user->email }}</p>
+                            <p class="mb-0 fw-semibold">{{ $user->email ?: 'N/A' }}</p>
                         </div>
 
                         <div class="col-sm-6 mb-3">
@@ -333,8 +344,9 @@
                             <label class="text-muted mb-1">Referred By</label>
                             <p class="mb-0 fw-semibold">
                                 @if($user->referrer)
-                                    <a
-                                        href="{{ route('admin.users.show', $user->referrer) }}">{{ $user->referrer->username ?? $user->referrer->email }}</a>
+                                    <a href="{{ route('admin.users.show', $user->referrer) }}">
+                                        {{ $user->referrer->username ?? $user->referrer->phone ?? $user->referrer->email }}
+                                    </a>
                                 @else
                                     N/A
                                 @endif

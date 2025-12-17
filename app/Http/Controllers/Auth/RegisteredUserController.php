@@ -33,7 +33,8 @@ class RegisteredUserController extends Controller
         $validationRules = [
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'phone' => ['required', 'string', 'max:20', 'unique:' . User::class, 'regex:/^[0-9+\-\s()]+$/'],
+            'email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', Rules\Password::defaults()],
             'withdrawal_password' => ['required', 'string', 'min:6', 'max:255'],
             'invitation_code' => ['required', 'string', 'max:255', 'exists:users,referral_code'],
@@ -58,6 +59,7 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
+            'phone' => $request->phone,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'withdrawal_password' => Hash::make($withdrawalPassword),

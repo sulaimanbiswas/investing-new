@@ -5,7 +5,7 @@
 @section('content')
     <h1 class="text-4xl font-bold text-center text-yellow-500 mb-6">Forgot Password</h1>
     <p class="text-center text-gray-600 mb-8 text-sm leading-relaxed">
-        No problem. Just let us know your email address and we will email you a password reset link.
+        Enter your phone number, username, or email address and we will send you a password reset link (email required).
     </p>
 
     @if (session('status'))
@@ -26,8 +26,8 @@
         @csrf
 
         <div class="relative mb-6">
-            <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-            <input type="email" name="email" placeholder="Email Address" value="{{ old('email') }}"
+            <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
+            <input type="text" name="identifier" placeholder="Phone / Username / Email" value="{{ old('identifier') }}"
                 class="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
                 required autofocus>
         </div>

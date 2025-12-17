@@ -31,9 +31,14 @@
                 </div>
                 <div class="text-white/80 text-sm mt-2">Invitation Code: {{ auth()->user()->referral_code ?? '—' }}</div>
                 <div class="mt-3 flex gap-4 text-sm">
-                    <div class="flex items-center gap-1"><i class="fas fa-envelope"></i>
-                        <span>{{ auth()->user()->email }}</span>
+                    <div class="flex items-center gap-1"><i class="fas fa-phone"></i>
+                        <span>{{ auth()->user()->phone }}</span>
                     </div>
+                    @if(auth()->user()->email)
+                        <div class="flex items-center gap-1"><i class="fas fa-envelope"></i>
+                            <span>{{ auth()->user()->email }}</span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -41,7 +46,8 @@
         <!-- Profile Information Form -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h2 class="text-lg font-semibold text-gray-800 mb-1">Basic Information</h2>
-            <p class="text-sm text-gray-500 mb-6">Update your display name and avatar. Email & username are fixed.</p>
+            <p class="text-sm text-gray-500 mb-6">Update your display name and avatar. Phone, email & username are fixed.
+            </p>
             @include('profile.partials.update-profile-information-form', ['user' => auth()->user()])
         </div>
 

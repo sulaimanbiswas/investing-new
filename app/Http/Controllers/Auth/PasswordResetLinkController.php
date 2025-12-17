@@ -26,22 +26,45 @@ class PasswordResetLinkController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => ['required', 'email'],
+            'identifier' => ['required', 'string'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $identifier = $request->identifier;
 
-        if ($status == Password::RESET_LINK_SENT) {
-            flash()->success(__($status));
+        // Find user by phone, email, or username
+        $user = null;
+        if (preg_match('/^[0-9+\-\s()]+$/', $identifier)) {
+            // Phone number
+            $phone = preg_replace('/[^0-9+]/', '', $identifier);
+            $user = \App\Models\User::where('phone', $phone)->first();
+        } elseif (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            // Email
+            $user = \App\Models\User::where('email', $identifier)->first();
+        } else {
+            // Username
+            $user = \App\Models\User::where('username', $identifier)->first();
+        }
+
+        if (!$user) {
+            return back()->withInput($request->only('identifier'))
+                ->withErrors(['identifier' => 'We could not find a user with that phone/username/email.']);
+        }
+
+        // For now, we'll use email-based password reset if user has email
+        // Otherwise, show error message
+        if (!$user->email) {
+            flash()->error('Password reset is only available for users with email addresses. Please contact support.');
             return back();
         }
 
-        return back()->withInput($request->only('email'))
-            ->withErrors(['email' => __($status)]);
+        $status = Password::sendResetLink(['email' => $user->email]);
+
+        if ($status == Password::RESET_LINK_SENT) {
+            flash()->success('Password reset link has been sent to your email address.');
+            return back();
+        }
+
+        return back()->withInput($request->only('identifier'))
+            ->withErrors(['identifier' => __($status)]);
     }
 }
