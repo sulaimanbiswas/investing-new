@@ -286,6 +286,8 @@ class MenuController extends Controller
     {
         $user = Auth::user();
 
+        dd($order);
+
         // Verify order belongs to user
         if ($order->userOrderSet->user_id !== $user->id) {
             return response()->json([
