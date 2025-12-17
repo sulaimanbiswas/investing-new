@@ -290,6 +290,7 @@ class MenuController extends Controller
             'user_email' => $user ? $user->email : null,
             'order_id' => $order->id,
             'order_user_order_set_id' => $order->user_order_set_id,
+            'order_set_user_id' => $order->userOrderSet->user_id,
         ]);
 
         // Verify order belongs to user
