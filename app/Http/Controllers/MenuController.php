@@ -293,14 +293,8 @@ class MenuController extends Controller
             'order_set_user_id' => $order->userOrderSet->user_id,
         ]);
 
-        // Verify order belongs to user
-        if ($order->userOrderSet->user_id !== $user->id) {
-            \Log::info('SubmitOrder Auth User', [
-                'error' => 'Unauthorized action - user mismatch',
-                'user_id' => $user->id,
-                'order_user_order_set_id' => $order->user_order_set_id,
-                'order_set_user_id' => $order->userOrderSet->user_id,
-            ]);
+        // Verify order belongs to user (cast both to int to avoid type mismatch)
+        if ((int)$order->userOrderSet->user_id !== (int)$user->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized action.'
