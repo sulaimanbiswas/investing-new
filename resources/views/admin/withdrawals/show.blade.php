@@ -81,25 +81,6 @@
 
                     <!-- Details Row -->
                     <div class="row">
-                        <!-- Amount -->
-                        <div class="col-lg-5 mb-3">
-                            <div class="media align-items-start">
-                                <span class="p-3 border border-primary-light rounded-circle me-3">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13.41 18.09V19H10.74V18.07C9.03 17.71 7.58 16.61 7.5 14.67H9.43C9.53 15.82 10.29 16.53 12.09 16.53C13.95 16.53 14.38 15.64 14.38 14.96C14.38 14.09 13.96 13.44 11.64 12.9C9.03 12.3 7.5 11.25 7.5 9.26C7.5 7.54 8.91 6.36 10.74 5.95V5H13.41V5.93C15.27 6.33 16.44 7.63 16.5 9.43H14.57C14.5 8.28 13.86 7.47 12.09 7.47C10.5 7.47 9.5 8.17 9.5 9.21C9.5 10.03 10.07 10.57 12.38 11.11C14.69 11.65 16.38 12.61 16.38 14.97C16.37 16.83 14.94 17.91 13.41 18.09Z"
-                                            fill="#2BC155" />
-                                    </svg>
-                                </span>
-                                <div class="media-body">
-                                    <span class="d-block text-black font-w600 mb-1">Withdrawal Amount</span>
-                                    <h4 class="mb-0 text-danger">{{ number_format($withdrawal->amount, 2) }}
-                                        {{ $withdrawal->currency }}
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- User Info -->
                         @if($withdrawal->user)
@@ -146,6 +127,10 @@
                             </div>
                         </div>
 
+
+
+
+
                         <!-- Wallet Address -->
                         <div class="col-lg-7 mb-3">
                             <div class="media align-items-start">
@@ -161,12 +146,38 @@
                                     <span class="d-block text-black font-w600 mb-2">Wallet Address
                                         ({{ $withdrawal->currency }})</span>
                                     <p class="mb-0 font-monospace text-break">{{ $withdrawal->wallet_address }}</p>
-                                    <button class="btn btn-sm btn-primary mt-2"
-                                        onclick="copyToClipboard('{{ $withdrawal->wallet_address }}')">
-                                        <i class="fas fa-copy me-1"></i> Copy Address
+                                    <button class="btn btn-sm btn-primary mt-2" id="copyWalletBtn"
+                                        onclick="copyWalletAddress(this, '{{ $withdrawal->wallet_address }}')">
+                                        <i class="fas fa-copy me-1" id="copyWalletIcon"></i> <span id="copyWalletText">Copy
+                                            Address</span>
                                     </button>
                                 </div>
 
+                            </div>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="col-lg-5 mb-3">
+                            <div class="media align-items-start">
+                                <span class="p-3 border border-primary-light rounded-circle me-3">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13.41 18.09V19H10.74V18.07C9.03 17.71 7.58 16.61 7.5 14.67H9.43C9.53 15.82 10.29 16.53 12.09 16.53C13.95 16.53 14.38 15.64 14.38 14.96C14.38 14.09 13.96 13.44 11.64 12.9C9.03 12.3 7.5 11.25 7.5 9.26C7.5 7.54 8.91 6.36 10.74 5.95V5H13.41V5.93C15.27 6.33 16.44 7.63 16.5 9.43H14.57C14.5 8.28 13.86 7.47 12.09 7.47C10.5 7.47 9.5 8.17 9.5 9.21C9.5 10.03 10.07 10.57 12.38 11.11C14.69 11.65 16.38 12.61 16.38 14.97C16.37 16.83 14.94 17.91 13.41 18.09Z"
+                                            fill="#2BC155" />
+                                    </svg>
+                                </span>
+                                <div class="media-body">
+                                    <span class="d-block text-black font-w600 mb-1">Withdrawal Amount</span>
+                                    <h4 class="mb-0 text-danger">{{ number_format($withdrawal->amount, 2) }}
+                                        {{ $withdrawal->currency }}
+                                    </h4>
+                                    <button class="btn btn-sm btn-primary mt-2"
+                                        id="copyAmountBtn"
+                                        onclick="copyAmount(this, '{{ $withdrawal->amount }}')">
+                                        <i class="fas fa-copy me-1" id="copyAmountIcon"></i> <span id="copyAmountText">Copy Amount</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -378,9 +389,50 @@
 
 @push('scripts')
     <script>
-        function copyToClipboard(text) {
+        function copyWalletAddress(btn, text) {
             navigator.clipboard.writeText(text).then(function () {
-                alert('Wallet address copied to clipboard!');
+                const icon = btn.querySelector('#copyWalletIcon');
+                const label = btn.querySelector('#copyWalletText');
+                if (icon && label) {
+                    icon.classList.remove('fa-copy');
+                    icon.classList.add('fa-check');
+                    label.textContent = 'Copied!';
+                }
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-success');
+                setTimeout(function () {
+                    if (icon && label) {
+                        icon.classList.remove('fa-check');
+                        icon.classList.add('fa-copy');
+                        label.textContent = 'Copy Address';
+                    }
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-primary');
+                }, 1500);
+            }, function (err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+        function copyAmount(btn, text) {
+            navigator.clipboard.writeText(text).then(function () {
+                const icon = btn.querySelector('#copyAmountIcon');
+                const label = btn.querySelector('#copyAmountText');
+                if (icon && label) {
+                    icon.classList.remove('fa-copy');
+                    icon.classList.add('fa-check');
+                    label.textContent = 'Copied!';
+                }
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-success');
+                setTimeout(function () {
+                    if (icon && label) {
+                        icon.classList.remove('fa-check');
+                        icon.classList.add('fa-copy');
+                        label.textContent = 'Copy Amount';
+                    }
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-primary');
+                }, 1500);
             }, function (err) {
                 console.error('Could not copy text: ', err);
             });
