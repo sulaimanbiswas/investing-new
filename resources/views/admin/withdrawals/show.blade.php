@@ -172,10 +172,10 @@
                                     <h4 class="mb-0 text-danger">{{ number_format($withdrawal->amount, 2) }}
                                         {{ $withdrawal->currency }}
                                     </h4>
-                                    <button class="btn btn-sm btn-primary mt-2"
-                                        id="copyAmountBtn"
+                                    <button class="btn btn-sm btn-primary mt-2" id="copyAmountBtn"
                                         onclick="copyAmount(this, '{{ $withdrawal->amount }}')">
-                                        <i class="fas fa-copy me-1" id="copyAmountIcon"></i> <span id="copyAmountText">Copy Amount</span>
+                                        <i class="fas fa-copy me-1" id="copyAmountIcon"></i> <span id="copyAmountText">Copy
+                                            Amount</span>
                                     </button>
                                 </div>
                             </div>

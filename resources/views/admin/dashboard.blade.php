@@ -76,7 +76,7 @@
             </div>
         </div>
         <div class="col-xl-3 col-lg-4 col-sm-6">
-            <div class="card h-100">
+            <div class="card h-100 ">
                 <div class="card-body d-flex align-items-center">
                     <div class="me-3 p-3 rounded bg-warning bg-opacity-10 text-warning">
                         <i class="la la-hourglass-half fs-26"></i>
@@ -248,7 +248,7 @@
 
     <div class="row g-3 g-xl-4 mt-1">
         <div class="col-xl-6">
-            <div class="card">
+            <div class="card p-3">
                 <div class="card-header border-0 pb-0 d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">Pending Deposits</h4>
                 </div>
@@ -282,7 +282,7 @@
         </div>
 
         <div class="col-xl-6">
-            <div class="card">
+            <div class="card p-3">
                 <div class="card-header border-0 pb-0 d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">Pending Withdrawals</h4>
                 </div>
@@ -371,13 +371,13 @@
         }
 
         const depositStatus = [
-                {{ $approvedDepositsCount }},
-                {{ $pendingDeposits }},
+                                {{ $approvedDepositsCount }},
+                                {{ $pendingDeposits }},
             {{ $rejectedDeposits }}
         ];
         const withdrawStatus = [
-                {{ $approvedWithdrawalsCount }},
-                {{ $pendingWithdrawals }},
+                                {{ $approvedWithdrawalsCount }},
+                                {{ $pendingWithdrawals }},
             {{ $rejectedWithdrawals }}
         ];
 

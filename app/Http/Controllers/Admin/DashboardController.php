@@ -72,13 +72,13 @@ class DashboardController extends Controller
         $pendingDepositRows = Deposit::with('user')
             ->where('status', 'pending')
             ->latest()
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         $pendingWithdrawalRows = Withdrawal::with('user')
             ->where('status', 'pending')
             ->latest()
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         return view('admin.dashboard', [

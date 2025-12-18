@@ -108,7 +108,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
             @forelse($gateways as $gateway)
                 <label class="gateway-card cursor-pointer">
-                    <input type="radio" name="gateway" value="{{ $gateway->id }}" class="hidden gateway-radio"
+                    <input type="radio" name="gateway" value="{{ $gateway->id }}" class="hidden gateway-radio" required
                         data-min="{{ $gateway->min_limit }}" data-max="{{ $gateway->max_limit }}"
                         data-currency="{{ $gateway->currency }}"
                         data-user-address="{{ $user->getWalletAddressForGateway($gateway->id) }}"

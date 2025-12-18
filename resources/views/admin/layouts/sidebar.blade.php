@@ -29,14 +29,28 @@
             <li>
                 <a href="{{ route('admin.deposits.index') }}" class="ai-icon" aria-expanded="false">
                     <i class="flaticon-381-calculator"></i>
-                    <span class="nav-text">Deposits</span>
+                    <span class="nav-text">Deposits
+                        @php
+                            $pendingDeposits = \App\Models\Deposit::where('status', 'pending')->count();
+                        @endphp
+                        @if($pendingDeposits > 0)
+                            <span class="badge bg-danger badge-sm ms-2">{{ $pendingDeposits }}</span>
+                        @endif
+                    </span>
                 </a>
             </li>
 
             <li>
                 <a href="{{ route('admin.withdrawals.index') }}" class="ai-icon" aria-expanded="false">
                     <i class="flaticon-381-download"></i>
-                    <span class="nav-text">Withdrawals</span>
+                    <span class="nav-text">Withdrawals
+                        @php
+                            $pendingWithdrawals = \App\Models\Withdrawal::where('status', 'pending')->count();
+                        @endphp
+                        @if($pendingWithdrawals > 0)
+                            <span class="badge bg-danger badge-sm ms-2">{{ $pendingWithdrawals }}</span>
+                        @endif
+                    </span>
                 </a>
             </li>
 
