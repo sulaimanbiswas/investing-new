@@ -14,11 +14,18 @@ class DepositController extends Controller
      */
     public function index()
     {
+        // Check for pending deposit
+        $pendingDeposit = Deposit::where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->orderByDesc('created_at')
+            ->with('gateway')
+            ->first();
+
         $gateways = Gateway::where('type', 'payment')
             ->where('is_active', 1)
             ->get();
 
-        return view('user.deposit.index', compact('gateways'));
+        return view('user.deposit.index', compact('gateways', 'pendingDeposit'));
     }
 
     /**
@@ -27,32 +34,59 @@ class DepositController extends Controller
     public function confirm(Request $request)
     {
         $request->validate([
+            'deposit_id' => 'required|exists:deposits,id'
+        ]);
+
+        $deposit = Deposit::where('id', $request->deposit_id)
+            ->where('user_id', Auth::id())
+            ->where('status', 'initialed')
+            ->with('gateway')
+            ->firstOrFail();
+
+        $gateway = $deposit->gateway;
+
+        return view('user.deposit.confirm', compact('gateway', 'deposit'));
+    }
+
+    /**
+     * Create initialed deposit via AJAX (Deposit Now button)
+     */
+    public function createInitialed(Request $request)
+    {
+        $request->validate([
             'gateway' => 'required|exists:gateways,id',
             'amount' => 'required|numeric|min:0.01'
         ]);
 
         $gateway = Gateway::findOrFail($request->gateway);
 
-        // Validate amount against gateway limits
         if ($request->amount < $gateway->min_limit || $request->amount > $gateway->max_limit) {
-            return redirect()->route('deposit')->with('error', 'Amount must be between ' . $gateway->min_limit . ' and ' . $gateway->max_limit);
+            return response()->json(['success' => false, 'message' => 'Amount must be between ' . $gateway->min_limit . ' and ' . $gateway->max_limit]);
         }
 
-        // Create initialed deposit
-        $deposit = Deposit::create([
-            'user_id' => Auth::id(),
-            'gateway_id' => $gateway->id,
-            'amount' => $request->amount,
-            'currency' => $gateway->currency,
-            'status' => 'initialed',
-            'order_number' => 'DEP' . time() . rand(1000, 9999)
+        // Prevent multiple initialed deposits for this user/gateway/amount
+        $deposit = Deposit::where('user_id', Auth::id())
+            ->where('gateway_id', $gateway->id)
+            ->where('amount', $request->amount)
+            ->where('status', 'initialed')
+            ->latest('created_at')
+            ->first();
+
+        if (!$deposit) {
+            $deposit = Deposit::create([
+                'user_id' => Auth::id(),
+                'gateway_id' => $gateway->id,
+                'amount' => $request->amount,
+                'currency' => $gateway->currency,
+                'status' => 'initialed',
+                'order_number' => 'DEP' . time() . rand(1000, 9999)
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'redirect' => route('deposit.confirm', ['deposit_id' => $deposit->id])
         ]);
-
-        flash()
-            ->options(['timeout' => 8000, 'position' => 'top-right'])
-            ->info("You have requested " . number_format((float)$deposit->amount, 2) . " {$gateway->currency}. Please pay " . number_format((float)$deposit->amount, 2) . " {$gateway->currency} for successful payment.");
-
-        return view('user.deposit.confirm', compact('gateway', 'deposit'));
     }
 
     /**

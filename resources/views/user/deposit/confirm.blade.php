@@ -57,44 +57,33 @@
     </div>
 
     <!-- Transaction Details Form -->
-    @if($gateway->requires_txn_id || $gateway->requires_screenshot)
-        <form id="depositForm" class="space-y-5">
-            @csrf
-            <input type="hidden" name="deposit_id" value="{{ $deposit->id }}">
+    <form id="depositForm" class="space-y-5">
+        @csrf
+        <input type="hidden" name="deposit_id" value="{{ $deposit->id }}">
 
-            @if($gateway->requires_txn_id)
-                <div class="bg-white rounded-xl shadow-sm p-5">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Transaction ID <span
-                            class="text-red-600">*</span></label>
-                    <input type="text" name="txn_id" id="txn_id" required
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition"
-                        placeholder="Enter your transaction ID">
-                    <p class="text-xs text-gray-500 mt-2">Please enter the transaction ID from your payment</p>
-                </div>
-            @endif
+        <div class="bg-white rounded-xl shadow-sm p-5">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Transaction ID @if($gateway->requires_txn_id) <span
+            class="text-red-600">*</span>@endif</label>
+            <input type="text" name="txn_id" id="txn_id" @if($gateway->requires_txn_id) required @endif
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition"
+                placeholder="Enter your transaction ID">
+            <p class="text-xs text-gray-500 mt-2">Please enter the transaction ID from your payment</p>
+        </div>
 
-            @if($gateway->requires_screenshot)
-                <div class="bg-white rounded-xl shadow-sm p-5">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Payment Screenshot <span
-                            class="text-red-600">*</span></label>
-                    <input type="file" name="screenshot" id="screenshot" accept="image/*" required
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition">
-                    <p class="text-xs text-gray-500 mt-2">Upload a clear screenshot of your payment confirmation</p>
-                </div>
-            @endif
+        <div class="bg-white rounded-xl shadow-sm p-5">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Payment Screenshot
+                @if($gateway->requires_screenshot) <span class="text-red-600">*</span>@endif</label>
+            <input type="file" name="screenshot" id="screenshot" accept="image/*" @if($gateway->requires_screenshot)
+            required @endif
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition">
+            <p class="text-xs text-gray-500 mt-2">Upload a clear screenshot of your payment confirmation</p>
+        </div>
 
-            <button type="submit" id="submitBtn"
-                class="w-full bg-indigo-600 text-white font-semibold py-4 rounded-xl hover:bg-indigo-700 transition">
-                Submit Payment Proof
-            </button>
-        </form>
-    @else
-        <!-- Pay Now Button (No requirements) -->
-        <button type="button" onclick="confirmPayment()"
+        <button type="submit" id="submitBtn"
             class="w-full bg-indigo-600 text-white font-semibold py-4 rounded-xl hover:bg-indigo-700 transition">
-            Pay Now
+            Confirm Payment
         </button>
-    @endif
+    </form>
 @endsection
 
 @push('scripts')
@@ -118,17 +107,21 @@
             });
         }
 
-        @if($gateway->requires_txn_id || $gateway->requires_screenshot)
-            // Handle form submission with transaction details
-            document.getElementById('depositForm').addEventListener('submit', function (e) {
-                e.preventDefault();
+        // Always handle form submission
+        document.getElementById('depositForm').addEventListener('submit', function (e) {
+            e.preventDefault();
 
-                const submitBtn = document.getElementById('submitBtn');
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitting...';
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
 
+            // If any file input exists, use FormData, else use JSON
+            const txnId = document.getElementById('txn_id')?.value;
+            const screenshotInput = document.getElementById('screenshot');
+            const hasFile = screenshotInput && screenshotInput.files.length > 0;
+
+            if (hasFile) {
                 const formData = new FormData(this);
-
                 fetch('{{ route("deposit.store") }}', {
                     method: 'POST',
                     headers: {
@@ -137,25 +130,10 @@
                     body: formData
                 })
                     .then(response => response.json())
-                    .then(data => {
-                        if (data.success && data.redirect) {
-                            window.location.href = data.redirect;
-                        } else {
-                            flasher.error(data.message || 'Failed to process deposit');
-                            submitBtn.disabled = false;
-                            submitBtn.textContent = 'Submit Payment Proof';
-                        }
-                    })
-                    .catch(error => {
-                        flasher.error('An error occurred. Please try again.');
-                        console.error(error);
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Submit Payment Proof';
-                    });
-            });
-        @else
-            function confirmPayment() {
-                // Update deposit to pending (no requirements)
+                    .then(data => handleDepositResponse(data, submitBtn))
+                    .catch(error => handleDepositError(error, submitBtn));
+            } else {
+                // No file, send as JSON
                 fetch('{{ route("deposit.store") }}', {
                     method: 'POST',
                     headers: {
@@ -163,22 +141,31 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        deposit_id: {{ $deposit->id }}
-                                                        })
+                        deposit_id: {{ $deposit->id }},
+                        txn_id: txnId
+                    })
                 })
                     .then(response => response.json())
-                    .then(data => {
-                        if (data.success && data.redirect) {
-                            window.location.href = data.redirect;
-                        } else {
-                            flasher.error(data.message || 'Failed to process deposit');
-                        }
-                    })
-                    .catch(error => {
-                        flasher.error('An error occurred. Please try again.');
-                        console.error(error);
-                    });
+                    .then(data => handleDepositResponse(data, submitBtn))
+                    .catch(error => handleDepositError(error, submitBtn));
             }
-        @endif
+        });
+
+        function handleDepositResponse(data, submitBtn) {
+            if (data.success && data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                flasher.error(data.message || 'Failed to process deposit');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirm Payment';
+            }
+        }
+
+        function handleDepositError(error, submitBtn) {
+            flasher.error('An error occurred. Please try again.');
+            console.error(error);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Confirm Payment';
+        }
     </script>
 @endpush

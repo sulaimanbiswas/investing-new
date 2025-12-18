@@ -54,6 +54,7 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     // Deposit routes
     Route::get('/deposit', [\App\Http\Controllers\DepositController::class, 'index'])->name('deposit');
     Route::get('/deposit/confirm', [\App\Http\Controllers\DepositController::class, 'confirm'])->name('deposit.confirm');
+    Route::post('/deposit/create-initialed', [\App\Http\Controllers\DepositController::class, 'createInitialed'])->name('deposit.create-initialed');
     Route::post('/deposit', [\App\Http\Controllers\DepositController::class, 'store'])->name('deposit.store');
     Route::get('/deposit/records', [\App\Http\Controllers\DepositController::class, 'records'])->name('deposit.records');
 
