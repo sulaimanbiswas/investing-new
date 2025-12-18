@@ -42,8 +42,8 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $identifier = $this->string('identifier');
-        $credentials = ['password' => $this->string('password')];
+        $identifier = (string) $this->string('identifier');
+        $credentials = ['password' => (string) $this->string('password')];
 
         // Decide whether the identifier is phone, email, or username
         if (preg_match('/^[0-9+\-\s()]+$/', $identifier)) {
@@ -106,6 +106,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
+        return Str::transliterate(Str::lower($this->string('identifier')) . '|' . $this->ip());
     }
 }

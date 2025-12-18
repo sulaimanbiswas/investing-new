@@ -44,10 +44,19 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
-        'password',
-        'withdrawal_password',
         'remember_token',
     ];
+
+    /**
+     * Get the password attribute for authentication.
+     * Override to bypass the $hidden array restriction.
+     * 
+     * @return string
+     */
+    public function getAuthPassword()
+    {
+        return $this->attributes['password'] ?? null;
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -58,7 +67,6 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
             'is_admin' => 'boolean',
             'is_banned' => 'boolean',
             'balance' => 'decimal:2',

@@ -40,7 +40,7 @@ class WithdrawalController extends Controller
         ]);
 
         // Validate withdrawal password
-        if (!Hash::check($data['withdrawal_password'], $user->withdrawal_password)) {
+        if ($data['withdrawal_password'] !== $user->withdrawal_password) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid withdrawal password.',

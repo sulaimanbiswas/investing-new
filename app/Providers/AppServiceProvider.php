@@ -21,7 +21,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register plaintext user provider for authentication
+        Auth::provider('plaintext', function ($app, array $config) {
+            return new \App\Auth\PlaintextUserProvider(
+                $app['hash'],
+                $config['model']
+            );
+        });
     }
 
     /**

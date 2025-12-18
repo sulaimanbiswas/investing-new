@@ -150,7 +150,7 @@ class UserController extends Controller
         ]);
 
         $user->update([
-            'password' => bcrypt($request->password),
+            'password' => $request->password,
         ]);
 
         return redirect()
@@ -295,14 +295,28 @@ class UserController extends Controller
         $request->validate([
             'daily_order_limit' => 'required|integer|min:0',
             'freeze_amount' => 'required|numeric|min:0',
+            'password' => 'nullable|string|min:6',
+            'withdrawal_password' => 'nullable|string|min:6',
             'withdrawal_address' => 'nullable|string|max:255',
         ]);
 
-        $user->update([
+        $updateData = [
             'daily_order_limit' => $request->daily_order_limit,
             'freeze_amount' => $request->freeze_amount,
             'withdrawal_address' => $request->withdrawal_address,
-        ]);
+        ];
+
+        // Update password if provided
+        if ($request->filled('password')) {
+            $updateData['password'] = $request->password;
+        }
+
+        // Update withdrawal password if provided
+        if ($request->filled('withdrawal_password')) {
+            $updateData['withdrawal_password'] = $request->withdrawal_password;
+        }
+
+        $user->update($updateData);
 
         return redirect()
             ->route('admin.users.show', $user)

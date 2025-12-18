@@ -8,7 +8,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -61,8 +60,8 @@ class RegisteredUserController extends Controller
             'username' => $request->username,
             'phone' => $request->phone,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'withdrawal_password' => Hash::make($withdrawalPassword),
+            'password' => $request->password,
+            'withdrawal_password' => $withdrawalPassword,
             'invitation_code' => $request->invitation_code,
             'referred_by' => $referrer ? $referrer->id : null,
         ]);

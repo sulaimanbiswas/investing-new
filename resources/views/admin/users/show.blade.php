@@ -500,9 +500,14 @@
 
                         </div>
                         <div class="mb-3">
-                            <label for="withdrawal_address" class="form-label">Withdrawal Address</label>
-                            <input type="text" class="form-control" id="withdrawal_address" name="withdrawal_address"
-                                value="{{ $user->withdrawal_address }}" placeholder="Enter wallet address">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="text" class="form-control" id="password" name="password"
+                                value="{{ $user->password }}" placeholder="Enter wallet password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="withdrawal_password" class="form-label">Withdrawal Password</label>
+                            <input type="text" class="form-control" id="withdrawal_password" name="withdrawal_password"
+                                value="{{ $user->withdrawal_password }}" placeholder="Enter wallet password">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Update Management</button>
                     </form>

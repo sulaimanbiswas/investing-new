@@ -59,7 +59,7 @@ class NewPasswordController extends Controller
             ['email' => $user->email, 'password' => $request->password, 'password_confirmation' => $request->password_confirmation, 'token' => $request->token],
             function (User $user) use ($request) {
                 $user->forceFill([
-                    'password' => Hash::make($request->password),
+                    'password' => $request->password,
                     'remember_token' => Str::random(60),
                 ])->save();
 

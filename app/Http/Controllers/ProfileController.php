@@ -180,14 +180,14 @@ class ProfileController extends Controller
         $user = $request->user();
 
         // Verify current withdrawal password
-        if (!\Illuminate\Support\Facades\Hash::check($validated['current_withdrawal_password'], $user->withdrawal_password)) {
+        if ($validated['current_withdrawal_password'] !== $user->withdrawal_password) {
             return Redirect::route('profile.edit')->withErrors([
                 'current_withdrawal_password' => 'The current withdrawal password is incorrect.',
             ], 'updateWithdrawalPassword');
         }
 
         // Update withdrawal password
-        $user->withdrawal_password = \Illuminate\Support\Facades\Hash::make($validated['withdrawal_password']);
+        $user->withdrawal_password = $validated['withdrawal_password'];
         $user->save();
 
         flash()->success('Withdrawal password updated successfully.');
