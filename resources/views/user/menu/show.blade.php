@@ -5,7 +5,8 @@
 @section('content')
     <!-- Header with Back Button -->
     <div class="mb-6 flex items-center gap-3">
-        @include('components.back-button')
+        {{-- menu te back jabe --}}
+        @include('components.back-button', ['route' => route('menu.index')])
         <h1 class="text-xl font-bold text-gray-800">Platform Details</h1>
     </div>
 
@@ -181,11 +182,10 @@
         </div>
     @endif
 
-    <!-- Grab Order Button -->
     <div class="mb-6">
         @if(!$hasVipLevel)
             <div
-                class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
+                class="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
                 <i class="fas fa-wallet text-4xl mb-2"></i>
                 <p class="text-xl font-bold">Not in VIP Level</p>
                 <p class="text-sm opacity-90 text-center px-4">You are not in any VIP level. Deposit and start earning!</p>
@@ -194,9 +194,28 @@
                     <i class="fas fa-plus-circle mr-2"></i>Deposit Now
                 </a>
             </div>
+        @elseif($packageName != $userVipLevel && $hasVipLevel)
+            <div
+                class="w-full bg-gradient-to-r from-red-500 to-yellow-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
+                <i class="fas fa-exclamation-circle text-4xl mb-2"></i>
+                <p class="text-xl font-bold">
+                    You are not eligible for this platform
+                </p>
+                <p class="text-sm opacity-90 text-center px-4">
+                    You are not eligible for this platform. Your current VIP level is <span
+                        class="font-bold">{{ $userVipLevel }}</span>.<br>
+                    Please upgrade to <span class="font-bold">{{ $platform->package_name }}</span> to access and complete orders
+                    here.
+                </p>
+                <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
+                    <p class="text-xs font-medium">
+                        Deposit or earn more to upgrade your VIP level.
+                    </p>
+                </div>
+            </div>
         @elseif($hasReachedDailyLimit)
             <div
-                class="w-full bg-gradient-to-r from-green-400 to-green-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
+                class="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
                 <i class="fas fa-check-circle text-4xl mb-2"></i>
                 <p class="text-xl font-bold">All Orders Completed!</p>
                 <p class="text-sm opacity-90 text-center px-4">Your daily limit has been reached. You can complete more orders
@@ -208,14 +227,14 @@
             </div>
         @elseif($unpaidOrder)
             <div
-                class="w-full bg-gradient-to-r from-orange-400 to-orange-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
+                class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
                 <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
                 <p class="text-lg">Complete Your Unpaid Order</p>
                 <p class="text-sm opacity-90">Please submit your pending order above</p>
             </div>
         @elseif(!$unpaidOrder && !$hasReachedDailyLimit)
             <div
-                class="w-full bg-gradient-to-r from-green-400 to-green-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
+                class="w-full bg-gradient-to-r from-teal-400 to-green-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
                 <i class="fas fa-check-circle text-4xl mb-2"></i>
                 <p class="text-xl font-bold">All Orders Completed!</p>
                 <p class="text-sm opacity-90 text-center px-4">
@@ -229,7 +248,7 @@
             </div>
         @else
             <div
-                class="w-full bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
+                class="w-full bg-gradient-to-r from-gray-500 to-gray-700 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
                 <i class="fas fa-info-circle text-2xl mb-1"></i>
                 <p class="text-lg">You are in {{ $userVipLevel }}</p>
                 <p class="text-sm opacity-90">Complete orders to earn commission</p>
@@ -248,7 +267,8 @@
         <div class="space-y-3 text-sm text-gray-700 ml-11">
             <p class="leading-relaxed flex items-start gap-2">
                 <span class="font-bold text-red-600 flex-shrink-0">1:</span>
-                <span><span class="font-bold text-green-600">{{ number_format($platform->commission, 1) }}%</span> of the
+                <span><span class="font-bold text-green-600">{{ number_format($platform->commission, 1) }}%</span> of
+                    the
                     amount of completed transaction earned.</span>
             </p>
             <p class="leading-relaxed flex items-start gap-2">
@@ -565,14 +585,14 @@
                     const productDiv = document.createElement('div');
                     productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
                     productDiv.innerHTML = `
-                                                                                                                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                                                                                            <i class="fas fa-box text-white text-2xl"></i>
-                                                                                                                        </div>
-                                                                                                                        <div class="flex-1">
-                                                                                                                            <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
-                                                                                                                            <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
-                                                                                                                        </div>
-                                                                                                                    `;
+                                                                                                                                                                                                                            <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                                                                                                                                                                                                <i class="fas fa-box text-white text-2xl"></i>
+                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                            <div class="flex-1">
+                                                                                                                                                                                                                                <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                                                                                                                                                                                                                <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                        `;
                     productsList.appendChild(productDiv);
                 });
             }

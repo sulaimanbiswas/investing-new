@@ -122,6 +122,8 @@ class MenuController extends Controller
             $cashGap = max(0, $unpaidOrder->order_amount - $user->balance);
         }
 
+        $packageName = strtoupper(string: $platform->package_name);
+
         return view('user.menu.show', compact(
             'platform',
             'user',
@@ -136,7 +138,9 @@ class MenuController extends Controller
             'todayCompletedCount',
             'userVipLevel',
             'isUserVipPlatform',
-            'hasVipLevel'
+            'hasVipLevel',
+            'packageName',
+            "userVipPlatform"
         ));
     }
 
