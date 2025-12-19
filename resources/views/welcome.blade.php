@@ -486,7 +486,7 @@
                 <div class="text-center mb-16">
                     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
                         Why Choose <span
-                            class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">InvestPro</span>
+                            class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{{ setting('site_title', "Invest Pro") }}</span>
                     </h2>
                     <p class="text-lg text-gray-600 max-w-2xl mx-auto">
                         Experience the future of investing with our cutting-edge features designed to maximize your
@@ -718,7 +718,8 @@
                         Say
                     </h2>
                     <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                        Join thousands of satisfied investors who are building their wealth with InvestPro.
+                        Join thousands of satisfied investors who are building their wealth with
+                        {{ setting('site_title', "Invest Pro") }}.
                     </p>
                 </div>
 
@@ -756,7 +757,8 @@
                             </div>
                         </div>
                         <p class="text-gray-700 mb-6 leading-relaxed italic">
-                            "InvestPro changed my life! I started with just $100 and now my portfolio is worth over
+                            "{{ setting('site_title', "Invest Pro") }} changed my life! I started with just $100 and now
+                            my portfolio is worth over
                             $15,000. The platform is incredibly easy to use and the returns are amazing."
                         </p>
                         <div class="flex items-center">
@@ -852,7 +854,8 @@
                             </div>
                         </div>
                         <p class="text-gray-700 mb-6 leading-relaxed italic">
-                            "I was skeptical at first, but InvestPro proved me wrong. The returns are consistent and the
+                            "I was skeptical at first, but {{ setting('site_title', "Invest Pro") }} proved me wrong.
+                            The returns are consistent and the
                             platform is very transparent. I've already referred 5 friends!"
                         </p>
                         <div class="flex items-center">
@@ -900,7 +903,8 @@
                             </div>
                         </div>
                         <p class="text-gray-700 mb-6 leading-relaxed italic">
-                            "As a beginner investor, I found InvestPro to be perfect for me. The educational resources
+                            "As a beginner investor, I found {{ setting('site_title', "Invest Pro") }} to be perfect for
+                            me. The educational resources
                             and easy-to-understand interface made investing stress-free."
                         </p>
                         <div class="flex items-center">
@@ -996,7 +1000,8 @@
                             </div>
                         </div>
                         <p class="text-gray-700 mb-6 leading-relaxed italic">
-                            "InvestPro has been a game-changer for my retirement planning. The diversified portfolio
+                            "{{ setting('site_title', "Invest Pro") }} has been a game-changer for my retirement
+                            planning. The diversified portfolio
                             options and consistent returns give me peace of mind for the future."
                         </p>
                         <div class="flex items-center">
@@ -1029,7 +1034,8 @@
                         Ready to Start Your Investment Journey?
                     </h2>
                     <p class="text-lg sm:text-xl text-white/90 mb-10 leading-relaxed">
-                        Join 50,000+ investors who are already building wealth with InvestPro. Start with as little as
+                        Join 50,000+ investors who are already building wealth with
+                        {{ setting('site_title', "Invest Pro") }}. Start with as little as
                         $10 and watch your money grow.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
@@ -1178,7 +1184,7 @@
             <!-- Bottom Bar -->
             <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
                 <p class="text-gray-400 text-sm mb-4 md:mb-0">
-                    © {{ date('Y') }} InvestPro. All rights reserved.
+                    © {{ date('Y') }} {{ setting('site_title', "Invest Pro") }}. All rights reserved.
                 </p>
                 <div class="flex items-center space-x-6">
                     <a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Contact</a>

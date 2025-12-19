@@ -647,7 +647,7 @@
         <div class="footer">
             <div class="copyright">
                 <p>
-                    Copyright © {{ now()->year }} All rights reserved.
+                    © {{ date('Y') }} {{ setting('site_title', "Invest Pro") }}. All rights reserved.
                 </p>
             </div>
         </div>
