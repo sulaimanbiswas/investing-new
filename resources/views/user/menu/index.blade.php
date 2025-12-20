@@ -18,27 +18,23 @@
     <!-- Current Boost Badge -->
     <div class="mb-6">
         @if($hasActiveOrder)
-            <div class="bg-gradient-to-br from-green-400 via-green-500 to-emerald-600 rounded-2xl shadow-xl p-5">
-                <div class="flex items-center gap-4">
-                    <div class="bg-white bg-opacity-25 rounded-full p-3 animate-pulse">
-                        <i class="fas fa-check-circle text-white text-2xl"></i>
-                    </div>
+            <div class="bg-gradient-to-br from-green-400 via-green-500 to-emerald-600 rounded-xl shadow-xl p-2">
+                <div class="flex items-center gap-4 text-center">
+                    
                     <div class="flex-1">
                         <p class="text-white text-sm font-medium opacity-90 mb-1">Current Boost</p>
                         <p class="text-white text-xl font-bold">Order Available</p>
                     </div>
-                    {{-- <div class="bg-white bg-opacity-20 rounded-full px-4 py-2">
+                    {{-- <div class="bg-white bg-opacity-20  px-4 py-2">
                         <i class="fas fa-arrow-right text-white"></i>
                     </div> --}}
                 </div>
             </div>
         @else
-            <div class="bg-gradient-to-br from-slate-500 via-slate-600 to-gray-700 rounded-2xl shadow-lg p-5">
+            <div class="bg-gradient-to-br from-slate-500 via-slate-600 to-gray-700 rounded-xl shadow-lg p-2">
                 <div class="flex items-center gap-4">
-                    <div class="bg-white bg-opacity-20 rounded-full p-3">
-                        <i class="fas fa-inbox text-white text-2xl"></i>
-                    </div>
-                    <div class="flex-1">
+                    
+                    <div class="flex-1 text-center">
                         <p class="text-white text-sm font-medium opacity-90 mb-1">Current Boost</p>
                         <p class="text-white text-xl font-bold">No Order</p>
                     </div>

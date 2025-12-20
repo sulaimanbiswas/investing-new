@@ -15,19 +15,19 @@
 
         <!-- Platform Name Header -->
         <div class="col-span-5 text-center">
-            <div class="px-6 py-6">
-                <div class=" ">
+            <div class="p-3">
+                <div class="">
                     @if($platform->image)
                         <img src="{{ asset($platform->image) }}" alt="{{ $platform->name }}"
-                            class="w-14 h-14 rounded-2xl object-cover shadow-xl mx-auto border-4 border-white">
+                            class="w-10 h-10 rounded-xl object-cover shadow-xl mx-auto border-4 border-white">
                     @else
                         <div
-                            class="w-14 h-14 bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl mx-auto border-4 border-white">
-                            <i class="fas fa-store text-white text-4xl"></i>
+                            class="w-10 h-10  bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 rounded-xl flex items-center justify-center shadow-xl mx-auto border-2 border-white">
+                            <i class="fas fa-store text-white text-2xl"></i>
                         </div>
                     @endif
                 </div>
-                <h2 class="text-xl font-bold text-white mb-1">
+                <h2 class="text-base font-bold text-white ">
                     {{ $platform->name }}
                 </h2>
                 <p class="text-gray-100 text-sm">Commission Rate: <span
@@ -37,7 +37,7 @@
 
         <!-- Account Balance Card -->
         <div class="col-span-7">
-            <div class="px-6 py-6 relative">
+            <div class="px-3 relative">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
                 <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -ml-12 -mb-12"></div>
                 <div class="relative">
@@ -45,7 +45,7 @@
                         <i class="fas fa-wallet text-white text-xl"></i>
                         <p class="text-white text-sm opacity-90">Account Balance</p>
                     </div>
-                    <p class="text-white text-4xl font-bold mb-1">{{ number_format($user->balance, 2) }}</p>
+                    <p class="text-white text-3xl font-bold mb-1">{{ number_format($user->balance, 2) }}</p>
                     <p class="text-white text-lg opacity-90">USDT</p>
                 </div>
             </div>
@@ -53,74 +53,6 @@
 
     </div>
 
-    <!-- Statistics Grid -->
-    <div class="grid grid-cols-2 gap-4 mb-6">
-        <!-- Today's Time (Orders Count) -->
-        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
-            <div class="flex flex-col items-center justify-center h-full">
-                <div class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
-                    <i class="fas fa-clock text-blue-600 text-xl"></i>
-                </div>
-                <p class="text-3xl font-bold text-gray-900 mb-1">{{ $todayOrdersCount }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Today's Time</p>
-            </div>
-        </div>
-
-        <!-- Today's Commission -->
-        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
-            <div class="flex flex-col items-center justify-center h-full">
-                <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
-                    <i class="fas fa-coins text-green-600 text-xl"></i>
-                </div>
-                <p class="text-2xl font-bold text-green-600 mb-1">{{ number_format($todayCommission, 2) }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Today's Commission</p>
-            </div>
-        </div>
-
-        <!-- Cash Gap Between Task -->
-        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
-            <div class="flex flex-col items-center justify-center h-full">
-                <div class="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
-                    <i class="fas fa-chart-line text-orange-600 text-xl"></i>
-                </div>
-                <p class="text-2xl font-bold text-orange-600 mb-1">{{ number_format($cashGap, 2) }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Cash gap between task</p>
-            </div>
-        </div>
-
-        <!-- Yesterday's Buy Commission -->
-        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
-            <div class="flex flex-col items-center justify-center h-full">
-                <div class="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
-                    <i class="fas fa-shopping-cart text-purple-600 text-xl"></i>
-                </div>
-                <p class="text-2xl font-bold text-purple-600 mb-1">{{ number_format($yesterdayCommission, 2) }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Yesterday's buy commission</p>
-            </div>
-        </div>
-
-        <!-- Yesterday's Team Commission -->
-        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
-            <div class="flex flex-col items-center justify-center h-full">
-                <div class="bg-indigo-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
-                    <i class="fas fa-users text-indigo-600 text-xl"></i>
-                </div>
-                <p class="text-2xl font-bold text-indigo-600 mb-1">{{ number_format($yesterdayTeamCommission, 2) }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Yesterday's team commission</p>
-            </div>
-        </div>
-
-        <!-- Money Frozen in Account -->
-        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
-            <div class="flex flex-col items-center justify-center h-full">
-                <div class="bg-red-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
-                    <i class="fas fa-lock text-red-600 text-xl"></i>
-                </div>
-                <p class="text-2xl font-bold text-red-600 mb-1">{{ number_format($user->freeze_amount, 2) }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Money frozen in account</p>
-            </div>
-        </div>
-    </div>
 
     <!-- Unpaid Order (Single) -->
     @if($unpaidOrder)
@@ -262,6 +194,76 @@
             </div>
         @endif
     </div>
+
+    <!-- Statistics Grid -->
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <!-- Today's Time (Orders Count) -->
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
+            <div class="flex flex-col items-center justify-center h-full">
+                <div class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
+                    <i class="fas fa-clock text-blue-600 text-xl"></i>
+                </div>
+                <p class="text-3xl font-bold text-gray-900 mb-1">{{ $todayOrdersCount }}</p>
+                <p class="text-gray-600 text-xs text-center font-medium">Today's Time</p>
+            </div>
+        </div>
+
+        <!-- Today's Commission -->
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
+            <div class="flex flex-col items-center justify-center h-full">
+                <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
+                    <i class="fas fa-coins text-green-600 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-green-600 mb-1">{{ number_format($todayCommission, 2) }}</p>
+                <p class="text-gray-600 text-xs text-center font-medium">Today's Commission</p>
+            </div>
+        </div>
+
+        <!-- Cash Gap Between Task -->
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
+            <div class="flex flex-col items-center justify-center h-full">
+                <div class="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
+                    <i class="fas fa-chart-line text-orange-600 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-orange-600 mb-1">{{ number_format($cashGap, 2) }}</p>
+                <p class="text-gray-600 text-xs text-center font-medium">Cash gap between task</p>
+            </div>
+        </div>
+
+        <!-- Yesterday's Buy Commission -->
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
+            <div class="flex flex-col items-center justify-center h-full">
+                <div class="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
+                    <i class="fas fa-shopping-cart text-purple-600 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-purple-600 mb-1">{{ number_format($yesterdayCommission, 2) }}</p>
+                <p class="text-gray-600 text-xs text-center font-medium">Yesterday's buy commission</p>
+            </div>
+        </div>
+
+        <!-- Yesterday's Team Commission -->
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
+            <div class="flex flex-col items-center justify-center h-full">
+                <div class="bg-indigo-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
+                    <i class="fas fa-users text-indigo-600 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-indigo-600 mb-1">{{ number_format($yesterdayTeamCommission, 2) }}</p>
+                <p class="text-gray-600 text-xs text-center font-medium">Yesterday's team commission</p>
+            </div>
+        </div>
+
+        <!-- Money Frozen in Account -->
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
+            <div class="flex flex-col items-center justify-center h-full">
+                <div class="bg-red-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
+                    <i class="fas fa-lock text-red-600 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-red-600 mb-1">{{ number_format($user->freeze_amount, 2) }}</p>
+                <p class="text-gray-600 text-xs text-center font-medium">Money frozen in account</p>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Hint Section -->
     <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl shadow-md p-5 border-l-4 border-orange-500">
@@ -592,14 +594,14 @@
                     const productDiv = document.createElement('div');
                     productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
                     productDiv.innerHTML = `
-                                                                                                                                                                                                                                                                                                                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                                                                                                                                                                                                                                                                                            <i class="fas fa-box text-white text-2xl"></i>
-                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                        <div class="flex-1">
-                                                                                                                                                                                                                                                                                                                            <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
-                                                                                                                                                                                                                                                                                                                            <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
-                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                                                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                                                                                                                                                                                                                                                                                                                                            <i class="fas fa-box text-white text-2xl"></i>
+                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                        <div class="flex-1">
+                                                                                                                                                                                                                                                                                                                                                                            <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                                                                                                                                                                                                                                                                                                                                                            <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                    `;
                     productsList.appendChild(productDiv);
                 });
             }
