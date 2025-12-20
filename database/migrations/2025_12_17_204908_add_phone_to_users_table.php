@@ -25,7 +25,7 @@ return new class extends Migration
         foreach ($users as $user) {
             DB::table('users')
                 ->where('id', $user->id)
-                ->update(['phone' => '+temp' . $user->id . time()]);
+                ->update(['phone' => '+' . $user->id . time()]);
         }
 
         // Now make phone unique and not nullable, and make email nullable

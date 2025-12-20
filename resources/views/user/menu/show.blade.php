@@ -10,40 +10,47 @@
         <h1 class="text-xl font-bold text-gray-800">Platform Details</h1>
     </div>
 
-    <!-- Platform Name Header -->
-    <div class="mb-6 text-center">
-        <div class="mb-4">
-            @if($platform->image)
-                <img src="{{ asset($platform->image) }}" alt="{{ $platform->name }}"
-                    class="w-24 h-24 rounded-2xl object-cover shadow-xl mx-auto border-4 border-white">
-            @else
-                <div
-                    class="w-24 h-24 bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl mx-auto border-4 border-white">
-                    <i class="fas fa-store text-white text-4xl"></i>
-                </div>
-            @endif
-        </div>
-        <h2 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-1">
-            {{ $platform->name }}
-        </h2>
-        <p class="text-gray-500 text-sm">Commission Rate: <span
-                class="font-bold text-green-600">{{ number_format($platform->commission, 1) }}%</span></p>
-    </div>
+    <div
+        class="grid grid-cols-12 items-center gap-4 mb-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl shadow-xl overflow-hidden">
 
-    <!-- Account Balance Card -->
-    <div class="mb-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl shadow-xl overflow-hidden">
-        <div class="px-6 py-6 relative">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
-            <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -ml-12 -mb-12"></div>
-            <div class="relative">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="fas fa-wallet text-white text-xl"></i>
-                    <p class="text-white text-sm opacity-90">Account Balance</p>
+        <!-- Platform Name Header -->
+        <div class="col-span-5 text-center">
+            <div class="px-6 py-6">
+                <div class=" ">
+                    @if($platform->image)
+                        <img src="{{ asset($platform->image) }}" alt="{{ $platform->name }}"
+                            class="w-14 h-14 rounded-2xl object-cover shadow-xl mx-auto border-4 border-white">
+                    @else
+                        <div
+                            class="w-14 h-14 bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl mx-auto border-4 border-white">
+                            <i class="fas fa-store text-white text-4xl"></i>
+                        </div>
+                    @endif
                 </div>
-                <p class="text-white text-4xl font-bold mb-1">{{ number_format($user->balance, 2) }}</p>
-                <p class="text-white text-lg opacity-90">USDT</p>
+                <h2 class="text-xl font-bold text-white mb-1">
+                    {{ $platform->name }}
+                </h2>
+                <p class="text-gray-100 text-sm">Commission Rate: <span
+                        class="font-bold text-green-200">{{ number_format($platform->commission, 1) }}%</span></p>
             </div>
         </div>
+
+        <!-- Account Balance Card -->
+        <div class="col-span-7">
+            <div class="px-6 py-6 relative">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -ml-12 -mb-12"></div>
+                <div class="relative">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-wallet text-white text-xl"></i>
+                        <p class="text-white text-sm opacity-90">Account Balance</p>
+                    </div>
+                    <p class="text-white text-4xl font-bold mb-1">{{ number_format($user->balance, 2) }}</p>
+                    <p class="text-white text-lg opacity-90">USDT</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Statistics Grid -->
@@ -585,14 +592,14 @@
                     const productDiv = document.createElement('div');
                     productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
                     productDiv.innerHTML = `
-                                                                                                                                                                                                                            <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                                                                                                                                                                                                <i class="fas fa-box text-white text-2xl"></i>
-                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                            <div class="flex-1">
-                                                                                                                                                                                                                                <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
-                                                                                                                                                                                                                                <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
-                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                        `;
+                                                                                                                                                                                                                                                                                                                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                                                                                                                                                                                                                                                                                            <i class="fas fa-box text-white text-2xl"></i>
+                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                        <div class="flex-1">
+                                                                                                                                                                                                                                                                                                                            <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                                                                                                                                                                                                                                                                                                            <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                    `;
                     productsList.appendChild(productDiv);
                 });
             }
