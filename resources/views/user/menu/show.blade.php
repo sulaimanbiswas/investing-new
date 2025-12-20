@@ -5,8 +5,10 @@
 @section('content')
     <!-- Header with Back Button -->
     <div class="mb-6 flex items-center gap-3">
-        {{-- menu te back jabe --}}
-        @include('components.back-button', ['route' => route('menu.index')])
+        <a href="{{ route('menu.index') }}"
+            class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
+            <i class="fas fa-arrow-left text-gray-700"></i>
+        </a>
         <h1 class="text-xl font-bold text-gray-800">Platform Details</h1>
     </div>
 
@@ -14,12 +16,12 @@
         class="grid grid-cols-12 items-center gap-4 mb-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl shadow-xl overflow-hidden">
 
         <!-- Platform Name Header -->
-        <div class="col-span-5 text-center">
-            <div class="p-3">
+        <div class="col-span-5 md:col-span-6 text-center">
+            <div class="p-3 md:p-6">
                 <div class="">
                     @if($platform->image)
                         <img src="{{ asset($platform->image) }}" alt="{{ $platform->name }}"
-                            class="w-10 h-10 rounded-xl object-cover shadow-xl mx-auto border-4 border-white">
+                            class="w-10 md:w-16 h-10 md:h-16 rounded-xl object-cover shadow-xl mx-auto border-4 border-white">
                     @else
                         <div
                             class="w-10 h-10  bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 rounded-xl flex items-center justify-center shadow-xl mx-auto border-2 border-white">
@@ -36,8 +38,8 @@
         </div>
 
         <!-- Account Balance Card -->
-        <div class="col-span-7">
-            <div class="px-3 relative">
+        <div class="col-span-7 md:col-span-6">
+            <div class="px-3 md:p-6 relative">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
                 <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -ml-12 -mb-12"></div>
                 <div class="relative">
@@ -594,14 +596,14 @@
                     const productDiv = document.createElement('div');
                     productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
                     productDiv.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                                                                                                                                                                                                                                                                                                                                            <i class="fas fa-box text-white text-2xl"></i>
-                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                        <div class="flex-1">
-                                                                                                                                                                                                                                                                                                                                                                            <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
-                                                                                                                                                                                                                                                                                                                                                                            <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
-                                                                                                                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="fas fa-box text-white text-2xl"></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="flex-1">
+                                                                                                                                                                                                                                                                                                                                                                                                                        <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                                                                                                                                                                                                                                                                                                                                                                                                        <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                `;
                     productsList.appendChild(productDiv);
                 });
             }
