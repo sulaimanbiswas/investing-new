@@ -57,33 +57,60 @@
     </div>
 
     <!-- Transaction Details Form -->
-    <form id="depositForm" class="space-y-5">
-        @csrf
-        <input type="hidden" name="deposit_id" value="{{ $deposit->id }}">
+    @if($gateway->requires_txn_id || $gateway->requires_screenshot)
+        <form id="depositForm" class="space-y-5">
+            @csrf
+            <input type="hidden" name="deposit_id" value="{{ $deposit->id }}">
 
-        <div class="bg-white rounded-xl shadow-sm p-5">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Transaction ID @if($gateway->requires_txn_id) <span
-            class="text-red-600">*</span>@endif</label>
-            <input type="text" name="txn_id" id="txn_id" @if($gateway->requires_txn_id) required @endif
-                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition"
-                placeholder="Enter your transaction ID">
-            <p class="text-xs text-gray-500 mt-2">Please enter the transaction ID from your payment</p>
-        </div>
+            @if($gateway->requires_txn_id)
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Transaction ID <span
+                            class="text-red-600">*</span></label>
+                    <input type="text" name="txn_id" id="txn_id" required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition"
+                        placeholder="Enter your transaction ID">
+                    <p class="text-xs text-gray-500 mt-2">Please enter the transaction ID from your payment</p>
+                </div>
+            @endif
 
-        <div class="bg-white rounded-xl shadow-sm p-5">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Payment Screenshot
-                @if($gateway->requires_screenshot) <span class="text-red-600">*</span>@endif</label>
-            <input type="file" name="screenshot" id="screenshot" accept="image/*" @if($gateway->requires_screenshot)
-            required @endif
-                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition">
-            <p class="text-xs text-gray-500 mt-2">Upload a clear screenshot of your payment confirmation</p>
-        </div>
+            @if($gateway->requires_screenshot)
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Payment Screenshot <span
+                            class="text-red-600">*</span></label>
+                    <input type="file" name="screenshot" id="screenshot" accept="image/*" required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition">
+                    <p class="text-xs text-gray-500 mt-2">Upload a clear screenshot of your payment confirmation</p>
+                </div>
+            @endif
 
-        <button type="submit" id="submitBtn"
-            class="w-full bg-indigo-600 text-white font-semibold py-4 rounded-xl hover:bg-indigo-700 transition">
-            Confirm Payment
-        </button>
-    </form>
+            <button type="submit" id="submitBtn"
+                class="w-full bg-indigo-600 text-white font-semibold py-4 rounded-xl hover:bg-indigo-700 active:scale-95 transition">
+                Confirm Payment
+            </button>
+        </form>
+    @else
+        <!-- No verification required -->
+        <form id="depositForm" class="space-y-5">
+            @csrf
+            <input type="hidden" name="deposit_id" value="{{ $deposit->id }}">
+
+            {{-- <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle text-green-500 text-5xl"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mb-2">No Verification Required</h2>
+                <p class="text-gray-600 mb-4">Your payment will be confirmed automatically. Click the button below to proceed.
+                </p>
+            </div> --}}
+
+            <button type="submit" id="submitBtn"
+                class="w-full bg-green-600 text-white font-semibold py-4 rounded-xl hover:bg-green-700 active:scale-95 transition flex items-center justify-center gap-2">
+                <i class="fas fa-check"></i>
+                Pay Now
+            </button>
+        </form>
+    @endif
+
 @endsection
 
 @push('scripts')
