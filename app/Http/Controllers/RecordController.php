@@ -12,7 +12,7 @@ class RecordController extends Controller
     public function index(): View
     {
         $userId = Auth::id();
-        $activeTab = request('tab', 'incomplete');
+        $activeTab = request('tab', 'complete');
 
         // Get transaction statistics
         $stats = [
@@ -75,7 +75,7 @@ class RecordController extends Controller
         } elseif ($activeTab === 'transactions') {
             $transactions = Transaction::where('user_id', $userId)
                 ->latest()
-                ->paginate(15)
+                ->paginate(perPage: 15)
                 ->withQueryString();
         }
 

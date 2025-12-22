@@ -45,7 +45,7 @@
 
     @php
         $tabs = [
-            'incomplete' => ['label' => 'Incomplete Orders', 'icon' => 'fa-clock', 'color' => 'orange'],
+            // 'incomplete' => ['label' => 'Incomplete Orders', 'icon' => 'fa-clock', 'color' => 'orange'],
             'complete' => ['label' => 'Complete Orders', 'icon' => 'fa-check-circle', 'color' => 'green'],
             'transactions' => ['label' => 'Transactions', 'icon' => 'fa-exchange-alt', 'color' => 'blue'],
         ];
@@ -55,8 +55,7 @@
         <div class="flex overflow-x-auto gap-2 p-2" style="scrollbar-width: thin;">
             @foreach($tabs as $key => $tab)
                 <a href="{{ route('records.index', ['tab' => $key]) }}"
-                    class="flex-shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition
-                                                                                            {{ $activeTab === $key ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    class="flex-shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition {{ $activeTab === $key ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     <i class="fas {{ $tab['icon'] }} mr-1"></i>{{ $tab['label'] }}
                 </a>
             @endforeach
@@ -64,81 +63,81 @@
     </div>
 
     <!-- Incomplete Orders Tab -->
-    @if($activeTab === 'incomplete')
-        @forelse($incompleteOrders as $order)
-            <div class="bg-white rounded-xl shadow-md p-5 border-2 border-orange-300 mb-4">
-                <div class="mb-4">
-                    <p class="text-sm text-gray-600 mb-1">Order #{{ $order->order_number }}</p>
-                    <p class="text-xs text-gray-500">{{ $order->type === 'combo' ? 'Combo Order' : 'Single Order' }}</p>
-                </div>
+    {{-- @if($activeTab === 'incomplete')
+    @forelse($incompleteOrders as $order)
+    <div class="bg-white rounded-xl shadow-md p-5 border-2 border-orange-300 mb-4">
+        <div class="mb-4">
+            <p class="text-sm text-gray-600 mb-1">Order #{{ $order->order_number }}</p>
+            <p class="text-xs text-gray-500">{{ $order->type === 'combo' ? 'Combo Order' : 'Single Order' }}</p>
+        </div>
 
-                <!-- Products List -->
-                @if($order->manage_crypto && count($order->manage_crypto) > 0)
-                    <div class="space-y-3 mb-4">
-                        @foreach($order->manage_crypto as $product)
-                            <div class="flex items-start gap-4 p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
-                                @if(!empty($product['image']))
-                                    <div class="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden">
-                                        <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] ?? 'Product' }}"
-                                            class="w-full h-full object-cover">
-                                    </div>
-                                @else
-                                    <div
-                                        class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-box text-white text-xl"></i>
-                                    </div>
-                                @endif
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900 mb-1">{{ $product['name'] ?? 'Product' }}</h4>
-                                    <div class="flex items-center gap-4 text-sm">
-                                        <span class="text-gray-700">Price:
-                                            <strong>${{ number_format($product['price'] ?? 0, 2) }}</strong></span>
-                                        <span class="text-gray-700">x <strong>{{ $product['quantity'] ?? 0 }}</strong></span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
+        <!-- Products List -->
+        @if($order->manage_crypto && count($order->manage_crypto) > 0)
+        <div class="space-y-3 mb-4">
+            @foreach($order->manage_crypto as $product)
+            <div class="flex items-start gap-4 p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
+                @if(!empty($product['image']))
+                <div class="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden">
+                    <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] ?? 'Product' }}"
+                        class="w-full h-full object-cover">
+                </div>
+                @else
+                <div
+                    class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-box text-white text-xl"></i>
+                </div>
                 @endif
-
-                <!-- Order Summary -->
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-2 mb-4 border-2 border-blue-200">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-700 font-medium">Order Amount:</span>
-                        <span class="font-bold text-gray-900">${{ number_format($order->order_amount, 2) }} USDT</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-700 font-medium">Commission:</span>
-                        <span class="font-bold text-green-600">${{ number_format($order->profit_amount, 2) }} USDT</span>
-                    </div>
-                    <div class="flex justify-between border-t-2 border-blue-300 pt-2">
-                        <span class="font-bold text-gray-900">Expected Income:</span>
-                        <span
-                            class="font-bold text-orange-500 text-xl">${{ number_format($order->order_amount + $order->profit_amount, 2) }}
-                            USDT</span>
+                <div class="flex-1">
+                    <h4 class="font-bold text-gray-900 mb-1">{{ $product['name'] ?? 'Product' }}</h4>
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="text-gray-700">Price:
+                            <strong>${{ number_format($product['price'] ?? 0, 2) }}</strong></span>
+                        <span class="text-gray-700">x <strong>{{ $product['quantity'] ?? 0 }}</strong></span>
                     </div>
                 </div>
-
-                <button type="button"
-                    class="submit-order-btn w-full bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-4 rounded-xl shadow-lg hover:from-red-600 hover:to-red-700 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2"
-                    data-order-id="{{ $order->id }}">
-                    <i class="fas fa-check-circle text-xl"></i>
-                    <span>Submit Order</span>
-                </button>
             </div>
-        @empty
-            <div class="bg-white rounded-xl shadow-sm px-4 py-12 text-center">
-                <i class="fas fa-check-circle text-4xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500 text-sm">No incomplete orders found.</p>
-            </div>
-        @endforelse
-
-        @if($incompleteOrders->hasPages())
-            <div class="mt-4">
-                {{ $incompleteOrders->links() }}
-            </div>
+            @endforeach
+        </div>
         @endif
+
+        <!-- Order Summary -->
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-2 mb-4 border-2 border-blue-200">
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-700 font-medium">Order Amount:</span>
+                <span class="font-bold text-gray-900">${{ number_format($order->order_amount, 2) }} USDT</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-700 font-medium">Commission:</span>
+                <span class="font-bold text-green-600">${{ number_format($order->profit_amount, 2) }} USDT</span>
+            </div>
+            <div class="flex justify-between border-t-2 border-blue-300 pt-2">
+                <span class="font-bold text-gray-900">Expected Income:</span>
+                <span class="font-bold text-orange-500 text-xl">${{ number_format($order->order_amount +
+                    $order->profit_amount, 2) }}
+                    USDT</span>
+            </div>
+        </div>
+
+        <button type="button"
+            class="submit-order-btn w-full bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-4 rounded-xl shadow-lg hover:from-red-600 hover:to-red-700 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2"
+            data-order-id="{{ $order->id }}">
+            <i class="fas fa-check-circle text-xl"></i>
+            <span>Submit Order</span>
+        </button>
+    </div>
+    @empty
+    <div class="bg-white rounded-xl shadow-sm px-4 py-12 text-center">
+        <i class="fas fa-check-circle text-4xl text-gray-300 mb-3"></i>
+        <p class="text-gray-500 text-sm">No incomplete orders found.</p>
+    </div>
+    @endforelse
+
+    @if($incompleteOrders->hasPages())
+    <div class="mt-4">
+        {{ $incompleteOrders->links() }}
+    </div>
     @endif
+    @endif --}}
 
     <!-- Complete Orders Tab -->
     @if($activeTab === 'complete')
