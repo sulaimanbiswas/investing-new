@@ -59,11 +59,23 @@
     <!-- Unpaid Order (Single) -->
     @if($unpaidOrder)
         <div class="mb-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-3">Your Unpaid Order</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-3">Your Current Order</h3>
             <div class="bg-white rounded-xl shadow-md p-5 border-2 border-orange-300">
                 <div class="mb-4">
-                    <p class="text-sm text-gray-600 mb-1">Order #{{ $unpaidOrder->order_number }}</p>
-                    <p class="text-xs text-gray-500">{{ $unpaidOrder->type === 'combo' ? 'Combo Order' : 'Single Order' }}</p>
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Order #{{ $unpaidOrder->order_number }}</p>
+                            <p class="text-xs text-gray-500">
+                                {{ $unpaidOrder->type === 'combo' ? 'Combo Order' : 'Single Order' }}
+                            </p>
+                        </div>
+                        {{-- @if($unpaidOrder->userOrderSet && $unpaidOrder->userOrderSet->orderSet &&
+                        $unpaidOrder->userOrderSet->orderSet->platform)
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">
+                            {{ $unpaidOrder->userOrderSet->orderSet->platform->name }}
+                        </span>
+                        @endif --}}
+                    </div>
                 </div>
 
                 <!-- Products List -->
@@ -355,8 +367,8 @@
 
 <!-- Insufficient Balance Modal -->
 <div id="insufficientBalanceModal"
-    class="fixed inset-0 bg-black bg-opacity-60 z-[60] hidden items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full transform transition-all">
+    class="fixed inset-0 bg-black bg-opacity-60 z-[60] top-24 hidden items-start justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full transform transition-all">
         <div class="p-6">
             <!-- Warning Icon -->
             <div class="flex justify-center mb-4">
@@ -368,6 +380,29 @@
 
             <!-- Title -->
             <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">Insufficient Balance</h3>
+
+            <!-- Order Summary -->
+            @if($unpaidOrder)
+                <div
+                    class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-2 mb-4 border-2 border-blue-200">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-700 font-medium">Order Amount:</span>
+                        <span class="font-bold text-gray-900">${{ number_format($unpaidOrder->order_amount, 2) }}
+                            USDT</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-700 font-medium">Commission:</span>
+                        <span class="font-bold text-green-600">${{ number_format($unpaidOrder->profit_amount, 2) }}
+                            USDT</span>
+                    </div>
+                    <div class="flex justify-between border-t-2 border-blue-300 pt-2">
+                        <span class="font-bold text-gray-900">Expected Income:</span>
+                        <span
+                            class="font-bold text-orange-500 text-xl">${{ number_format($unpaidOrder->order_amount + $unpaidOrder->profit_amount, 2) }}
+                            USDT</span>
+                    </div>
+                </div>
+            @endif
 
             <!-- Message -->
             <p id="insufficientBalanceMessage" class="text-gray-600 text-center mb-6"></p>
@@ -596,14 +631,14 @@
                     const productDiv = document.createElement('div');
                     productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
                     productDiv.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="fas fa-box text-white text-2xl"></i>
-                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="flex-1">
-                                                                                                                                                                                                                                                                                                                                                                                                                        <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
-                                                                                                                                                                                                                                                                                                                                                                                                                        <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <i class="fas fa-box text-white text-2xl"></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="flex-1">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            `;
                     productsList.appendChild(productDiv);
                 });
             }

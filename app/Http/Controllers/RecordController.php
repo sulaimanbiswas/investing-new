@@ -40,31 +40,28 @@ class RecordController extends Controller
         $transactions = collect();
 
         if ($activeTab === 'incomplete') {
-            // Find the earliest UserOrderSet for this user
-            $earliestOrderSet = \App\Models\UserOrderSet::where('user_id', $userId)
+            // Get the first unpaid order globally for this user (oldest first)
+            // This ensures orders are completed in the sequence they were assigned
+            $firstUnpaidOrder = UserOrder::with(['userOrderSet.orderSet.platform', 'productPackageItem.productPackage'])
+                ->whereHas('userOrderSet', function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                })
+                ->where('status', 'unpaid')
                 ->orderBy('created_at', 'asc')
                 ->first();
 
             $incompleteOrders = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
-            if ($earliestOrderSet) {
-                // Get the first unpaid order from this set
-                $firstUnpaidOrder = $earliestOrderSet->orders()
-                    ->where('status', 'unpaid')
-                    ->with(['productPackageItem.productPackage'])
-                    ->orderBy('created_at', 'asc')
-                    ->first();
-                if ($firstUnpaidOrder) {
-                    $incompleteOrders = new \Illuminate\Pagination\LengthAwarePaginator(
-                        [$firstUnpaidOrder],
-                        1,
-                        15,
-                        1,
-                        [
-                            'path' => request()->url(),
-                            'query' => request()->query(),
-                        ]
-                    );
-                }
+            if ($firstUnpaidOrder) {
+                $incompleteOrders = new \Illuminate\Pagination\LengthAwarePaginator(
+                    [$firstUnpaidOrder],
+                    1,
+                    15,
+                    1,
+                    [
+                        'path' => request()->url(),
+                        'query' => request()->query(),
+                    ]
+                );
             }
         } elseif ($activeTab === 'complete') {
             $completeOrders = UserOrder::whereHas('userOrderSet', function ($query) use ($userId) {

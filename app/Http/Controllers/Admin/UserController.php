@@ -73,7 +73,7 @@ class UserController extends Controller
         // Get assigned order sets for this user
         $userOrderSets = UserOrderSet::with('orderSet')
             ->where('user_id', $user->id)
-            ->orderByDesc('created_at')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         // Get all user orders with relationships
@@ -81,8 +81,9 @@ class UserController extends Controller
             ->whereHas('userOrderSet', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })
-            ->orderByRaw("CASE WHEN status = 'unpaid' THEN 0 ELSE 1 END")
-            ->orderByDesc('created_at')
+            ->orderByRaw("CASE WHEN status = 'unpaid' THEN 0 ELSE 1 END, 
+                         CASE WHEN status = 'unpaid' THEN created_at ELSE NULL END, 
+                         CASE WHEN status = 'paid' THEN paid_at ELSE NULL END DESC")
             ->paginate(20);
 
         return view('admin.users.show', compact('user', 'stats', 'orderSets', 'userOrderSets', 'userOrders'));
@@ -238,9 +239,6 @@ class UserController extends Controller
                     'product_package_item_id' => $firstItem->id,
                     'order_number' => UserOrder::generateOrderNumber(),
                     'type' => 'normal',
-                    'product_name' => $firstItem->product->name,
-                    'quantity' => $firstItem->quantity,
-                    'price' => $firstItem->price,
                     'order_amount' => $orderAmount,
                     'profit_amount' => $profitAmount,
                     'balance_after' => $user->balance,

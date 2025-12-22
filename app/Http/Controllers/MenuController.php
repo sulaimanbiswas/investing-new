@@ -92,16 +92,15 @@ class MenuController extends Controller
         // Check if this is user's VIP platform
         $isUserVipPlatform = $userVipPlatform && $userVipPlatform->id === $platform->id;
 
-        // Get first unpaid order - ONLY show on user's current VIP level platform
-        $unpaidOrder = null;
-        if ($isUserVipPlatform) {
-            $unpaidOrder = UserOrder::whereHas('userOrderSet', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
+        // Get first unpaid order globally for the user (oldest first, ordered by created_at)
+        // This ensures orders are completed in the sequence they were assigned
+        $unpaidOrder = UserOrder::with(['userOrderSet.orderSet.platform', 'productPackageItem.product', 'productPackageItem.productPackage'])
+            ->whereHas('userOrderSet', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
             })
-                ->where('status', 'unpaid')
-                ->with(['productPackageItem.product', 'productPackageItem.productPackage'])
-                ->first();
-        }
+            ->where('status', 'unpaid')
+            ->orderBy('created_at', 'asc')
+            ->first();
 
         // Count today's completed orders
         $todayCompletedCount = UserOrder::whereHas('userOrderSet', function ($query) use ($user) {

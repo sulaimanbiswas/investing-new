@@ -17,9 +17,6 @@ return new class extends Migration
             $table->unsignedBigInteger('product_package_item_id')->nullable();
             $table->string('order_number')->unique();
             $table->enum('type', ['normal', 'combo'])->default('normal');
-            $table->string('product_name'); // Cached product name
-            $table->integer('quantity');
-            $table->decimal('price', 10, 2);
             $table->decimal('order_amount', 12, 2); // quantity * price
             $table->decimal('profit_amount', 12, 2)->default(0);
             $table->decimal('balance_after', 12, 2); // User balance after this order

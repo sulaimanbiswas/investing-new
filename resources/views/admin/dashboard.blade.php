@@ -8,7 +8,7 @@
         <div class="col-xl-3 col-lg-4 col-sm-6">
             <div class="card h-100">
                 <div class="card-body d-flex align-items-center">
-                    <div class="me-3 p-3 rounded bg-primary bg-opacity-10 text-primary">
+                    <div class="me-3 p-3 rounded bg-primary bg-opacity-10 text-white">
                         <i class="la la-users fs-26"></i>
                     </div>
                     <div>
@@ -173,7 +173,7 @@
         <div class="col-xl-3 col-lg-4 col-sm-6">
             <div class="card h-100">
                 <div class="card-body d-flex align-items-center">
-                    <div class="me-3 p-3 rounded bg-primary bg-opacity-10 text-primary">
+                    <div class="me-3 p-3 rounded bg-primary bg-opacity-10 text-white">
                         <i class="la la-sign-in fs-26"></i>
                     </div>
                     <div>
@@ -371,13 +371,13 @@
         }
 
         const depositStatus = [
-                                {{ $approvedDepositsCount }},
-                                {{ $pendingDeposits }},
+                                            {{ $approvedDepositsCount }},
+                                            {{ $pendingDeposits }},
             {{ $rejectedDeposits }}
         ];
         const withdrawStatus = [
-                                {{ $approvedWithdrawalsCount }},
-                                {{ $pendingWithdrawals }},
+                                            {{ $approvedWithdrawalsCount }},
+                                            {{ $pendingWithdrawals }},
             {{ $rejectedWithdrawals }}
         ];
 
