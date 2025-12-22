@@ -111,7 +111,6 @@
                     <input type="radio" name="gateway" value="{{ $gateway->id }}" class="hidden gateway-radio" required
                         data-min="{{ $gateway->min_limit }}" data-max="{{ $gateway->max_limit }}"
                         data-currency="{{ $gateway->currency }}"
-                        data-user-address="{{ $user->getWalletAddressForGateway($gateway->id) }}"
                         data-custom-fields="{{ json_encode($gateway->custom_fields ?? []) }}">
                     <div
                         class="border-2 border-gray-200 rounded-xl p-4 text-center transition hover:border-green-400 hover:bg-green-50">
@@ -146,32 +145,47 @@
             @csrf
             <input type="hidden" id="gateway_id" name="gateway_id">
 
+            {{-- @if($user->withdrawal_address) --}}
+            <!-- Wallet Address Display -->
+            <div id="wallet-address-section">
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                    <p class="text-xs text-gray-600 font-medium mb-2">Your Withdrawal Address</p>
+                    <div class="flex items-center gap-3">
+                        <div class="flex-1">
+                            <p id="wallet-address-display" class="text-sm font-semibold text-gray-900 break-all">
+                                @if($user->withdrawal_address)
+                                    {{ $user->withdrawal_address }}
+                                @else
+                                    No address set
+                                @endif
+                            </p>
+                        </div>
+                        <button type="button" id="copyWalletBtn"
+                            class="text-green-600 hover:text-green-700 transition flex-shrink-0">
+                            <i class="fas fa-copy text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {{-- @endif --}}
+
             <!-- Withdrawal Amount -->
             <div>
                 <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Withdrawal Amount</label>
                 <div
                     class="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden focus-within:border-green-500 transition">
-                    <span class="px-4 py-3 bg-gray-50 text-gray-700 font-semibold" id="currency-label">USDT</span>
+                    <span class="px-2 py-3 bg-gray-50 text-gray-700 font-semibold" id="currency-label">USDT</span>
                     <input type="number" id="amount" name="amount" step="0.01" min="0.01"
                         class="flex-1 px-4 py-3 border-0 focus:ring-0 focus:outline-none" placeholder="Enter amount"
                         required>
                     <button type="button" id="maxBtn"
-                        class="px-4 py-3 bg-green-500 text-white text-xs font-semibold hover:bg-green-600 transition-colors">
+                        class="h-full px-2 py-3.5 bg-green-500 text-white font-semibold rounded-none rounded-r-xl focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95 transition-all duration-200 min-w-[48px] max-w-[60px] text-xs flex items-center justify-center whitespace-nowrap">
                         MAX
                     </button>
+
                 </div>
                 <p class="text-xs text-gray-500 mt-2" id="amount-hint">Please select a withdrawal method first</p>
                 <p class="text-xs text-red-600 mt-1" id="amount-error"></p>
-            </div>
-
-            <!-- Wallet Address -->
-            <div>
-                <label for="wallet_address" class="block text-sm font-medium text-gray-700 mb-1">Wallet Address <span
-                        class="text-red-500">*</span></label>
-                <input type="text" id="wallet_address" name="wallet_address"
-                    class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500"
-                    placeholder="Enter destination wallet address" required>
-                <p class="text-xs text-gray-500 mt-1">Ensure the address matches the selected network/currency.</p>
             </div>
 
             <!-- Custom Fields Container -->
@@ -188,6 +202,15 @@
                 <p class="text-xs text-gray-500 mt-1">Enter the password you set during registration</p>
             </div>
 
+            <div class="flex gap-3">
+                <a href="{{ route('profile.home') }}"
+                    class="flex-1 px-4 py-3 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-center">Cancel</a>
+                <button type="submit" id="submit-btn" disabled
+                    class="flex-1 px-4 py-3 rounded-lg bg-gray-400 text-white shadow font-semibold disabled:cursor-not-allowed transition">
+                    Submit Request
+                </button>
+            </div>
+
             <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
                 <div class="flex items-start gap-2">
                     <i class="fas fa-exclamation-triangle text-yellow-600 mt-0.5"></i>
@@ -200,15 +223,6 @@
                         </ul>
                     </div>
                 </div>
-            </div>
-
-            <div class="flex gap-3">
-                <a href="{{ route('profile.home') }}"
-                    class="flex-1 px-4 py-3 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-center">Cancel</a>
-                <button type="submit" id="submit-btn" disabled
-                    class="flex-1 px-4 py-3 rounded-lg bg-gray-400 text-white shadow font-semibold disabled:cursor-not-allowed transition">
-                    Submit Request
-                </button>
             </div>
         </form>
     </div>
@@ -253,16 +267,22 @@
                 </div>
 
                 <!-- Title -->
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">Error</h3>
+                <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">Something Went Wrong</h3>
 
                 <!-- Message -->
-                <p id="errorMessage" class="text-gray-600 text-center mb-6"></p>
+                <p id="errorMessage" class="text-gray-700 text-center mb-6 font-medium"></p>
 
-                <!-- Button -->
-                <button type="button" id="closeErrorBtn"
-                    class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 active:scale-95 transition-all duration-200">
-                    Close
-                </button>
+                <!-- Buttons -->
+                <div class="flex gap-3">
+                    <button type="button" id="closeErrorBtn"
+                        class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 active:scale-95 transition-all duration-200">
+                        Close
+                    </button>
+                    <a href="{{ route('menu.index') }}" id="gotoMenuBtn"
+                        class="flex-1 bg-green-500 text-white font-bold py-3 rounded-xl hover:bg-green-600 active:scale-95 transition-all duration-200 text-center">
+                        Go to Menu
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -280,6 +300,9 @@
         const amountInput = document.getElementById('amount');
         const customFieldsContainer = document.getElementById('custom-fields-container');
         const submitBtn = document.getElementById('submit-btn');
+        const walletAddressSection = document.getElementById('wallet-address-section');
+        const walletAddressDisplay = document.getElementById('wallet-address-display');
+        const copyWalletBtn = document.getElementById('copyWalletBtn');
 
         let selectedGateway = null;
         let minLimit = 0;
@@ -293,7 +316,6 @@
                 minLimit = parseFloat(this.dataset.min);
                 maxLimit = parseFloat(this.dataset.max);
                 const currency = this.dataset.currency;
-                const userAddress = this.dataset.userAddress || '';
                 customFields = JSON.parse(this.dataset.customFields || '[]');
 
                 // Update UI
@@ -309,15 +331,30 @@
                 document.getElementById('amount-hint').textContent = `Available: {{ number_format($availableBalance, 2) }} USDT | Min: ${minLimit} ${currency} | Max: ${maxLimit} ${currency}`;
                 document.getElementById('gateway-error').textContent = '';
 
-                // Auto-fill wallet address for selected gateway (fallback to default)
-                const walletInput = document.getElementById('wallet_address');
-                walletInput.value = userAddress || defaultWalletAddress || '';
+                // Show wallet address section with default address
+                walletAddressSection.classList.remove('hidden');
+                walletAddressDisplay.textContent = defaultWalletAddress || 'No address set';
 
                 // Render custom fields
                 renderCustomFields();
                 validateForm();
             });
         });
+
+        // Copy wallet address
+        if (copyWalletBtn) {
+            copyWalletBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const address = walletAddressDisplay.textContent;
+                navigator.clipboard.writeText(address).then(() => {
+                    const originalIcon = copyWalletBtn.innerHTML;
+                    copyWalletBtn.innerHTML = '<i class="fas fa-check text-green-600 text-lg"></i>';
+                    setTimeout(() => {
+                        copyWalletBtn.innerHTML = originalIcon;
+                    }, 2000);
+                });
+            });
+        }
 
         // Render custom fields based on selected gateway
         function renderCustomFields() {
@@ -502,6 +539,28 @@
 
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
+
+            // Check for pending orders before withdrawal
+            try {
+                const checkResponse = await fetch('{{ route('withdrawal.check-pending-orders') }}', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    }
+                });
+
+                const checkData = await checkResponse.json();
+
+                if (checkData.has_pending_orders) {
+                    document.getElementById('errorMessage').textContent = 'You have pending orders. Please complete all orders before requesting withdrawal.';
+                    errorModal.classList.remove('hidden');
+                    errorModal.classList.add('flex');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error checking pending orders:', error);
+            }
 
             const formData = new FormData(form);
 

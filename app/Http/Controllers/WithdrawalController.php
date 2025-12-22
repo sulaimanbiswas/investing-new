@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Withdrawal;
 use App\Models\Gateway;
+use App\Models\UserOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -26,6 +27,22 @@ class WithdrawalController extends Controller
         ]);
     }
 
+    public function checkPendingOrders()
+    {
+        $user = Auth::user();
+
+        // Check if user has any unpaid orders
+        $hasPendingOrders = UserOrder::whereHas('userOrderSet', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->where('status', 'unpaid')
+            ->exists();
+
+        return response()->json([
+            'has_pending_orders' => $hasPendingOrders
+        ]);
+    }
+
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -34,7 +51,6 @@ class WithdrawalController extends Controller
         $data = $request->validate([
             'gateway_id' => 'required|exists:gateways,id',
             'amount' => 'required|numeric|min:0.01',
-            'wallet_address' => 'required|string|max:255',
             'withdrawal_password' => 'required|string',
             'custom_data' => 'nullable|array',
         ]);
@@ -72,24 +88,17 @@ class WithdrawalController extends Controller
         // Generate unique order number
         $orderNumber = 'WD' . strtoupper(uniqid());
 
-        // Create withdrawal request
+        // Create withdrawal request - use user's default wallet address
         Withdrawal::create([
             'user_id' => $user->id,
             'gateway_id' => $gateway->id,
             'order_number' => $orderNumber,
             'amount' => $data['amount'],
             'currency' => $gateway->currency,
-            'wallet_address' => $data['wallet_address'],
+            'wallet_address' => $user->withdrawal_address, // Use default wallet address
             'status' => 'pending',
             'custom_data' => $data['custom_data'] ?? null,
         ]);
-
-        // Persist/update the user's wallet address for this gateway
-        try {
-            $user->setWalletAddressForGateway($gateway->id, $data['wallet_address']);
-        } catch (\Throwable $e) {
-            // Non-fatal: ignore persistence issues here
-        }
 
         return response()->json([
             'success' => true,
