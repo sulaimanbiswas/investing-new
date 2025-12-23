@@ -14,7 +14,7 @@
                   <div class="d-flex justify-content-center align-items-center mb-3">
                     <a href="{{ route('admin.dashboard') }}" class="brand-logo">
                       @if(setting('logo_path'))
-                        <dev class='d-flex justify-content-center align-items-center'>
+                        <dev class='d-flex justify-content-center align-items-center gap-2'>
                           <img src="{{ asset(setting('logo_path')) }}" alt="Logo"
                             style="max-height: 40px; max-width: 40px; object-fit: contain;">
                           <span class="text-dark brand-title text-primary" style="font-size: 20px; font-weight: 600;">
