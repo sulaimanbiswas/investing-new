@@ -295,17 +295,16 @@ class UserController extends Controller
 
     public function deleteUserOrderSet(Request $request, User $user, UserOrderSet $userOrderSet)
     {
-        // Verify the order set belongs to this user
-        if ($userOrderSet->user_id !== $user->id) {
-            if ($request->wantsJson()) {
-                return response()->json(['message' => 'Unauthorized action.'], 403);
-            }
-            return redirect()
-                ->route('admin.users.show', $user)
-                ->with('error', 'Unauthorized action.');
-        }
-
         try {
+            // Verify the order set belongs to this user (defensive check)
+            if ($userOrderSet->user_id != $user->id) {
+                $message = 'Order set does not belong to this user.';
+                if ($request->wantsJson()) {
+                    return response()->json(['success' => false, 'message' => $message], 422);
+                }
+                return redirect()->back()->with('error', $message);
+            }
+
             $orderSetName = $userOrderSet->orderSet->name;
 
             // Delete all user orders associated with this order set
@@ -315,7 +314,7 @@ class UserController extends Controller
             $userOrderSet->delete();
 
             $successMessage = "Order set '{$orderSetName}' and its associated orders have been removed successfully.";
-            
+
             if ($request->wantsJson()) {
                 return response()->json(['success' => true, 'message' => $successMessage], 200);
             }
@@ -325,11 +324,11 @@ class UserController extends Controller
                 ->with('success', $successMessage);
         } catch (\Exception $e) {
             $errorMessage = 'Failed to delete order set: ' . $e->getMessage();
-            
+
             if ($request->wantsJson()) {
                 return response()->json(['success' => false, 'message' => $errorMessage], 500);
             }
-            
+
             return redirect()
                 ->route('admin.users.show', $user)
                 ->with('error', $errorMessage);

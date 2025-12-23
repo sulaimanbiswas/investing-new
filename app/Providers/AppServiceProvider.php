@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\User;
 use App\Models\Deposit;
 use App\Models\Withdrawal;
+use App\Models\UserOrderSet;
 use App\Observers\UserObserver;
 use App\Observers\DepositObserver;
 use App\Observers\WithdrawalObserver;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,6 +37,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Configure route model bindings
+        Route::bind('userOrderSet', function ($value) {
+            return UserOrderSet::findOrFail($value);
+        });
+
         // Dynamically set pagination view: Tailwind for user, Bootstrap for admin
         if (request()->is('admin*')) {
             Paginator::defaultView('vendor.pagination.bootstrap-5');
