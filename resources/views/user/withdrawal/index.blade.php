@@ -111,7 +111,7 @@
                     <input type="radio" name="gateway" value="{{ $gateway->id }}" class="hidden gateway-radio" required
                         data-min="{{ $gateway->min_limit }}" data-max="{{ $gateway->max_limit }}"
                         data-currency="{{ $gateway->currency }}"
-                        data-custom-fields="{{ json_encode($gateway->custom_fields ?? []) }}">
+                        data-custom-fields="{{ json_encode($gateway->custom_fields ?? []) }}" @if($loop->first) checked @endif>
                     <div
                         class="border-2 border-gray-200 rounded-xl p-4 text-center transition hover:border-green-400 hover:bg-green-50">
                         @if($gateway->logo_path)
@@ -341,6 +341,16 @@
                 renderCustomFields();
                 validateForm();
             });
+        });
+
+        // Auto-select gateway id=1 on page load
+        // Auto-select the first gateway on page load
+        window.addEventListener('DOMContentLoaded', function () {
+            const gatewayRadio = document.querySelector('.gateway-radio');
+            if (gatewayRadio) {
+                gatewayRadio.checked = true;
+                gatewayRadio.dispatchEvent(new Event('change'));
+            }
         });
 
         // Copy wallet address
