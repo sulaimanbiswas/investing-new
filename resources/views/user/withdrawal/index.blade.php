@@ -256,7 +256,7 @@
 
     <!-- Error Modal -->
     <div id="errorModal" class="fixed inset-0 bg-black bg-opacity-60 z-[60] hidden items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full transform transition-all">
+        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full transform transition-all">
             <div class="p-6">
                 <!-- Error Icon -->
                 <div class="flex justify-center mb-4">
