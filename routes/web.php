@@ -64,6 +64,9 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::post('/withdrawal', [\App\Http\Controllers\WithdrawalController::class, 'store'])->name('withdrawal.store');
     Route::get('/withdrawal/records', [\App\Http\Controllers\WithdrawalController::class, 'records'])->name('withdrawal.records');
 
+    Route::get('/withdrawal/check-pending-withdrawal', [\App\Http\Controllers\WithdrawalController::class, 'checkPendingWithdrawals'])->name('withdrawal.check-pending-withdrawal');
+
+
     // Referral Commission routes
     Route::get('/commissions', [\App\Http\Controllers\ReferralCommissionController::class, 'index'])->name('commissions.index');
 

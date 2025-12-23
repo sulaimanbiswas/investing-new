@@ -344,8 +344,40 @@
         });
 
         // Auto-select gateway id=1 on page load
-        // Auto-select the first gateway on page load
-        window.addEventListener('DOMContentLoaded', function () {
+        // On page load: check pending withdrawals, then auto-select first gateway
+        window.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const resp = await fetch('{{ route('withdrawal.check-pending-withdrawal') }}', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    }
+                });
+
+                const data = await resp.json();
+
+                if (data.has_pending_withdrawals) {
+                    // Show message and disable form
+                    document.getElementById('errorMessage').textContent = 'Tomar already ekta pending request ache. Tumi support e contact koro.';
+                    errorModal.classList.remove('hidden');
+                    errorModal.classList.add('flex');
+
+                    // Disable form controls so user cannot create a new request
+                    const controls = form.querySelectorAll('input, button, textarea, select');
+                    controls.forEach(el => {
+                        // keep close button enabled
+                        if (el.id === 'closeErrorBtn' || el.id === 'gotoMenuBtn') return;
+                        el.disabled = true;
+                    });
+
+                    return;
+                }
+            } catch (err) {
+                console.error('Error checking pending withdrawals:', err);
+            }
+
+            // Auto-select the first gateway
             const gatewayRadio = document.querySelector('.gateway-radio');
             if (gatewayRadio) {
                 gatewayRadio.checked = true;

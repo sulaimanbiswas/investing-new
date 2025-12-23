@@ -43,6 +43,19 @@ class WithdrawalController extends Controller
         ]);
     }
 
+    public function checkPendingWithdrawals()
+    {
+        $user = Auth::user();
+
+        $hasPendingWithdrawals = Withdrawal::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->exists();
+
+        return response()->json([
+            'has_pending_withdrawals' => $hasPendingWithdrawals
+        ]);
+    }
+
     public function store(Request $request)
     {
         $user = Auth::user();
