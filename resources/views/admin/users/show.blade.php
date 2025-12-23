@@ -872,11 +872,14 @@
                     // Use POST with _method override for compatibility
                     const body = new URLSearchParams();
                     body.append('_method', 'DELETE');
+                    if (token) body.append('_token', token);
 
                     fetch(url, {
                         method: 'POST',
+                        credentials: 'same-origin',
                         headers: {
                             'X-CSRF-TOKEN': token,
+                            'X-Requested-With': 'XMLHttpRequest',
                             'Accept': 'application/json',
                             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                         },
