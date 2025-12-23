@@ -267,7 +267,9 @@
                 </div>
 
                 <!-- Title -->
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">Something Went Wrong</h3>
+                <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">
+                    Complete Your Orders First
+                </h3>
 
                 <!-- Message -->
                 <p id="errorMessage" class="text-gray-700 text-center mb-6 font-medium"></p>
