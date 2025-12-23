@@ -947,7 +947,7 @@
                             let json = null;
                             try { json = await response.json(); } catch (err) { /* ignore */ }
 
-                            if (response.ok) {
+                            if (response.ok && json?.success) {
                                 Swal.fire({
                                     title: 'Deleted',
                                     text: json?.message || 'Order set deleted successfully.',
@@ -956,7 +956,7 @@
                                     showConfirmButton: false
                                 }).then(() => location.reload());
                             } else {
-                                const msg = json?.message || 'Failed to delete order set.';
+                                const msg = json?.message || 'Failed to delete order set. Please try again.';
                                 Swal.fire('Error', msg, 'error');
                             }
                         })

@@ -297,6 +297,9 @@ class UserController extends Controller
     {
         // Verify the order set belongs to this user
         if ($userOrderSet->user_id !== $user->id) {
+            if ($request->wantsJson()) {
+                return response()->json(['message' => 'Unauthorized action.'], 403);
+            }
             return redirect()
                 ->route('admin.users.show', $user)
                 ->with('error', 'Unauthorized action.');
@@ -311,13 +314,25 @@ class UserController extends Controller
             // Delete the user order set
             $userOrderSet->delete();
 
+            $successMessage = "Order set '{$orderSetName}' and its associated orders have been removed successfully.";
+            
+            if ($request->wantsJson()) {
+                return response()->json(['success' => true, 'message' => $successMessage], 200);
+            }
+
             return redirect()
                 ->route('admin.users.show', $user)
-                ->with('success', "Order set '{$orderSetName}' and its associated orders have been removed successfully.");
+                ->with('success', $successMessage);
         } catch (\Exception $e) {
+            $errorMessage = 'Failed to delete order set: ' . $e->getMessage();
+            
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $errorMessage], 500);
+            }
+            
             return redirect()
                 ->route('admin.users.show', $user)
-                ->with('error', 'Failed to delete order set: ' . $e->getMessage());
+                ->with('error', $errorMessage);
         }
     }
 
