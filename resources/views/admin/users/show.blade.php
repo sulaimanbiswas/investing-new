@@ -399,12 +399,14 @@
                     <h4 class="card-title">Order Set Assign</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.users.assign-order-set', $user) }}" method="POST" id="assignOrderSetForm">
+                    <form action="{{ route('admin.users.assign-order-set', $user) }}" method="POST" id="assignOrderSetForm"
+                        autocomplete="off">
                         @csrf
                         <div class="mb-3">
                             <label for="order_set_id" class="form-label">Order Set <span
                                     class="text-danger">*</span></label>
-                            <select name="order_set_id" id="order_set_id" class="default-select form-control wide" required>
+                            <select name="order_set_id" id="order_set_id" class="default-select form-control wide" required
+                                autocomplete="off">
                                 <option value="">Select Order Set</option>
                                 @foreach($orderSets as $orderSet)
                                     <option value="{{ $orderSet->id }}">{{ $orderSet->name }}</option>
@@ -801,39 +803,95 @@
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Assign Order Set Form - Success Modal
-        document.getElementById('assignOrderSetForm').addEventListener('submit', function (e) {
-            const orderSetId = document.getElementById('order_set_id').value;
-
-            if (!orderSetId) {
+        // Assign Order Set Form - AJAX Submit
+        const assignOrderSetForm = document.getElementById('assignOrderSetForm');
+        if (assignOrderSetForm) {
+            assignOrderSetForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Please select an order set',
-                    icon: 'error',
-                    confirmButtonColor: '#dc3545'
-                });
-                return;
-            }
 
-            // Show success modal after form submits
-            e.preventDefault();
+                const orderSetSelect = document.getElementById('order_set_id');
+                const orderSetId = orderSetSelect.value;
 
-            Swal.fire({
-                title: 'Assigning Order Set...',
-                text: 'Please wait while we assign the order set to this user.',
-                icon: 'info',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                    // Submit the form after showing loading
-                    setTimeout(() => {
-                        this.submit();
-                    }, 500);
+                if (!orderSetId) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Please select an order set',
+                        icon: 'error',
+                        confirmButtonColor: '#dc3545'
+                    });
+                    return;
                 }
+
+                const selectedText = orderSetSelect.options[orderSetSelect.selectedIndex].text;
+                const csrfToken = document.querySelector('input[name="_token"]').value;
+
+                // Show loading modal
+                Swal.fire({
+                    title: 'Assigning Order Set...',
+                    text: 'Please wait while we process your request.',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Submit via AJAX
+                fetch(assignOrderSetForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: new URLSearchParams({
+                        '_token': csrfToken,
+                        'order_set_id': orderSetId
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Reset form immediately
+                        orderSetSelect.value = '';
+                        assignOrderSetForm.reset();
+
+                        // Close loading and show result
+                        Swal.close();
+
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonColor: '#28a745'
+                            }).then(() => {
+                                // Reload page to show updated data
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: data.message || 'Failed to assign order set',
+                                icon: 'error',
+                                confirmButtonColor: '#dc3545'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        orderSetSelect.value = '';
+                        assignOrderSetForm.reset();
+                        Swal.close();
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Request failed. Please try again.',
+                            icon: 'error',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    });
             });
-        });
+        }
 
         // Delete Order Set Form - Confirmation (AJAX)
         document.querySelectorAll('.deleteOrderSetForm').forEach(form => {

@@ -161,34 +161,29 @@ class UserController extends Controller
 
     public function assignOrderSet(Request $request, User $user)
     {
-        $request->validate([
-            'order_set_id' => 'required|exists:order_sets,id',
+        $validated = $request->validate([
+            'order_set_id' => 'required|integer|exists:order_sets,id',
         ]);
 
-        $orderSet = OrderSet::with('productPackages.items.product')->findOrFail($request->order_set_id);
+        $orderSetId = (int) $validated['order_set_id'];
+        $orderSet = OrderSet::with('productPackages.items.product')->findOrFail($orderSetId);
 
-        // Check if already assigned
-        $existing = UserOrderSet::where('user_id', $user->id)
-            ->where('order_set_id', $orderSet->id)
-            ->where('status', '!=', 'completed')
-            ->first();
-
-        if ($existing) {
+        // Validate order set has packages
+        if ($orderSet->productPackages->isEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This order set has no packages. Cannot assign empty order set.'
+                ], 422);
+            }
             return redirect()
                 ->route('admin.users.show', $user)
-                ->with('error', 'This order set is already assigned to this user.');
+                ->with('error', 'This order set has no packages. Cannot assign empty order set.');
         }
 
         DB::beginTransaction();
         try {
-            if ($orderSet->productPackages->isEmpty()) {
-                DB::rollBack();
-                return redirect()
-                    ->route('admin.users.show', $user)
-                    ->with('error', 'This order set has no packages.');
-            }
-
-            // Calculate totals
+            // Calculate totals for this assignment
             $totalAmount = 0;
             $totalPackages = $orderSet->productPackages->count();
 
@@ -198,10 +193,10 @@ class UserController extends Controller
                 }
             }
 
-            // Create user order set
+            // Create new user order set every time (allow unlimited assignments)
             $userOrderSet = UserOrderSet::create([
                 'user_id' => $user->id,
-                'order_set_id' => $orderSet->id,
+                'order_set_id' => $orderSetId,
                 'total_products' => $totalPackages,
                 'completed_products' => 0,
                 'total_amount' => $totalAmount,
@@ -210,13 +205,23 @@ class UserController extends Controller
                 'assigned_at' => now(),
             ]);
 
+            // Ensure user order set was created
+            if (!$userOrderSet || !$userOrderSet->id) {
+                throw new \Exception('Failed to create user order set record');
+            }
+
             // Create ONE order per package
+            $ordersCreated = 0;
             foreach ($orderSet->productPackages as $package) {
                 $orderAmount = 0;
                 $manageCrypto = [];
 
                 // Get first item for basic order info
                 $firstItem = $package->items->first();
+
+                if (!$firstItem) {
+                    continue; // Skip if package has no items
+                }
 
                 // Build manage_crypto array with all products in this package
                 foreach ($package->items as $item) {
@@ -234,7 +239,7 @@ class UserController extends Controller
                 // Calculate profit from package profit_percentage
                 $profitAmount = $orderAmount * ($package->profit_percentage / 100);
 
-                UserOrder::create([
+                $newOrder = UserOrder::create([
                     'user_order_set_id' => $userOrderSet->id,
                     'product_package_item_id' => $firstItem->id,
                     'order_number' => UserOrder::generateOrderNumber(),
@@ -245,15 +250,43 @@ class UserController extends Controller
                     'status' => 'unpaid',
                     'manage_crypto' => $manageCrypto,
                 ]);
+
+                if (!$newOrder || !$newOrder->id) {
+                    throw new \Exception('Failed to create user order');
+                }
+
+                $ordersCreated++;
             }
 
             DB::commit();
 
+            $message = 'Order set "' . $orderSet->name . '" assigned! ' . $ordersCreated . ' orders created.';
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message
+                ], 200);
+            }
+
             return redirect()
                 ->route('admin.users.show', $user)
-                ->with('success', 'Order set assigned successfully! Total ' . $totalPackages . ' orders created.');
+                ->with('success', $message);
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Failed to assign order set', [
+                'user_id' => $user->id,
+                'order_set_id' => $orderSetId,
+                'error' => $e->getMessage(),
+            ]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to assign order set: ' . $e->getMessage()
+                ], 500);
+            }
+
             return redirect()
                 ->route('admin.users.show', $user)
                 ->with('error', 'Failed to assign order set: ' . $e->getMessage());
