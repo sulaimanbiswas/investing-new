@@ -835,7 +835,7 @@
             });
         });
 
-        // Delete Order Set Form - Confirmation
+        // Delete Order Set Form - Confirmation (AJAX)
         document.querySelectorAll('.deleteOrderSetForm').forEach(form => {
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
@@ -852,21 +852,57 @@
                     confirmButtonText: 'Yes, Delete',
                     cancelButtonText: 'Cancel'
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Deleting...',
-                            text: 'Please wait while we delete the order set.',
-                            icon: 'info',
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                                setTimeout(() => {
-                                    this.submit();
-                                }, 500);
+                    if (!result.isConfirmed) return;
+
+                    Swal.fire({
+                        title: 'Deleting...',
+                        text: 'Please wait while we delete the order set.',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    const url = this.action;
+                    const tokenInput = this.querySelector('input[name="_token"]');
+                    const token = tokenInput ? tokenInput.value : (document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '');
+
+                    // Use POST with _method override for compatibility
+                    const body = new URLSearchParams();
+                    body.append('_method', 'DELETE');
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': token,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                        body: body.toString()
+                    })
+                        .then(async (response) => {
+                            let json = null;
+                            try { json = await response.json(); } catch (err) { /* ignore */ }
+
+                            if (response.ok) {
+                                Swal.fire({
+                                    title: 'Deleted',
+                                    text: json?.message || 'Order set deleted successfully.',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                }).then(() => location.reload());
+                            } else {
+                                const msg = json?.message || 'Failed to delete order set.';
+                                Swal.fire('Error', msg, 'error');
                             }
+                        })
+                        .catch((err) => {
+                            console.error('Delete request failed', err);
+                            Swal.fire('Error', 'Request failed. Check console for details.', 'error');
                         });
-                    }
                 });
             });
         });
