@@ -25,10 +25,7 @@
                         <p class="text-white text-sm font-medium opacity-90 mb-1">Current Boost</p>
                         <p class="text-white text-xl font-bold">Order Available</p>
                     </div>
-                    {{-- <div class="bg-white bg-opacity-20  px-4 py-2">
-                        <i class="fas fa-arrow-right text-white"></i>
-                    </div> --}}
-                </div>
+                                    </div>
             </div>
         @else
             <div class="bg-gradient-to-br from-slate-500 via-slate-600 to-gray-700 rounded-xl shadow-lg p-2">

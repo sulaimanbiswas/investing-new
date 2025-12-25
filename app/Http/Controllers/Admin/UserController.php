@@ -84,7 +84,7 @@ class UserController extends Controller
             ->orderByRaw("CASE WHEN status = 'unpaid' THEN 0 ELSE 1 END, 
                          CASE WHEN status = 'unpaid' THEN created_at ELSE NULL END, 
                          CASE WHEN status = 'paid' THEN paid_at ELSE NULL END DESC")
-            ->paginate(20);
+            ->paginate(25);
 
         return view('admin.users.show', compact('user', 'stats', 'orderSets', 'userOrderSets', 'userOrders'));
     }
