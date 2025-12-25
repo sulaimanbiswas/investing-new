@@ -126,8 +126,10 @@
                                         <span class="d-block text-black font-w600 mb-1">User Details</span>
                                         <p class="mb-0">
                                             <strong>{{ $deposit->user->name }}</strong>
-                                            <span
-                                                class="text-muted">{{ '@' . ($deposit->user->username ?? $deposit->user->email) }}</span>
+                                            <a href="{{ route('admin.users.show', $deposit->user)  }}">
+                                                <span
+                                                    class="text-primary">{{ '@' . ($deposit->user->username ?? $deposit->user->email) }}</span>
+                                            </a>
                                         </p>
                                     </div>
                                 </div>
