@@ -29,7 +29,8 @@
         <form action="{{ route('wallet.update') }}" method="POST" class="space-y-4">
             @csrf
             <div>
-                <label for="withdrawal_address" class="block text-sm font-medium text-gray-700 mb-1">Wallet Address
+                <label for="withdrawal_address" class="block text-sm font-medium text-gray-700 mb-1">Wallet Address (USDT
+                    TRC20)
                     @if(!$user->withdrawal_address) <span class="text-red-500">*</span>@endif
                 </label>
                 <input type="text" id="withdrawal_address" name="withdrawal_address"

@@ -9,17 +9,6 @@
         <h1 class="text-2xl font-bold text-gray-800">Withdrawal</h1>
     </div>
 
-    <div class="bg-gradient-to-br from-green-600 to-teal-700 rounded-xl shadow-lg p-5 text-white mb-5">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                <i class="fas fa-money-bill-wave text-white text-xl"></i>
-            </div>
-            <div>
-                <div class="text-sm text-white/80">Request withdrawal</div>
-            </div>
-        </div>
-    </div>
-
     <!-- Available Balance Card -->
     @if($user->freeze_amount > 0)
         <!-- With Frozen Amount -->
@@ -78,7 +67,7 @@
             <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
             <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
 
-            <div class="relative">
+            <div class="relative flex justify-between items-center">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                         <i class="fas fa-wallet text-white text-2xl"></i>
@@ -91,11 +80,8 @@
 
                 <div class="flex items-end justify-between">
                     <div>
-                        <p class="text-white text-5xl font-bold mb-1">{{ number_format($availableBalance, 2) }}</p>
+                        <p class="text-white text-3xl font-bold mb-1">{{ number_format($availableBalance, 2) }}</p>
                         <p class="text-green-100 text-lg font-medium">USDT</p>
-                    </div>
-                    <div class="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                        <i class="fas fa-arrow-circle-down text-white text-4xl"></i>
                     </div>
                 </div>
             </div>
@@ -105,7 +91,7 @@
     <!-- Withdrawal Gateway Selection -->
     <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
         <h3 class="text-sm font-medium text-gray-700 mb-3">Withdrawal Method</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             @forelse($gateways as $gateway)
                 <label class="gateway-card cursor-pointer">
                     <input type="radio" name="gateway" value="{{ $gateway->id }}" class="hidden gateway-radio" required
@@ -178,9 +164,10 @@
                     <input type="number" id="amount" name="amount" step="0.01" min="0.01"
                         class="flex-1 px-4 py-3 border-0 focus:ring-0 focus:outline-none" placeholder="Enter amount"
                         required>
-                    <button type="button" id="maxBtn"
-                        class="h-full px-2 py-3.5 bg-green-500 text-white font-semibold rounded-none rounded-r-xl focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95 transition-all duration-200 min-w-[48px] max-w-[60px] text-xs flex items-center justify-center whitespace-nowrap">
-                        MAX
+                    <button type="button" id="maxBtn" {{--
+                        class="h-full px-2 py-3.5 bg-green-500 text-white font-semibold rounded-none rounded-r-xl focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95 transition-all duration-200 min-w-[48px] max-w-[60px] text-xs flex items-center justify-center whitespace-nowrap"
+                        --}}>
+                        {{-- MAX --}}
                     </button>
 
                 </div>
@@ -268,7 +255,7 @@
 
                 <!-- Title -->
                 <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">
-                    Complete Your Orders First
+                    Withdrawal Error
                 </h3>
 
                 <!-- Message -->
@@ -359,7 +346,7 @@
 
                 if (data.has_pending_withdrawals) {
                     // Show message and disable form
-                    document.getElementById('errorMessage').textContent = 'Tomar already ekta pending request ache. Tumi support e contact koro.';
+                    document.getElementById('errorMessage').textContent = 'You have already a pending withdrawal request. Please contact support.';
                     errorModal.classList.remove('hidden');
                     errorModal.classList.add('flex');
 
