@@ -148,65 +148,67 @@
                 </a>
             </div>
         @elseif($packageName != $userVipLevel && $hasVipLevel)
-            <div
-                class="w-full bg-gradient-to-r from-red-500 to-yellow-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
-                <i class="fas fa-exclamation-circle text-4xl mb-2"></i>
-                <p class="text-xl font-bold">
-                    You are not eligible for this platform
-                </p>
-                <p class="text-sm opacity-90 text-center px-4">
-                    You are not eligible for this platform. Your current VIP level is <span
-                        class="font-bold">{{ $userVipLevel }}</span>.<br>
-                    Please upgrade to <span class="font-bold">{{ $platform->package_name }}</span> to access and complete orders
-                    here.
-                </p>
-                <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
-                    <p class="text-xs font-medium">
-                        Deposit or earn more to upgrade your VIP level.
+                <div
+                    class="w-full bg-gradient-to-r from-red-500 to-yellow-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
+                    <i class="fas fa-exclamation-circle text-4xl mb-2"></i>
+                    <p class="text-xl font-bold">
+                        You are not eligible for this platform
                     </p>
+                    <p class="text-sm opacity-90 text-center px-4">
+                        You are not eligible for this platform. Your current VIP level is <span
+                            class="font-bold">{{ $userVipLevel }}</span>.<br>
+                        Please upgrade to <span class="font-bold">{{ $platform->package_name }}</span> to access and complete orders
+                        here.
+                    </p>
+                    <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
+                        <p class="text-xs font-medium">
+                            Goto {{ $userVipLevel }}
+                        </p>
+
+                    </div>
                 </div>
             </div>
         @elseif($hasReachedDailyLimit)
-            <div
-                class="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
-                <i class="fas fa-check-circle text-4xl mb-2"></i>
-                <p class="text-xl font-bold">All Orders Completed!</p>
-                <p class="text-sm opacity-90 text-center px-4">Your daily limit has been reached. You can complete more orders
-                    tomorrow.</p>
-                <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
-                    <p class="text-xs font-medium">{{ $todayCompletedCount }}/{{ $user->daily_order_limit }} orders completed
-                        today</p>
-                </div>
+        <div
+            class="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
+            <i class="fas fa-check-circle text-4xl mb-2"></i>
+            <p class="text-xl font-bold">All Orders Completed!</p>
+            <p class="text-sm opacity-90 text-center px-4">Your daily limit has been reached. You can complete more orders
+                tomorrow.</p>
+            <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
+                <p class="text-xs font-medium">{{ $todayCompletedCount }}/{{ $user->daily_order_limit }} orders completed
+                    today</p>
             </div>
-        @elseif($unpaidOrder)
-            <div
-                class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
-                <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
-                <p class="text-lg">Complete Your Unpaid Order</p>
-                <p class="text-sm opacity-90">Please submit your pending order above</p>
-            </div>
-        @elseif(!$unpaidOrder && !$hasReachedDailyLimit)
-            <div
-                class="w-full bg-gradient-to-r from-teal-400 to-green-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
-                <i class="fas fa-check-circle text-4xl mb-2"></i>
-                <p class="text-xl font-bold">All Orders Completed!</p>
-                <p class="text-sm opacity-90 text-center px-4">
-                    You have completed all your orders for today.
+        </div>
+    @elseif($unpaidOrder)
+        <div
+            class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
+            <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
+            <p class="text-lg">Complete Your Unpaid Order</p>
+            <p class="text-sm opacity-90">Please submit your pending order above</p>
+        </div>
+    @elseif(!$unpaidOrder && !$hasReachedDailyLimit)
+        <div
+            class="w-full bg-gradient-to-r from-teal-400 to-green-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
+            <i class="fas fa-check-circle text-4xl mb-2"></i>
+            <p class="text-xl font-bold">All Orders Completed!</p>
+            <p class="text-sm opacity-90 text-center px-4">
+                You have completed all your orders for today.
+            </p>
+            <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
+                <p class="text-xs font-medium">
+                    Contact support for more orders.
                 </p>
-                <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
-                    <p class="text-xs font-medium">
-                        Contact support for more orders.
-                    </p>
-                </div>
             </div>
-        @else
-            <div
-                class="w-full bg-gradient-to-r from-gray-500 to-gray-700 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
-                <i class="fas fa-info-circle text-2xl mb-1"></i>
-                <p class="text-lg">You are in {{ $userVipLevel }}</p>
-                <p class="text-sm opacity-90">Complete orders to earn commission</p>
-            </div>
-        @endif
+        </div>
+    @else
+        <div
+            class="w-full bg-gradient-to-r from-gray-500 to-gray-700 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
+            <i class="fas fa-info-circle text-2xl mb-1"></i>
+            <p class="text-lg">You are in {{ $userVipLevel }}</p>
+            <p class="text-sm opacity-90">Complete orders to earn commission</p>
+        </div>
+    @endif
     </div>
 
     <!-- Statistics Grid -->
@@ -631,14 +633,14 @@
                     const productDiv = document.createElement('div');
                     productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
                     productDiv.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <i class="fas fa-box text-white text-2xl"></i>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="flex-1">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="fas fa-box text-white text-2xl"></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="flex-1">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    `;
                     productsList.appendChild(productDiv);
                 });
             }
