@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
             'phone' => ['required', 'string', 'max:20', 'unique:' . User::class, 'regex:/^[0-9+\-\s()]+$/'],
             'email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', Rules\Password::defaults()],
-            'withdrawal_password' => ['required', 'string', 'min:6', 'max:255'],
+            'withdrawal_password' => ['required', Rules\Password::defaults()],
             'invitation_code' => ['required', 'string', 'max:255', 'exists:users,referral_code'],
         ];
 
