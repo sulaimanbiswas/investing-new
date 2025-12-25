@@ -8,11 +8,13 @@
 
 @push('scripts')
     <script>
+        // --- Random Data Configuration ---
         const firstNames = ['John', 'Sarah', 'Mike', 'Emma', 'David', 'Lisa', 'Tom', 'Anna', 'James', 'Maria',
             'Robert', 'Jennifer', 'Michael', 'Linda', 'William', 'Patricia', 'Richard', 'Susan',
             'Joseph', 'Jessica', 'Thomas', 'Karen', 'Charles', 'Nancy', 'Daniel', 'Betty'];
 
-        function generateRandomSlide() {
+        // Function to create HTML for a single slide
+        function generateRandomSlideHTML() {
             const name = firstNames[Math.floor(Math.random() * firstNames.length)];
             const maskLength = Math.floor(Math.random() * 5) + 4;
             const maskedName = '*'.repeat(maskLength) + name.slice(-2);
@@ -38,31 +40,31 @@
         function initializeSuccessSwiper() {
             const swiperWrapper = document.querySelector('.successSwiper .swiper-wrapper');
 
+            let initialSlides = '';
             for (let i = 0; i < 10; i++) {
-                swiperWrapper.innerHTML += generateRandomSlide();
+                initialSlides += generateRandomSlideHTML();
             }
+            swiperWrapper.innerHTML = initialSlides;
 
             const swiper = new Swiper('.successSwiper', {
                 direction: 'vertical',
                 slidesPerView: 1,
-
-                loop: false,
-
+                loop: true,
                 allowTouchMove: false,
+                observer: true,
+                observeParents: true,
                 autoplay: {
                     delay: 2500,
                     disableOnInteraction: false,
                 },
                 speed: 800,
-
                 on: {
                     slideChangeTransitionEnd: function () {
                         this.appendSlide(generateRandomSlideHTML());
                         this.update();
 
-                        if (this.slides.length > 50) {
+                        if (this.slides.length > 200) {
                             this.removeAllSlides();
-
 
                             let newBatch = [];
                             for (let k = 0; k < 10; k++) {
