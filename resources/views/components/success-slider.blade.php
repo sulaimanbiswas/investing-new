@@ -19,22 +19,22 @@
             const maskLength = Math.floor(Math.random() * 5) + 4;
             const maskedName = '*'.repeat(maskLength) + name.slice(-2);
             const action = Math.random() > 0.5 ? 'Withdrawal' : 'Earning';
-            const amount = (Math.floor(Math.random() * 4950) + 50).toFixed(2);
+            const amount = (Math.floor(Math.random() * 40000) + 50).toFixed(2);
 
             return `
-                                        <div class="swiper-slide w-full h-full flex items-center">
-                                            <div class="flex items-center w-full gap-3 bg-white/90 backdrop-blur px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-sm mx-2 sm:mx-4">
-                                                <i class="fas fa-user-circle text-green-500 text-xl sm:text-2xl"></i>
-                                                <div class="leading-tight">
-                                                    <div class="font-semibold text-gray-800 text-sm sm:text-base">${maskedName}</div>
-                                                    <div class="text-xs sm:text-sm text-green-700">
-                                                        <i class="fas fa-check-circle"></i>
-                                                        Successful ${action} ${amount} USDT
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `;
+                    <div class="swiper-slide w-full h-full flex items-center">
+                        <div class="flex items-center w-full gap-3 bg-white/90 backdrop-blur px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-sm mx-2 sm:mx-4">
+                            <i class="fas fa-user-circle text-green-500 text-xl sm:text-2xl"></i>
+                            <div class="leading-tight">
+                                <div class="font-semibold text-gray-800 text-sm sm:text-base">${maskedName}</div>
+                                <div class="text-xs sm:text-sm text-green-700">
+                                    <i class="fas fa-check-circle"></i>
+                                    Successful ${action} ${amount} USDT
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
         }
 
         function initializeSuccessSwiper() {

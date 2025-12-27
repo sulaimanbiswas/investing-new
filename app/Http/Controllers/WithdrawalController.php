@@ -115,7 +115,7 @@ class WithdrawalController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Your withdrawal request has been submitted successfully. Please wait for admin approval.',
+            'message' => 'Your withdrawal request has been submitted successfully. Please contact with customer service.',
         ]);
     }
 

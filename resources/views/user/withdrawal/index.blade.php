@@ -6,7 +6,7 @@
     <!-- Header with Back Button -->
     <div class="mb-6 flex items-center gap-3">
         @include('components.back-button')
-        <h1 class="text-2xl font-bold text-gray-800">Withdrawal</h1>
+        <h1 class="text-2xl font-bold text-gray-800">Withdrawal Request</h1>
     </div>
 
     <!-- Available Balance Card -->
@@ -67,14 +67,16 @@
             <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
             <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
 
-            <div class="relative flex justify-between items-center">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-wallet text-white text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-green-100 text-sm">Available Balance</p>
-                        <p class="text-white text-xs opacity-90">Ready to withdraw</p>
+            <div class="relative flex justify-between items-center gap-3">
+                <div class="flex flex-col items-center gap-3 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                            <i class="fas fa-wallet text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-green-100 text-sm">Available Balance</p>
+                            <p class="text-white text-xs opacity-90">Ready to withdraw</p>
+                        </div>
                     </div>
                 </div>
 
@@ -84,6 +86,13 @@
                         <p class="text-green-100 text-lg font-medium">USDT</p>
                     </div>
                 </div>
+            </div>
+            <div class="flex-1 ">
+                <p id="wallet-address-display" class="text-sm font-semibold text-white break-all">
+                    @if($user->withdrawal_address)
+                        {{ $user->withdrawal_address }}
+                    @endif
+                </p>
             </div>
         </div>
     @endif
@@ -99,19 +108,19 @@
                         data-currency="{{ $gateway->currency }}"
                         data-custom-fields="{{ json_encode($gateway->custom_fields ?? []) }}" @if($loop->first) checked @endif>
                     <div
-                        class="border-2 border-gray-200 rounded-xl p-4 text-center transition hover:border-green-400 hover:bg-green-50">
+                        class="border-2 flex items-center gap-2 justify-start border-gray-200 rounded-xl py-3 px-2  transition hover:border-green-400 hover:bg-green-50">
                         @if($gateway->logo_path)
                             <img src="{{ asset($gateway->logo_path) }}" alt="{{ $gateway->name }}"
-                                class="w-12 h-12 mx-auto mb-2 object-contain">
+                                class="w-6 h-6 mx-auto mb-2 object-contain">
                         @else
                             <div
-                                class="w-12 h-12 mx-auto mb-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+                                class="w-6 h-6 mx-auto mb-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
                                 <i class="fas fa-wallet text-white"></i>
                             </div>
                         @endif
-                        <div class="font-semibold text-gray-800 text-sm">{{ $gateway->name }}</div>
-                        <div class="text-xs text-gray-500 mt-1">{{ $gateway->currency }}</div>
-                    </div>
+                        <div>
+                            <div class="font-semibold text-gray-800 text-sm">{{ $gateway->name }}</div>
+                        </div>
                 </label>
             @empty
                 <div class="col-span-full text-center py-8 text-gray-500">
@@ -124,8 +133,7 @@
     </div>
 
     <!-- Withdrawal Form -->
-    <div class="bg-white rounded-xl shadow-sm p-5">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Withdrawal Request</h3>
+    <div class="bg-white rounded-xl shadow-sm ">
 
         <form id="withdrawalForm" class="space-y-4">
             @csrf
@@ -133,16 +141,16 @@
 
             {{-- @if($user->withdrawal_address) --}}
             <!-- Wallet Address Display -->
-            <div id="wallet-address-section">
+            {{-- <div id="wallet-address-section">
                 <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
                     <p class="text-xs text-gray-600 font-medium mb-2">Your Withdrawal Address</p>
                     <div class="flex items-center gap-3">
                         <div class="flex-1">
                             <p id="wallet-address-display" class="text-sm font-semibold text-gray-900 break-all">
                                 @if($user->withdrawal_address)
-                                    {{ $user->withdrawal_address }}
+                                {{ $user->withdrawal_address }}
                                 @else
-                                    No address set
+                                No address set
                                 @endif
                             </p>
                         </div>
@@ -152,7 +160,7 @@
                         </button>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             {{-- @endif --}}
 
             <!-- Withdrawal Amount -->
@@ -171,7 +179,6 @@
                     </button>
 
                 </div>
-                <p class="text-xs text-gray-500 mt-2" id="amount-hint">Please select a withdrawal method first</p>
                 <p class="text-xs text-red-600 mt-1" id="amount-error"></p>
             </div>
 
@@ -189,12 +196,12 @@
                 <p class="text-xs text-gray-500 mt-1">Enter the password you set during registration</p>
             </div>
 
-            <div class="flex gap-3">
+            <div class="flex items-center justify-center gap-3">
                 <a href="{{ route('profile.home') }}"
                     class="flex-1 px-4 py-3 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-center">Cancel</a>
                 <button type="submit" id="submit-btn" disabled
                     class="flex-1 px-4 py-3 rounded-lg bg-gray-400 text-white shadow font-semibold disabled:cursor-not-allowed transition">
-                    Submit Request
+                    Withdraw
                 </button>
             </div>
 
@@ -233,10 +240,18 @@
                 <p id="successMessage" class="text-gray-600 text-center mb-6"></p>
 
                 <!-- Button -->
-                <button type="button" id="closeSuccessBtn"
-                    class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 rounded-xl hover:from-green-600 hover:to-green-700 active:scale-95 transition-all duration-200">
-                    OK
-                </button>
+
+                <div class="flex gap-3">
+                    <button type="button" id="closeSuccessBtn"
+                        class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 active:scale-95 transition-all duration-200">
+                        Close
+                    </button>
+                    <a href="{{ route('service.index') }}" id="gotoMenuBtn"
+                        class="flex-1 bg-green-500 text-white font-bold py-3 rounded-xl hover:bg-green-600 active:scale-95 transition-all duration-200 text-center">
+                        Help Center
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>

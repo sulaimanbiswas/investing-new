@@ -8,7 +8,7 @@
         <a href="{{ route('service.index') }}"
             class="flex flex-col items-center gap-1 {{ request()->routeIs('service.*') ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500' }} transition">
             <i class="fas fa-headset text-xl"></i>
-            <span class="text-xs font-medium">Service</span>
+            <span class="text-xs font-medium">Support</span>
         </a>
         <a href="{{ route('menu.index') }}"
             class="flex flex-col items-center gap-1 {{ request()->routeIs('menu.*') ? 'text-yellow-500' : 'text-gray-500 hover:text-yellow-500' }} transition">
