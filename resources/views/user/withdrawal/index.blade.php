@@ -111,10 +111,10 @@
                         class="border-2 flex items-center gap-2 justify-start border-gray-200 rounded-xl py-3 px-2  transition hover:border-green-400 hover:bg-green-50">
                         @if($gateway->logo_path)
                             <img src="{{ asset($gateway->logo_path) }}" alt="{{ $gateway->name }}"
-                                class="w-6 h-6 p-2 mb-2 object-contain">
+                                class="w-6 h-6 pl-2  mb-2 object-contain">
                         @else
                             <div
-                                class="w-6 h-6 p-2 mb-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+                                class="w-6 h-6 pl-2  mb-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
                                 <i class="fas fa-wallet text-white"></i>
                             </div>
                         @endif
