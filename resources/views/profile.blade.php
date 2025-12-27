@@ -97,7 +97,7 @@
                     </div>
                     <span class="text-sm">Deposit</span>
                 </a>
-                <a href="#" class="flex flex-col items-center justify-center">
+                <a href="{{ route('withdrawal') }}" class="flex flex-col items-center justify-center">
                     <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
                         <i class="fas fa-money-bill-wave text-2xl text-white"></i>
                     </div>
