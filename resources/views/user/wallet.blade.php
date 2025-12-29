@@ -17,7 +17,7 @@
             <div>
                 <h2 class="text-2xl font-bold">Wallet Management</h2>
                 <div class="text-sm text-white/80">
-                    You can't change after setting your wallet.
+                    You can't change after setup your wallet.
                 </div>
             </div>
         </div>
@@ -39,22 +39,21 @@
             </div>
 
             <div>
-                <label for="wallet_currency_protocol" class="block text-sm font-medium text-gray-700 mb-1">Wallet Currency Protocol</label>
-                <select id="wallet_currency_protocol" name="wallet_currency_protocol"
-                    class="w-full rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500 @if($user->wallet_currency_protocol) bg-gray-50 cursor-not-allowed @endif"
-                    @if($user->wallet_currency_protocol) disabled @else required @endif>
+                <label for="wallet_gateway" class="block text-sm font-medium text-gray-700 mb-1">Wallet Currency Protocol</label>
+                <select id="wallet_gateway" name="wallet_gateway"
+                    class="w-full rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500 @if($user->wallet_gateway) bg-gray-50 cursor-not-allowed @endif"
+                    @if($user->wallet_gateway) disabled @else required @endif>
                     <option value="" disabled selected>Select Protocol</option>
                     @foreach ($gateways as $gateway)
-                        <option value="{{ $gateway->name }}" @if(old('wallet_currency_protocol',
-                            $user->wallet_currency_protocol)==$gateway->name) selected @endif>
+                        <option value="{{ $gateway->name }}" @if(old('wallet_gateway',
+                            $user->wallet_gateway)==$gateway->name) selected @endif>
                             {{ $gateway->name }}
                         </option>
                                                
                     @endforeach
                 </select>
-                @if($user->wallet_currency_protocol)
-                    <input type="hidden" name="wallet_currency_protocol" value="{{ $user->wallet_currency_protocol }}">
-                    
+                @if($user->wallet_gateway)
+                    <input type="hidden" name="wallet_gateway" value="{{ $user->wallet_gateway }}">
                 @endif
             </div>
 
@@ -88,8 +87,6 @@
             </div>
 
             <div class="flex justify-end gap-3">
-                <a href="{{ route('profile.home') }}"
-                    class="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">Cancel</a>
                 <button type="submit" @if($user->withdrawal_address) disabled
                 class="px-4 py-2 rounded-lg bg-gray-400 text-white cursor-not-allowed" @else
                     class="px-4 py-2 rounded-lg bg-rose-600 text-white hover:bg-rose-700 shadow" @endif>
