@@ -139,31 +139,47 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's default wallet address.
+     * Update the user's wallet details.
      */
-    public function updateWallet(Request $request): RedirectResponse
+    public function updateWallet(Request $request)
     {
+        $user = $request->user();
+
+        // Validate input
         $data = $request->validate([
+            'wallet_name' => 'required|string|max:255',
+            'wallet_gateway' => 'required|string|max:255',
             'withdrawal_address' => 'required|string|max:255',
-            'gateway_addresses' => 'nullable|array',
-            'gateway_addresses.*' => 'nullable|string|max:255',
+            'wallet_password' => 'required|string',
         ]);
 
-        $user = $request->user();
+        // Verify wallet password
+        if ($data['wallet_password'] !== $user->withdrawal_password) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Wallet password is incorrect. Please try again.'
+                ], 422);
+            }
+
+            return back()->withErrors(['wallet_password' => 'Wallet password is incorrect.']);
+        }
+
+        // Update wallet details
+        $user->wallet_name = $data['wallet_name'];
+        $user->wallet_gateway = $data['wallet_gateway'];
         $user->withdrawal_address = $data['withdrawal_address'];
         $user->save();
 
-        // Persist per-gateway addresses if provided
-        if (!empty($data['gateway_addresses'])) {
-            foreach ($data['gateway_addresses'] as $gatewayId => $address) {
-                if (is_string($address) && strlen(trim($address)) > 0) {
-                    $user->setWalletAddressForGateway((int)$gatewayId, trim($address));
-                }
-            }
+        // Return response based on request type
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Wallet details saved successfully!'
+            ]);
         }
 
-        flash()->success('Wallet address updated successfully.');
-
+        flash()->success('Wallet details saved successfully!');
         return Redirect::route('wallet.edit');
     }
 
