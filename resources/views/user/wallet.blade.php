@@ -15,19 +15,49 @@
                 <i class="fas fa-wallet text-white text-xl"></i>
             </div>
             <div>
-                <div class="text-sm text-white/80">Manage your withdrawal wallet</div>
                 <h2 class="text-2xl font-bold">Wallet Management</h2>
+                <div class="text-sm text-white/80">
+                    You can't change after setting your wallet.
+                </div>
             </div>
         </div>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm p-5">
-        <h3 class="text-lg font-semibold text-gray-800 mb-2">Withdrawal Wallet Address</h3>
-        <p class="text-sm text-gray-500 mb-4">Set your default wallet address for all withdrawals. This address cannot be
-            changed after initial setup.</p>
-
         <form action="{{ route('wallet.update') }}" method="POST" class="space-y-4">
             @csrf
+            <div>
+                <label for="withdrawal_name" class="block text-sm font-medium text-gray-700 mb-1">Withdrawal Name</label>
+                <input type="text" id="withdrawal_name" name="withdrawal_name"
+                    class="w-full rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500 @if($user->withdrawal_name) bg-gray-50 cursor-not-allowed @endif"
+                    value="{{ old('withdrawal_name', $user->withdrawal_name) }}" @if($user->withdrawal_name)
+                    disabled @else required @endif
+                    placeholder="@if($user->withdrawal_name) Name already set @else Enter your withdrawal name @endif">
+                @error('withdrawal_name')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="wallet_currency_protocol" class="block text-sm font-medium text-gray-700 mb-1">Wallet Currency Protocol</label>
+                <select id="wallet_currency_protocol" name="wallet_currency_protocol"
+                    class="w-full rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500 @if($user->wallet_currency_protocol) bg-gray-50 cursor-not-allowed @endif"
+                    @if($user->wallet_currency_protocol) disabled @else required @endif>
+                    <option value="" disabled selected>Select Protocol</option>
+                    @foreach ($gateways as $gateway)
+                        <option value="{{ $gateway->name }}" @if(old('wallet_currency_protocol',
+                            $user->wallet_currency_protocol)==$gateway->name) selected @endif>
+                            {{ $gateway->name }}
+                        </option>
+                                               
+                    @endforeach
+                </select>
+                @if($user->wallet_currency_protocol)
+                    <input type="hidden" name="wallet_currency_protocol" value="{{ $user->wallet_currency_protocol }}">
+                    
+                @endif
+            </div>
+
             <div>
                 <label for="withdrawal_address" class="block text-sm font-medium text-gray-700 mb-1">Wallet Address (USDT
                     TRC20)
@@ -40,13 +70,19 @@
                     placeholder="@if($user->withdrawal_address) Address already set @else Enter your wallet address @endif">
                 @if($user->withdrawal_address)
                     <input type="hidden" name="withdrawal_address" value="{{ $user->withdrawal_address }}">
-                    <p class="text-xs text-gray-500 mt-2"><i class="fas fa-lock text-gray-400 mr-1"></i>Your wallet address is
-                        locked and cannot be changed for security.</p>
-                @else
-                    <p class="text-xs text-gray-500 mt-2">Once set, this address cannot be changed. Make sure it's correct
-                        before saving.</p>
                 @endif
                 @error('withdrawal_address')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- wallet password --}}
+            <div>
+                <label for="wallet_password" class="block text-sm font-medium text-gray-700 mb-1">Wallet Password <span class="text-red-500">*</span></label>
+                <input type="password" id="wallet_password" name="wallet_password" required
+                    class="w-full rounded-lg border-gray-200 focus:border-rose-500 focus:ring-rose-500"
+                    placeholder="Enter your wallet password">
+                @error('wallet_password')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
                 @enderror
             </div>
