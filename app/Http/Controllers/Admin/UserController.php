@@ -86,7 +86,11 @@ class UserController extends Controller
                          CASE WHEN status = 'paid' THEN paid_at ELSE NULL END DESC")
             ->paginate(25);
 
-        return view('admin.users.show', compact('user', 'stats', 'orderSets', 'userOrderSets', 'userOrders'));
+        $gateways = \App\Models\Gateway::where('type', 'withdrawal')
+            ->where('is_active', 1)
+            ->get();
+
+        return view('admin.users.show', compact('user', 'stats', 'orderSets', 'userOrderSets', 'userOrders', 'gateways'));
     }
 
     public function addBalance(Request $request, User $user)
@@ -343,12 +347,16 @@ class UserController extends Controller
             'password' => 'nullable|string|min:6',
             'withdrawal_password' => 'nullable|string|min:6',
             'withdrawal_address' => 'nullable|string|max:255',
+            'wallet_name' => 'nullable|string|max:255',
+            'wallet_gateway' => 'nullable|string|max:255',
         ]);
 
         $updateData = [
             'daily_order_limit' => $request->daily_order_limit,
             'freeze_amount' => $request->freeze_amount,
             'withdrawal_address' => $request->withdrawal_address,
+            'wallet_name' => $request->wallet_name,
+            'wallet_gateway' => $request->wallet_gateway,
         ];
 
         // Update password if provided

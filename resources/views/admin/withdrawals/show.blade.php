@@ -122,7 +122,7 @@
                                 </span>
                                 <div class="media-body">
                                     <span class="d-block text-black font-w600 mb-1">Gateway</span>
-                                    <h5 class="mb-0">{{ $withdrawal->gateway->name ?? '-' }}</h5>
+                                    <h5 class="mb-0">{{ $withdrawal->wallet_gateway ?? '-' }}</h5>
                                 </div>
                             </div>
                         </div>

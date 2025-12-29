@@ -490,16 +490,17 @@
                     <form action="{{ route('admin.users.update-management', $user) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        <div class="mb-3">
-                            <label for="daily_order_limit" class="form-label">Daily Order Limit</label>
-                            <input type="number" class="form-control" id="daily_order_limit" name="daily_order_limit"
-                                value="{{ $user->daily_order_limit }}" required min="0">
-                        </div>
-                        <div class="mb-3">
-                            <label for="freeze_amount" class="form-label">Freeze Amount (USDT)</label>
-                            <input type="number" step="0.01" class="form-control" id="freeze_amount" name="freeze_amount"
-                                value="{{ $user->freeze_amount }}" required min="0">
-
+                        <div class="mb-3 row">
+                            <div class="col-6">
+                                <label for="daily_order_limit" class="form-label">Daily Order Limit</label>
+                                <input type="number" class="form-control" id="daily_order_limit" name="daily_order_limit"
+                                    value="{{ $user->daily_order_limit }}" required min="0">
+                            </div>
+                            <div class="col-6">
+                                <label for="freeze_amount" class="form-label">Freeze Amount </label>
+                                <input type="number" step="0.01" class="form-control" id="freeze_amount"
+                                    name="freeze_amount" value="{{ $user->freeze_amount }}" required min="0">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
@@ -510,6 +511,22 @@
                             <label for="withdrawal_password" class="form-label">Withdrawal Password</label>
                             <input type="text" class="form-control" id="withdrawal_password" name="withdrawal_password"
                                 value="{{ $user->withdrawal_password }}" placeholder="Enter wallet password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="wallet_name" class="form-label">Wallet Name</label>
+                            <input type="text" class="form-control" id="wallet_name" name="wallet_name"
+                                value="{{ $user->wallet_name }}" placeholder="Enter wallet name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="wallet_gateway" class="form-label">Wallet Gateway</label>
+                            <select name="wallet_gateway" id="wallet_gateway" class="default-select form-control wide"
+                                autocomplete="off">
+                                <option value="">Select Wallet Gateway</option>
+                                @foreach($gateways as $gateway)
+                                    <option value="{{ $gateway->name }}" @if($user->wallet_gateway == $gateway->name) selected
+                                    @endif>{{ $gateway->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="withdrawal_address" class="form-label">Withdrawal Address</label>

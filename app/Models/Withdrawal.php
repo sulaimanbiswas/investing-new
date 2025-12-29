@@ -15,6 +15,8 @@ class Withdrawal extends Model
         'order_number',
         'amount',
         'wallet_address',
+        'wallet_name',
+        'wallet_gateway',
         'currency',
         'custom_data',
         'status',

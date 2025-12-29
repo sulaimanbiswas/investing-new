@@ -109,6 +109,8 @@ class WithdrawalController extends Controller
             'amount' => $data['amount'],
             'currency' => $gateway->currency,
             'wallet_address' => $user->withdrawal_address, // Use default wallet address
+            'wallet_name' => $user->wallet_name,
+            'wallet_gateway' => $user->wallet_gateway,
             'status' => 'pending',
             'custom_data' => $data['custom_data'] ?? null,
         ]);

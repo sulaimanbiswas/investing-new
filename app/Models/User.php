@@ -32,6 +32,8 @@ class User extends Authenticatable
         'daily_order_limit',
         'freeze_amount',
         'withdrawal_address',
+        'wallet_name',
+        'wallet_gateway',
         'is_banned',
         'ban_reason',
         'banned_at',
