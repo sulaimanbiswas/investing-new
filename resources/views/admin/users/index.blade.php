@@ -20,6 +20,11 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">All Users</h4>
+            @if((int) auth('admin')->id() === 1)
+                <a href="{{ route('admin.users.admins') }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-user-shield me-1"></i>Admin Users
+                </a>
+            @endif
         </div>
         <div class="card-body">
             <!-- Mobile: Accordion filter -->
@@ -147,23 +152,10 @@
                                     @endif
                                 </td>
                                 <td class="text-end">
-                                    <div class="dropdown">
-                                        <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
-                                            <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1">
-                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                    <rect x="0" y="0" width="24" height="24" />
-                                                    <circle fill="#000000" cx="5" cy="12" r="2" />
-                                                    <circle fill="#000000" cx="12" cy="12" r="2" />
-                                                    <circle fill="#000000" cx="19" cy="12" r="2" />
-                                                </g>
-                                            </svg>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="{{ route('admin.users.show', $user) }}">
-                                                <i class="fas fa-eye me-2"></i>View Details
-                                            </a>
-                                        </div>
-                                    </div>
+                                    <a class="btn btn-primary btn-sm text-primary "
+                                        href="{{ route('admin.users.show', $user) }}">
+                                        <i class="fas fa-eye me-1 "></i>View
+                                    </a>
                                 </td>
                             </tr>
                         @empty

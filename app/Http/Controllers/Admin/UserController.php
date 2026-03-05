@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -50,8 +51,49 @@ class UserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
+    public function admins(Request $request)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        if (!$admin || (int) $admin->id !== 1) {
+            abort(403, 'Only super admin can access admin users page.');
+        }
+
+        $query = User::where('is_admin', true);
+
+        // Search by username, phone, or email
+        if ($search = $request->string('search')->toString()) {
+            $query->where(function ($q) use ($search) {
+                $q->where('username', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Date range filter
+        if ($from = $request->input('date_from')) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+        if ($to = $request->input('date_to')) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+
+        $users = $query->orderByDesc('created_at')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('admin.users.admins', compact('users'));
+    }
+
     public function show(User $user)
     {
+        $admin = Auth::guard('admin')->user();
+
+        // Only super admin can open user ID 1 profile.
+        if ((int) $user->id === 1 && (!$admin || (int) $admin->id !== 1)) {
+            abort(403, 'Only super admin can access this profile.');
+        }
+
         // Load relationships
         $user->load(['deposits.gateway', 'referrals']);
 
@@ -278,7 +320,7 @@ class UserController extends Controller
                 ->with('success', $message);
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Failed to assign order set', [
+            Log::error('Failed to assign order set', [
                 'user_id' => $user->id,
                 'order_set_id' => $orderSetId,
                 'error' => $e->getMessage(),
@@ -485,6 +527,10 @@ class UserController extends Controller
 
     public function banUser(Request $request, User $user)
     {
+        if ((int) $user->id === 1) {
+            return back()->with('error', 'Super admin (ID 1) cannot be banned or inactivated.');
+        }
+
         // Prevent banning admin users
         if ($user->is_admin) {
             return back()->with('error', 'Cannot ban admin users.');
@@ -520,6 +566,48 @@ class UserController extends Controller
         ]);
 
         return back()->with('success', 'User has been unbanned successfully.');
+    }
+
+    public function makeAdmin(User $user)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        // Only super admin (ID 1) can promote users to admin.
+        if (!$admin || (int) $admin->id !== 1) {
+            abort(403, 'Only super admin can make users admin.');
+        }
+
+        if ($user->is_admin) {
+            return back()->with('success', 'This user is already an admin.');
+        }
+
+        $user->is_admin = true;
+        $user->save();
+
+        return back()->with('success', 'User has been promoted to admin successfully.');
+    }
+
+    public function makeUser(User $user)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        // Only super admin (ID 1) can demote admin users.
+        if (!$admin || (int) $admin->id !== 1) {
+            abort(403, 'Only super admin can make admin users normal users.');
+        }
+
+        if ((int) $user->id === 1) {
+            return back()->with('error', 'Super admin (ID 1) cannot be converted to normal user.');
+        }
+
+        if (!$user->is_admin) {
+            return back()->with('success', 'This user is already a normal user.');
+        }
+
+        $user->is_admin = false;
+        $user->save();
+
+        return back()->with('success', 'Admin user has been converted to normal user successfully.');
     }
 
     public function userTree(User $user)

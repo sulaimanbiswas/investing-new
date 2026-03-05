@@ -14,6 +14,9 @@
                 </a>
                 <ul aria-expanded="false">
                     <li><a href="{{ route('admin.users.index') }}">All users</a></li>
+                    @if((int) auth('admin')->id() === 1)
+                        <li><a href="{{ route('admin.users.admins') }}">Admin users</a></li>
+                    @endif
                 </ul>
             </li>
             <li>
@@ -54,31 +57,37 @@
                 </a>
             </li>
 
-            <li>
-                <a href="{{ route('admin.products.index') }}" class="ai-icon" aria-expanded="false">
-                    <i class="flaticon-381-notepad"></i>
-                    <span class="nav-text">Products</span>
-                </a>
-            </li>
+            @if((int) auth('admin')->id() === 1)
+                <li>
+                    <a href="{{ route('admin.products.index') }}" class="ai-icon" aria-expanded="false">
+                        <i class="flaticon-381-notepad"></i>
+                        <span class="nav-text">Products</span>
+                    </a>
+                </li>
+            @endif
 
-            <li>
-                <a href="javascript:void(0);" class="ai-icon has-arrow" aria-expanded="false">
-                    <i class="flaticon-381-layer-1"></i>
-                    <span class="nav-text">Orders</span>
-                </a>
-                <ul aria-expanded="false">
-                    <li><a href="{{ route('admin.order-sets.index') }}">Order Sets</a></li>
-                    <li><a href="{{ route('admin.product-packages.index') }}">Order List</a></li>
-                    <li><a href="{{ route('admin.orders.index') }}">Orders</a></li>
-                </ul>
-            </li>
+            @if((int) auth('admin')->id() === 1)
+                <li>
+                    <a href="javascript:void(0);" class="ai-icon has-arrow" aria-expanded="false">
+                        <i class="flaticon-381-layer-1"></i>
+                        <span class="nav-text">Orders</span>
+                    </a>
+                    <ul aria-expanded="false">
+                        <li><a href="{{ route('admin.order-sets.index') }}">Order Sets</a></li>
+                        <li><a href="{{ route('admin.product-packages.index') }}">Order List</a></li>
+                        <li><a href="{{ route('admin.orders.index') }}">Orders</a></li>
+                    </ul>
+                </li>
+            @endif
 
-            <li>
-                <a href="{{ route('admin.gateways.index') }}" class="ai-icon" aria-expanded="false">
-                    <i class="flaticon-381-id-card-4"></i>
-                    <span class="nav-text">Gateways</span>
-                </a>
-            </li>
+            @if((int) auth('admin')->id() === 1)
+                <li>
+                    <a href="{{ route('admin.gateways.index') }}" class="ai-icon" aria-expanded="false">
+                        <i class="flaticon-381-id-card-4"></i>
+                        <span class="nav-text">Gateways</span>
+                    </a>
+                </li>
+            @endif
 
 
             <li>

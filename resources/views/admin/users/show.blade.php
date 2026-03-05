@@ -265,7 +265,12 @@
                 </a>
 
                 <!-- Ban/Unban User -->
-                @if($user->status === 'banned')
+                @if((int) $user->id === 1)
+                    <button type="button" class="btn btn-sm btn-secondary rounded-pill px-4" disabled
+                        title="Super admin cannot be banned or inactivated">
+                        <i class="fas fa-lock me-2"></i>Super Admin Protected
+                    </button>
+                @elseif($user->status === 'banned')
                     <button type="button" class="btn btn-sm btn-success rounded-pill px-4" id="unbanUserBtn"
                         data-username="{{ $user->username }}" data-user-id="{{ $user->id }}">
                         <i class="fas fa-check-circle me-2"></i>Unban User
@@ -275,6 +280,27 @@
                         data-username="{{ $user->username }}" data-user-id="{{ $user->id }}">
                         <i class="fas fa-ban me-2"></i>Ban User
                     </button>
+                @endif
+
+                @if((int) auth('admin')->id() === 1 && !$user->is_admin)
+                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-4" id="makeAdminBtn"
+                        data-username="{{ $user->username }}" data-user-id="{{ $user->id }}">
+                        <i class="fas fa-user-shield me-2"></i>Make Admin
+                    </button>
+                @endif
+
+                @if((int) auth('admin')->id() === 1 && $user->is_admin)
+                    @if((int) $user->id === 1)
+                        <button type="button" class="btn btn-sm btn-secondary rounded-pill px-4" disabled
+                            title="Super admin cannot be converted to normal user">
+                            <i class="fas fa-lock me-2"></i>Super Admin
+                        </button>
+                    @else
+                        <button type="button" class="btn btn-sm btn-dark rounded-pill px-4" id="makeUserBtn"
+                            data-username="{{ $user->username }}" data-user-id="{{ $user->id }}">
+                            <i class="fas fa-user-minus me-2"></i>Make User
+                        </button>
+                    @endif
                 @endif
 
                 <!-- Change Password -->
@@ -297,10 +323,9 @@
                     <div class="d-flex align-items-center mb-4">
                         @if($user->avatar_path)
                             <img src="{{ asset('uploads/avatar/' . $user->avatar_path) }}" alt="{{ $user->name }}"
-                                class="rounded-circle border border-2 border-light" width="80" height="80"
-                                style="object-fit: cover;">
+                                class="rounded-circle border-2 border-light" width="80" height="80" style="object-fit: cover;">
                         @else
-                            <div class="rounded-circle text-white d-flex align-items-center justify-content-center border border-2 border-light"
+                            <div class="rounded-circle text-white d-flex align-items-center justify-content-center border-2 border-light"
                                 style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <i class="fas fa-user" style="font-size: 36px;"></i>
                             </div>
@@ -815,6 +840,16 @@
     <form id="unbanUserForm" action="{{ route('admin.users.unban', $user) }}" method="POST" style="display: none;">
         @csrf
     </form>
+
+    <!-- Make Admin Form (Hidden) -->
+    <form id="makeAdminForm" action="{{ route('admin.users.make-admin', $user) }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+
+    <!-- Make User Form (Hidden) -->
+    <form id="makeUserForm" action="{{ route('admin.users.make-user', $user) }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 @endsection
 
 @push('scripts')
@@ -1218,6 +1253,52 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         document.getElementById('unbanUserForm').submit();
+                    }
+                });
+            });
+        }
+
+        // Make Admin Confirmation (super admin only)
+        const makeAdminBtn = document.getElementById('makeAdminBtn');
+        if (makeAdminBtn) {
+            makeAdminBtn.addEventListener('click', function () {
+                const username = this.dataset.username;
+
+                Swal.fire({
+                    title: 'Make Admin?',
+                    html: `Are you sure you want to make <strong>${username}</strong> an admin?<br><br>They will be able to login to admin panel.`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#0d6efd',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Make Admin',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('makeAdminForm').submit();
+                    }
+                });
+            });
+        }
+
+        // Make User Confirmation (super admin only)
+        const makeUserBtn = document.getElementById('makeUserBtn');
+        if (makeUserBtn) {
+            makeUserBtn.addEventListener('click', function () {
+                const username = this.dataset.username;
+
+                Swal.fire({
+                    title: 'Make Normal User?',
+                    html: `Are you sure you want to remove admin access from <strong>${username}</strong>?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#212529',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Make User',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('makeUserForm').submit();
                     }
                 });
             });
