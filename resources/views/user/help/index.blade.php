@@ -108,11 +108,11 @@
                     <ul class="space-y-2 text-gray-700 text-sm">
                         <li class="flex items-start gap-2">
                             <i class="fas fa-check-circle text-purple-600 mt-0.5"></i>
-                            <span>VIP level system with different commission rates</span>
+                            <span>Level system with different commission rates</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <i class="fas fa-check-circle text-purple-600 mt-0.5"></i>
-                            <span>Daily order limits based on your VIP level</span>
+                            <span>Daily order limits based on your Level</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <i class="fas fa-check-circle text-purple-600 mt-0.5"></i>
@@ -147,15 +147,15 @@
                     </p>
                     <div class="space-y-2">
                         <div class="flex items-center justify-between p-3 bg-white rounded-lg">
-                            <span class="font-semibold text-gray-900">VIP 1</span>
+                            <span class="font-semibold text-gray-900">Level 1</span>
                             <span class="text-yellow-600 font-bold">2.0% - 4.0%</span>
                         </div>
                         <div class="flex items-center justify-between p-3 bg-white rounded-lg">
-                            <span class="font-semibold text-gray-900">VIP 2</span>
+                            <span class="font-semibold text-gray-900">Level 2</span>
                             <span class="text-orange-600 font-bold">3.0% - 5.0%</span>
                         </div>
                         <div class="flex items-center justify-between p-3 bg-white rounded-lg">
-                            <span class="font-semibold text-gray-900">VIP 3</span>
+                            <span class="font-semibold text-gray-900">Level 3</span>
                             <span class="text-red-600 font-bold">4.0% - 6.0%</span>
                         </div>
                     </div>

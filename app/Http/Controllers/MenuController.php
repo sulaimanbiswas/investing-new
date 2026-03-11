@@ -100,6 +100,7 @@ class MenuController extends Controller
             })
             ->where('status', 'unpaid')
             ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc')
             ->first();
 
         // Count today's completed orders

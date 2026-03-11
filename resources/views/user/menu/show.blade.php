@@ -140,8 +140,8 @@
             <div
                 class="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
                 <i class="fas fa-wallet text-4xl mb-2"></i>
-                <p class="text-xl font-bold">Not in VIP Level</p>
-                <p class="text-sm opacity-90 text-center px-4">You are not in any VIP level. Deposit and start earning!</p>
+                <p class="text-xl font-bold">Not in Level Level</p>
+                <p class="text-sm opacity-90 text-center px-4">You are not in any Level level. Deposit and start earning!</p>
                 <a href="{{ route('deposit') }}"
                     class="mt-2 bg-white text-indigo-600 font-bold py-3 px-6 rounded-xl hover:bg-gray-100 active:scale-95 transition-all duration-200">
                     <i class="fas fa-plus-circle mr-2"></i>Deposit Now
@@ -155,7 +155,7 @@
                         You are not eligible for this platform
                     </p>
                     <p class="text-sm opacity-90 text-center px-4">
-                        You are not eligible for this platform. Your current VIP level is <span
+                        You are not eligible for this platform. Your current Level level is <span
                             class="font-bold">{{ $userVipLevel }}</span>.<br>
                         Please upgrade to <span class="font-bold">{{ $platform->package_name }}</span> to access and complete orders
                         here.

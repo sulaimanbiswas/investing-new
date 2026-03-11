@@ -85,14 +85,14 @@ class ProfileController extends Controller
 
         // Determine user's VIP level based on balance
         $vipLevel = 0;
-        $vipName = 'VIP 0';
+        $vipName = 'Level 0';
         $currentPlatform = null;
         $nextPlatform = null;
 
         foreach ($platforms as $index => $platform) {
             if ($balance >= $platform->start_price && $balance <= $platform->end_price) {
                 $vipLevel = $index + 1;
-                $vipName = 'VIP ' . $vipLevel;
+                $vipName = 'Level ' . $vipLevel;
                 $currentPlatform = $platform;
 
                 // Get next platform if exists
@@ -108,7 +108,7 @@ class ProfileController extends Controller
             $lastPlatform = $platforms->last();
             if ($balance > $lastPlatform->end_price) {
                 $vipLevel = $platforms->count();
-                $vipName = 'VIP ' . $vipLevel;
+                $vipName = 'Level ' . $vipLevel;
                 $currentPlatform = $lastPlatform;
             }
         }

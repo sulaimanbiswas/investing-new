@@ -24,7 +24,7 @@
             <div class="flex-1">
                 <div class="flex flex-wrap items-center gap-3">
                     <h1 class="text-2xl font-bold">{{ auth()->user()->name }}</h1>
-                    <span class="bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded">VIP 1</span>
+                    <span class="bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded">Level 1</span>
                     @if(auth()->user()->username)
                         <span class="text-xs bg-white/20 px-2 py-1 rounded">{{ '@' . auth()->user()->username }}</span>
                     @endif

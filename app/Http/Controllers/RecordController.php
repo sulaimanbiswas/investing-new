@@ -48,6 +48,7 @@ class RecordController extends Controller
                 })
                 ->where('status', 'unpaid')
                 ->orderBy('created_at', 'asc')
+                ->orderBy('id', 'asc')
                 ->first();
 
             $incompleteOrders = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);

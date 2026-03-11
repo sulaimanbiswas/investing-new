@@ -10,7 +10,7 @@
         </a>
             <div>
                 <h1 class="text-2xl font-bold text-gray-800">Platform Menu</h1>
-                <p class="text-gray-500 text-sm mt-0.5">Choose your VIP level and start earning</p>
+                <p class="text-gray-500 text-sm mt-0.5">Choose your Level and start earning</p>
             </div>
         </div>
     </div>
@@ -50,17 +50,17 @@
         <a href="{{ route('menu.index', ['vip_level' => 'vip1']) }}"
             class="px-4 py-3 text-center rounded-lg font-semibold transition-all shadow-sm {{ request('vip_level') === 'vip1' ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md' }}">
             <i class="fas fa-star text-sm mb-1"></i>
-            <div class="text-xs">VIP 1</div>
+            <div class="text-xs">Level 1</div>
         </a>
         <a href="{{ route('menu.index', ['vip_level' => 'vip2']) }}"
             class="px-4 py-3 text-center rounded-lg font-semibold transition-all shadow-sm {{ request('vip_level') === 'vip2' ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md' }}">
             <i class="fas fa-crown text-sm mb-1"></i>
-            <div class="text-xs">VIP 2</div>
+            <div class="text-xs">Level 2</div>
         </a>
         <a href="{{ route('menu.index', ['vip_level' => 'vip3']) }}"
             class="px-4 py-3 text-center rounded-lg font-semibold transition-all shadow-sm {{ request('vip_level') === 'vip3' ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md' }}">
             <i class="fas fa-gem text-sm mb-1"></i>
-            <div class="text-xs">VIP 3</div>
+            <div class="text-xs">Level 3</div>
         </a>
     </div>
 
@@ -75,17 +75,17 @@
                 
                 switch($platform->package_name) {
                     case 'vip1':
-                        $vipBadge = 'VIP 1';
+                        $vipBadge = 'Level 1';
                         $vipColor = 'bg-gradient-to-r from-yellow-400 to-yellow-500';
                         $vipIcon = 'fa-star';
                         break;
                     case 'vip2':
-                        $vipBadge = 'VIP 2';
+                        $vipBadge = 'Level 2';
                         $vipColor = 'bg-gradient-to-r from-yellow-500 to-orange-500';
                         $vipIcon = 'fa-crown';
                         break;
                     case 'vip3':
-                        $vipBadge = 'VIP 3';
+                        $vipBadge = 'Level 3';
                         $vipColor = 'bg-gradient-to-r from-orange-500 to-red-500';
                         $vipIcon = 'fa-gem';
                         break;
@@ -146,7 +146,7 @@
                     <i class="fas fa-inbox text-gray-400 text-3xl"></i>
                 </div>
                 <p class="text-gray-600 text-lg font-semibold mb-1">No platforms available</p>
-                <p class="text-gray-400 text-sm">Try selecting a different VIP level</p>
+                <p class="text-gray-400 text-sm">Try selecting a different Level</p>
             </div>
         @endforelse
     </div>

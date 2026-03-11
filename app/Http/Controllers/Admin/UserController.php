@@ -116,6 +116,7 @@ class UserController extends Controller
         $userOrderSets = UserOrderSet::with('orderSet')
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // Get all user orders with relationships
@@ -124,7 +125,8 @@ class UserController extends Controller
                 $query->where('user_id', $user->id);
             })
             ->orderByRaw("CASE WHEN status = 'unpaid' THEN 0 ELSE 1 END, 
-                         CASE WHEN status = 'unpaid' THEN created_at ELSE NULL END, 
+                         CASE WHEN status = 'unpaid' THEN created_at ELSE NULL END,
+                         CASE WHEN status = 'unpaid' THEN id ELSE NULL END,
                          CASE WHEN status = 'paid' THEN paid_at ELSE NULL END DESC")
             ->paginate(25);
 
@@ -233,7 +235,7 @@ class UserController extends Controller
             $totalAmount = 0;
             $totalPackages = $orderSet->productPackages->count();
 
-            foreach ($orderSet->productPackages as $package) {
+            foreach ($orderSet->productPackages->sortBy('id') as $package) {
                 foreach ($package->items as $item) {
                     $totalAmount += ($item->quantity * $item->price);
                 }
@@ -258,19 +260,20 @@ class UserController extends Controller
 
             // Create ONE order per package
             $ordersCreated = 0;
-            foreach ($orderSet->productPackages as $package) {
+            foreach ($orderSet->productPackages->sortBy('id') as $package) {
                 $orderAmount = 0;
                 $manageCrypto = [];
 
                 // Get first item for basic order info
-                $firstItem = $package->items->first();
+                $items = $package->items->sortBy('id');
+                $firstItem = $items->first();
 
                 if (!$firstItem) {
                     continue; // Skip if package has no items
                 }
 
                 // Build manage_crypto array with all products in this package
-                foreach ($package->items as $item) {
+                foreach ($items as $item) {
                     $itemAmount = $item->quantity * $item->price;
                     $orderAmount += $itemAmount;
 

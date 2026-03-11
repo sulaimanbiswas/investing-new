@@ -35,7 +35,7 @@
                     <span
                         class="{{ $colorClass }} text-white text-xs font-bold px-2.5 py-1 rounded inline-flex items-center gap-1">
                         <i class="fas {{ $iconClass }}"></i>
-                        {{ $vipName ?? 'VIP 0' }}
+                        {{ $vipName ?? 'Level 0' }}
                     </span>
                     @if(auth()->user()->username)
                         <span class="text-xs bg-white/20 px-2 py-1 rounded">{{ '@' . auth()->user()->username }}</span>

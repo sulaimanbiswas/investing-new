@@ -2,6 +2,29 @@
 
 @section('title', 'Admin | User Detail - ' . $user->username)
 
+@push('styles')
+    <style>
+        @media (max-width: 767.98px) {
+
+            .user-action-buttons .btn,
+            .user-action-buttons a {
+                flex: 1 1 100%;
+                text-align: center;
+            }
+
+            .user-profile-head {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+
+            .user-profile-head .ms-4 {
+                margin-left: 0 !important;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="page-titles">
         <ol class="breadcrumb">
@@ -26,7 +49,7 @@
     @endif
 
     <!-- Statistics Cards -->
-    <div class="row">
+    <div class="row align-items-start">
         <!-- Wallet Balance -->
         <div class="col-xl-3 col-xxl-3 col-sm-6">
             <div class="card gradient-bx text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -234,7 +257,7 @@
     <!-- Action Buttons -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex flex-wrap gap-2">
+            <div class="d-flex flex-wrap gap-2 user-action-buttons">
                 <!-- Add Balance -->
                 <button type="button" class="btn btn-sm btn-success rounded-pill px-4" data-bs-toggle="modal"
                     data-bs-target="#addBalanceModal">
@@ -320,7 +343,7 @@
                     <h4 class="card-title">User Information</h4>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex align-items-center mb-4">
+                    <div class="d-flex align-items-center mb-4 user-profile-head">
                         @if($user->avatar_path)
                             <img src="{{ asset('uploads/avatar/' . $user->avatar_path) }}" alt="{{ $user->name }}"
                                 class="rounded-circle border-2 border-light" width="80" height="80" style="object-fit: cover;">
@@ -451,7 +474,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive recentOrderTable">
-                            <table class="table verticle-middle table-responsive-md">
+                            <table class="table verticle-middle table-responsive-md mb-0">
                                 <thead>
                                     <tr>
                                         <th>Order Set</th>
@@ -516,12 +539,12 @@
                         @csrf
                         @method('PUT')
                         <div class="mb-3 row">
-                            <div class="col-6">
+                            <div class="col-12 col-sm-6 mb-3 mb-sm-0">
                                 <label for="daily_order_limit" class="form-label">Daily Order Limit</label>
                                 <input type="number" class="form-control" id="daily_order_limit" name="daily_order_limit"
                                     value="{{ $user->daily_order_limit }}" required min="0">
                             </div>
-                            <div class="col-6">
+                            <div class="col-12 col-sm-6">
                                 <label for="freeze_amount" class="form-label">Freeze Amount </label>
                                 <input type="number" step="0.01" class="form-control" id="freeze_amount"
                                     name="freeze_amount" value="{{ $user->freeze_amount }}" required min="0">
@@ -692,6 +715,7 @@
                                 </tbody>
                             </table>
                         </div>
+
                         @if($userOrders->hasPages())
                             <div class="card-footer">
                                 {{ $userOrders->links() }}
@@ -950,7 +974,11 @@
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
 
-                const orderSetName = this.closest('tr').querySelector('td:first-child').textContent.trim();
+                const row = this.closest('tr');
+                const mobileCard = this.closest('.border.rounded');
+                const orderSetName = row
+                    ? row.querySelector('td:first-child')?.textContent.trim()
+                    : (mobileCard?.querySelector('h6')?.textContent.trim() || 'this order set');
 
                 Swal.fire({
                     title: 'Delete Order Set?',
