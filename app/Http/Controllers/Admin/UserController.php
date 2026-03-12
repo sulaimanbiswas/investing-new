@@ -384,6 +384,74 @@ class UserController extends Controller
         }
     }
 
+    public function updateOrder(Request $request, User $user, UserOrder $order)
+    {
+        $belongsToUser = $order->userOrderSet && (int) $order->userOrderSet->user_id === (int) $user->id;
+        if (!$belongsToUser) {
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('error', 'This order does not belong to the selected user.');
+        }
+
+        if ($order->status !== 'unpaid') {
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('error', 'Only unpaid orders can be updated.');
+        }
+
+        $validated = $request->validate([
+            'order_amount' => 'nullable|numeric|min:0',
+            'profit_amount' => 'nullable|numeric|min:0',
+            'profit_percentage' => 'required|numeric|min:0',
+            'manage_crypto' => 'nullable|array',
+            'manage_crypto.*.quantity' => 'nullable|numeric|min:0',
+            'manage_crypto.*.price' => 'nullable|numeric|min:0',
+        ]);
+
+        $existingManageCrypto = collect($order->manage_crypto ?? [])->values();
+        $incomingManageCrypto = collect($validated['manage_crypto'] ?? [])->values();
+
+        $manageCrypto = $existingManageCrypto->map(function ($item, $index) use ($incomingManageCrypto) {
+            $incoming = $incomingManageCrypto->get($index, []);
+
+            $quantity = array_key_exists('quantity', $incoming)
+                ? (float) ($incoming['quantity'] ?? 0)
+                : (float) ($item['quantity'] ?? 0);
+
+            $price = array_key_exists('price', $incoming)
+                ? (float) ($incoming['price'] ?? 0)
+                : (float) ($item['price'] ?? 0);
+
+            return [
+                'name' => $item['name'] ?? null,
+                'quantity' => $quantity,
+                'price' => $price,
+                'image' => $item['image'] ?? null,
+            ];
+        })->all();
+
+        $calculatedOrderAmount = collect($manageCrypto)->sum(function ($item) {
+            return ((float) ($item['quantity'] ?? 0)) * ((float) ($item['price'] ?? 0));
+        });
+
+        if ($calculatedOrderAmount <= 0) {
+            $calculatedOrderAmount = isset($validated['order_amount']) ? (float) $validated['order_amount'] : (float) $order->order_amount;
+        }
+
+        $profitPercentage = (float) $validated['profit_percentage'];
+        $calculatedProfitAmount = ($calculatedOrderAmount * $profitPercentage) / 100;
+
+        $order->update([
+            'order_amount' => round($calculatedOrderAmount, 2),
+            'profit_amount' => round($calculatedProfitAmount, 2),
+            'manage_crypto' => $manageCrypto,
+        ]);
+
+        return redirect()
+            ->route('admin.users.show', $user)
+            ->with('success', 'Order updated successfully.');
+    }
+
     public function updateManagement(Request $request, User $user)
     {
         $request->validate([

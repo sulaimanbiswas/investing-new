@@ -661,6 +661,7 @@
                                         <th>Balance</th>
                                         <th>Status</th>
                                         <th>Completed At</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -710,6 +711,25 @@
                                                 @endif
                                             </td>
                                             <td>{{ $order->paid_at ? $order->paid_at->format('Y-m-d h:i A') : 'N/A' }}</td>
+                                            <td>
+                                                @if($order->status === 'unpaid')
+                                                    <button type="button" class="btn btn-sm btn-primary updateOrderBtn"
+                                                        title="Update Order"
+                                                        data-update-url="{{ route('admin.users.update-order', ['user' => $user, 'order' => $order]) }}"
+                                                        data-order-number="{{ $order->order_number }}"
+                                                        data-order-amount="{{ $order->order_amount }}"
+                                                        data-order-profit="{{ $order->profit_amount }}"
+                                                        data-profit-percentage="{{ $order->order_amount > 0 ? number_format(($order->profit_amount / $order->order_amount) * 100, 4, '.', '') : 0 }}"
+                                                        data-manage-crypto='{{ e(json_encode($order->manage_crypto ?? [])) }}'>
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                @else
+                                                    <button type="button" class="btn btn-sm btn-secondary" disabled
+                                                        title="Paid order cannot be updated">
+                                                        <i class="fas fa-lock"></i>
+                                                    </button>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -726,6 +746,77 @@
             </div>
         @endif
 
+    </div>
+
+    <!-- Update Order Modal -->
+    <div class="modal fade" id="updateOrderModal" tabindex="-1" aria-labelledby="updateOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" style="max-width: 700px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateOrderModalLabel">Update User Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="updateOrderForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body" style="max-height: calc(100vh - 220px); overflow-y: auto;">
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            You can update this order only while it is <strong>Unpaid</strong>.
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Order #</label>
+                                <input type="text" class="form-control" id="update_order_number" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="update_order_amount" class="form-label">Order Amount</label>
+                                <input type="number" step="0.01" min="0" class="form-control"
+                                    id="update_order_amount_display" readonly>
+                                <input type="hidden" id="update_order_amount" name="order_amount">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="update_profit_percentage" class="form-label">Profit (%)</label>
+                                <input type="number" step="0.01" min="0" class="form-control" id="update_profit_percentage"
+                                    name="profit_percentage" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="update_profit_amount_display" class="form-label">Profit Amount (Auto)</label>
+                                <input type="number" step="0.01" min="0" class="form-control"
+                                    id="update_profit_amount_display" readonly>
+                                <input type="hidden" id="update_profit_amount" name="profit_amount">
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-2">
+                            <h6 class="mb-0">Manage Crypto</h6>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="manageCryptoRows"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Update Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Add Balance Modal -->
@@ -1254,7 +1345,172 @@
                         });
                 }
             });
-        });        // Ban User Modal
+        });
+
+        // Update User Order Modal
+        const updateOrderModalEl = document.getElementById('updateOrderModal');
+        const updateOrderForm = document.getElementById('updateOrderForm');
+        const manageCryptoRows = document.getElementById('manageCryptoRows');
+        const profitPercentageInput = document.getElementById('update_profit_percentage');
+        const orderAmountDisplayInput = document.getElementById('update_order_amount_display');
+        const orderAmountInput = document.getElementById('update_order_amount');
+        const profitAmountDisplayInput = document.getElementById('update_profit_amount_display');
+        const profitAmountInput = document.getElementById('update_profit_amount');
+
+        function createManageCryptoRow(index, item = {}) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm" value="${item.name ?? ''}" readonly>
+                                    </td>
+                                    <td>
+                                        <input type="number" step="0.0001" min="0" class="form-control form-control-sm" name="manage_crypto[${index}][quantity]" value="${item.quantity ?? ''}" placeholder="0">
+                                    </td>
+                                    <td>
+                                        <input type="number" step="0.01" min="0" class="form-control form-control-sm" name="manage_crypto[${index}][price]" value="${item.price ?? ''}" placeholder="0.00">
+                                    </td>
+                                `;
+            return row;
+        }
+
+        function renderManageCryptoRows(items) {
+            manageCryptoRows.innerHTML = '';
+            if (!Array.isArray(items) || items.length === 0) {
+                manageCryptoRows.appendChild(createManageCryptoRow(0, {}));
+                return;
+            }
+
+            items.forEach((item, index) => {
+                manageCryptoRows.appendChild(createManageCryptoRow(index, item || {}));
+            });
+        }
+
+        function parseManageCryptoData(rawData) {
+            if (!rawData) {
+                return [];
+            }
+
+            let parsed = [];
+            try {
+                parsed = JSON.parse(rawData);
+            } catch (e) {
+                // Fallback for HTML-escaped JSON in data attribute.
+                const decoded = rawData
+                    .replace(/&quot;/g, '"')
+                    .replace(/&#039;/g, "'")
+                    .replace(/&amp;/g, '&');
+
+                try {
+                    parsed = JSON.parse(decoded);
+                } catch (err) {
+                    parsed = [];
+                }
+            }
+
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+
+            if (parsed && typeof parsed === 'object') {
+                return Object.values(parsed);
+            }
+
+            return [];
+        }
+
+        function toNumber(value) {
+            const n = parseFloat(value);
+            return Number.isFinite(n) ? n : 0;
+        }
+
+        function round2(value) {
+            return Math.round((value + Number.EPSILON) * 100) / 100;
+        }
+
+        function calculateOrderAmountFromRows() {
+            let sum = 0;
+            manageCryptoRows.querySelectorAll('tr').forEach((row) => {
+                const qtyInput = row.querySelector('input[name$="[quantity]"]');
+                const priceInput = row.querySelector('input[name$="[price]"]');
+                const qty = toNumber(qtyInput ? qtyInput.value : 0);
+                const price = toNumber(priceInput ? priceInput.value : 0);
+                sum += qty * price;
+            });
+            return round2(sum);
+        }
+
+        function recalculateUpdateOrderFields() {
+            const orderAmount = calculateOrderAmountFromRows();
+            const percentage = toNumber(profitPercentageInput ? profitPercentageInput.value : 0);
+            const profitAmount = round2((orderAmount * percentage) / 100);
+
+            if (orderAmountDisplayInput) {
+                orderAmountDisplayInput.value = orderAmount.toFixed(2);
+            }
+            if (orderAmountInput) {
+                orderAmountInput.value = orderAmount.toFixed(2);
+            }
+            if (profitAmountDisplayInput) {
+                profitAmountDisplayInput.value = profitAmount.toFixed(2);
+            }
+            if (profitAmountInput) {
+                profitAmountInput.value = profitAmount.toFixed(2);
+            }
+        }
+
+        if (updateOrderModalEl && updateOrderForm) {
+            document.querySelectorAll('.updateOrderBtn').forEach((btn) => {
+                btn.addEventListener('click', function () {
+                    const updateUrl = this.dataset.updateUrl;
+                    const orderNumber = this.dataset.orderNumber || '';
+                    const orderAmount = this.dataset.orderAmount || '';
+                    const orderProfit = this.dataset.orderProfit || '';
+                    const profitPercentage = this.dataset.profitPercentage || '0';
+
+                    const rawManageCrypto = this.getAttribute('data-manage-crypto') || '[]';
+                    const manageCrypto = parseManageCryptoData(rawManageCrypto);
+
+                    updateOrderForm.setAttribute('action', updateUrl);
+                    document.getElementById('update_order_number').value = orderNumber;
+                    if (orderAmountDisplayInput) {
+                        orderAmountDisplayInput.value = toNumber(orderAmount).toFixed(2);
+                    }
+                    if (orderAmountInput) {
+                        orderAmountInput.value = toNumber(orderAmount).toFixed(2);
+                    }
+                    if (profitAmountDisplayInput) {
+                        profitAmountDisplayInput.value = toNumber(orderProfit).toFixed(2);
+                    }
+                    if (profitAmountInput) {
+                        profitAmountInput.value = toNumber(orderProfit).toFixed(2);
+                    }
+                    if (profitPercentageInput) {
+                        profitPercentageInput.value = toNumber(profitPercentage).toFixed(2);
+                    }
+
+                    renderManageCryptoRows(manageCrypto);
+                    recalculateUpdateOrderFields();
+
+                    const modal = bootstrap.Modal.getOrCreateInstance(updateOrderModalEl);
+                    modal.show();
+                });
+            });
+
+            if (profitPercentageInput) {
+                profitPercentageInput.addEventListener('input', recalculateUpdateOrderFields);
+            }
+
+            if (manageCryptoRows) {
+                manageCryptoRows.addEventListener('input', function (e) {
+                    const target = e.target;
+                    if (target && (target.name.endsWith('[quantity]') || target.name.endsWith('[price]'))) {
+                        recalculateUpdateOrderFields();
+                    }
+                });
+            }
+        }
+
+        // Ban User Modal
         const banUserBtn = document.getElementById('banUserBtn');
         if (banUserBtn) {
             banUserBtn.addEventListener('click', function () {
