@@ -28,6 +28,9 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $normalizedPhone = preg_replace('/\s+/', '', (string) $request->input('phone', ''));
+        $request->merge(['phone' => $normalizedPhone]);
+
         $validationRules = [
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
@@ -36,7 +39,7 @@ class RegisteredUserController extends Controller
                 'string',
                 'max:20',
                 'unique:' . User::class,
-                'regex:/^[0-9+\-\s()]+$/',
+                'regex:/^\+[1-9]\d{7,14}$/',
                 function (string $attribute, mixed $value, \Closure $fail): void {
                     $digitsOnly = preg_replace('/\D/', '', (string) $value);
                     if (strlen($digitsOnly) < 9) {
@@ -44,6 +47,7 @@ class RegisteredUserController extends Controller
                     }
                 },
             ],
+            'phone_country' => ['nullable', 'string', 'size:2', 'alpha'],
             'email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'string', 'min:6'],
             'withdrawal_password' => ['required', 'string', 'min:6'],
@@ -57,6 +61,7 @@ class RegisteredUserController extends Controller
 
         $request->validate($validationRules, [
             'invitation_code.exists' => 'Invalid invitation code. Please enter a valid referral code from an existing user.',
+            'phone.regex' => 'Please enter a valid phone number with country code.',
         ]);
 
         // Find the referrer by referral code

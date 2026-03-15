@@ -23,6 +23,8 @@
             font-family: 'Poppins', sans-serif;
         }
     </style>
+
+    @stack('styles')
 </head>
 
 <body
@@ -32,6 +34,7 @@
     </div>
 
     @yield('scripts')
+    @stack('scripts')
 
     <!-- PHP Flasher -->
     @flasher_render

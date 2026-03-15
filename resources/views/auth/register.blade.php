@@ -2,6 +2,29 @@
 
 @section('title', 'Register')
 
+@push('styles')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.0/build/css/intlTelInput.css">
+    <style>
+        .iti {
+            width: 100%;
+        }
+
+        .iti__country-container {
+            left: 0;
+        }
+
+        .iti__selected-country {
+            padding-left: 12px;
+            border-top-left-radius: 0.75rem;
+            border-bottom-left-radius: 0.75rem;
+        }
+
+        #phone {
+            padding-left: 118px !important;
+        }
+    </style>
+@endpush
+
 @section('content')
     <h1 class="text-4xl font-bold text-center text-yellow-500 mb-10">Register</h1>
 
@@ -32,9 +55,11 @@
 
         <div class="relative mb-5">
             <i class="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-            <input type="tel" name="phone" placeholder="Phone Number (Required)" value="{{ old('phone') }}"
+            <input type="tel" id="phone" name="phone" placeholder="Phone Number (Required)" value="{{ old('phone') }}"
                 class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
-                minlength="9" inputmode="numeric" required>
+                inputmode="tel" autocomplete="tel" required>
+            <input type="hidden" id="phone_country" name="phone_country" value="{{ old('phone_country', 'bd') }}">
+            <p id="phone-format-hint" class="mt-2 ml-1 text-xs text-gray-500"></p>
         </div>
         {{--
         <div class="relative mb-5">
@@ -118,6 +143,8 @@
 @endsection
 
 @section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.0/build/js/intlTelInput.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.0/build/js/utils.js"></script>
     <script>
         @if(captcha_enabled())
             let captchaCode = '';
@@ -182,13 +209,158 @@
                 }
             }
 
-        // Ensure phone contains at least 9 digits (ignoring formatting chars)
+        // Country-aware phone input with automatic dialing code
         const registerForm = document.querySelector('form[action="{{ route('register') }}"]');
-        const phoneInput = registerForm ? registerForm.querySelector('input[name="phone"]') : null;
+        const phoneInput = document.getElementById('phone');
+        const phoneCountryInput = document.getElementById('phone_country');
+
+        let phoneIti = null;
+        let lastDialCode = '';
+
+        function updatePhoneFormatHint() {
+            const phoneFormatHint = document.getElementById('phone-format-hint');
+            if (!phoneIti || !phoneFormatHint) {
+                return;
+            }
+
+            const selected = phoneIti.getSelectedCountryData();
+            const placeholder = phoneInput.getAttribute('placeholder') || '';
+            const countryName = selected.name || 'selected country';
+
+            if (placeholder) {
+                phoneFormatHint.textContent = `Example for ${countryName}: ${placeholder}`;
+                return;
+            }
+
+            const dialCode = selected.dialCode ? `+${selected.dialCode}` : '';
+            phoneFormatHint.textContent = dialCode
+                ? `Enter a valid ${countryName} number starting with ${dialCode}`
+                : `Enter a valid phone number for ${countryName}`;
+        }
+
+        function extractSubscriberNumber(value, dialCode) {
+            const normalized = String(value || '').trim();
+            const numericDialCode = String(dialCode || '').replace(/\D/g, '');
+
+            if (!normalized) {
+                return '';
+            }
+
+            if (!numericDialCode) {
+                return normalized;
+            }
+
+            const digitsOnly = normalized.replace(/\D/g, '');
+            if (!digitsOnly.startsWith(numericDialCode)) {
+                return normalized.replace(/^\+/, '').trim();
+            }
+
+            return digitsOnly.slice(numericDialCode.length);
+        }
+
+        function setPhoneWithDialCode(dialCode, subscriberNumber = '') {
+            if (!phoneInput) {
+                return;
+            }
+
+            const cleanDialCode = String(dialCode || '').replace(/\D/g, '');
+            const cleanSubscriber = String(subscriberNumber || '').replace(/\D/g, '');
+            phoneInput.value = cleanDialCode ? `+${cleanDialCode}${cleanSubscriber}` : cleanSubscriber;
+        }
+
+        function syncCountryMeta() {
+            if (!phoneIti || !phoneCountryInput) {
+                return;
+            }
+
+            const selected = phoneIti.getSelectedCountryData();
+            phoneCountryInput.value = (selected.iso2 || '').toLowerCase();
+            lastDialCode = selected.dialCode || '';
+            updatePhoneFormatHint();
+        }
+
+        if (phoneInput && window.intlTelInput) {
+            phoneIti = window.intlTelInput(phoneInput, {
+                initialCountry: (phoneCountryInput?.value || 'bd').toLowerCase(),
+                preferredCountries: ['bd', 'in', 'pk', 'my', 'sa', 'ae', 'uk', 'us'],
+                separateDialCode: false,
+                nationalMode: false,
+                autoInsertDialCode: true,
+                autoPlaceholder: 'aggressive',
+                formatOnDisplay: true,
+                strictMode: false,
+            });
+
+            const initialCountry = phoneIti.getSelectedCountryData();
+            lastDialCode = initialCountry.dialCode || '';
+
+            if (!String(phoneInput.value || '').trim() && lastDialCode) {
+                setPhoneWithDialCode(lastDialCode);
+            } else if (String(phoneInput.value || '').trim().startsWith('+')) {
+                phoneIti.setNumber(phoneInput.value);
+                syncCountryMeta();
+            }
+
+            updatePhoneFormatHint();
+
+            if (phoneCountryInput) {
+                phoneInput.addEventListener('countrychange', function () {
+                    const selected = phoneIti.getSelectedCountryData();
+                    const nextDialCode = selected.dialCode || '';
+                    const subscriberNumber = extractSubscriberNumber(phoneInput.value, lastDialCode);
+
+                    setPhoneWithDialCode(nextDialCode, subscriberNumber);
+                    syncCountryMeta();
+                });
+            }
+
+            phoneInput.addEventListener('focus', function () {
+                if (!String(this.value || '').trim() && lastDialCode) {
+                    setPhoneWithDialCode(lastDialCode);
+                }
+            });
+
+            phoneInput.addEventListener('input', function () {
+                const rawValue = String(this.value || '').trim();
+                this.setCustomValidity('');
+
+                if (!rawValue) {
+                    return;
+                }
+
+                if (!rawValue.startsWith('+')) {
+                    setPhoneWithDialCode(lastDialCode, rawValue);
+                    return;
+                }
+
+                // Let the library infer and sync the country from typed international code.
+                phoneIti.setNumber(rawValue);
+                syncCountryMeta();
+            });
+        }
 
         if (registerForm && phoneInput) {
             registerForm.addEventListener('submit', function (e) {
-                const digitsOnly = (phoneInput.value || '').replace(/\D/g, '');
+                let normalized = (phoneInput.value || '').trim();
+
+                if (phoneIti) {
+                    const selected = phoneIti.getSelectedCountryData();
+                    if (phoneCountryInput) {
+                        phoneCountryInput.value = (selected.iso2 || '').toLowerCase();
+                    }
+
+                    // Validate against selected country rules.
+                    if (!phoneIti.isValidNumber()) {
+                        e.preventDefault();
+                        phoneInput.setCustomValidity('Please enter a valid phone number for the selected country.');
+                        phoneInput.reportValidity();
+                        return;
+                    }
+
+                    normalized = phoneIti.getNumber(); // E.164 format, e.g. +8801...
+                }
+
+                const digitsOnly = normalized.replace(/\D/g, '');
                 if (digitsOnly.length < 9) {
                     e.preventDefault();
                     phoneInput.setCustomValidity('Phone number must contain at least 9 digits.');
@@ -196,6 +368,7 @@
                     return;
                 }
 
+                phoneInput.value = normalized;
                 phoneInput.setCustomValidity('');
             });
 
