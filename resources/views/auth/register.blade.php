@@ -34,7 +34,7 @@
             <i class="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
             <input type="tel" name="phone" placeholder="Phone Number (Required)" value="{{ old('phone') }}"
                 class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
-                required>
+                minlength="9" inputmode="numeric" required>
         </div>
         {{--
         <div class="relative mb-5">
@@ -47,7 +47,7 @@
             <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
             <input type="password" id="password" name="password" placeholder="Password"
                 class="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
-                required>
+                minlength="6" required>
             <button type="button" onclick="togglePassword('password')"
                 class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-500 transition-colors">
                 <i class="fas fa-eye" id="password-toggle-icon"></i>
@@ -57,7 +57,7 @@
         <div class="relative mb-5">
             <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
             <input type="password" id="withdrawal_password" name="withdrawal_password" placeholder="Withdrawal Password"
-                value="{{ old('withdrawal_password') }}" required
+                value="{{ old('withdrawal_password') }}" required minlength="6"
                 class="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50">
             <button type="button" onclick="togglePassword('withdrawal_password')"
                 class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-500 transition-colors">
@@ -166,20 +166,42 @@
             });
         @endif
 
-        // Toggle password visibility
-        function togglePassword(fieldId) {
-            const passwordField = document.getElementById(fieldId);
-            const toggleIcon = document.getElementById(fieldId + '-toggle-icon');
+            // Toggle password visibility
+            function togglePassword(fieldId) {
+                const passwordField = document.getElementById(fieldId);
+                const toggleIcon = document.getElementById(fieldId + '-toggle-icon');
 
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    toggleIcon.classList.remove('fa-eye');
+                    toggleIcon.classList.add('fa-eye-slash');
+                } else {
+                    passwordField.type = 'password';
+                    toggleIcon.classList.remove('fa-eye-slash');
+                    toggleIcon.classList.add('fa-eye');
+                }
             }
+
+        // Ensure phone contains at least 9 digits (ignoring formatting chars)
+        const registerForm = document.querySelector('form[action="{{ route('register') }}"]');
+        const phoneInput = registerForm ? registerForm.querySelector('input[name="phone"]') : null;
+
+        if (registerForm && phoneInput) {
+            registerForm.addEventListener('submit', function (e) {
+                const digitsOnly = (phoneInput.value || '').replace(/\D/g, '');
+                if (digitsOnly.length < 9) {
+                    e.preventDefault();
+                    phoneInput.setCustomValidity('Phone number must contain at least 9 digits.');
+                    phoneInput.reportValidity();
+                    return;
+                }
+
+                phoneInput.setCustomValidity('');
+            });
+
+            phoneInput.addEventListener('input', function () {
+                this.setCustomValidity('');
+            });
         }
     </script>
 @endsection
