@@ -130,6 +130,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             return response()->noContent();
         })->name('session.ping');
         Route::post('/users/{user}/assign-order-set', [\App\Http\Controllers\Admin\UserController::class, 'assignOrderSet'])->name('users.assign-order-set');
+        Route::put('/users/{user}/update-referrer', [\App\Http\Controllers\Admin\UserController::class, 'updateReferrer'])->name('users.update-referrer');
         Route::put('/users/{user}/orders/{order}', [\App\Http\Controllers\Admin\UserController::class, 'updateOrder'])->name('users.update-order');
         Route::delete('/users/{user}/order-set/{userOrderSet}', [\App\Http\Controllers\Admin\UserController::class, 'deleteUserOrderSet'])->name('users.delete-order-set');
         Route::put('/users/{user}/update-management', [\App\Http\Controllers\Admin\UserController::class, 'updateManagement'])->name('users.update-management');

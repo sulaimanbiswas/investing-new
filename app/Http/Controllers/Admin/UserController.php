@@ -134,7 +134,69 @@ class UserController extends Controller
             ->where('is_active', 1)
             ->get();
 
-        return view('admin.users.show', compact('user', 'stats', 'orderSets', 'userOrderSets', 'userOrders', 'gateways'));
+        // Candidate referrers for admin reassignment: exclude current user and downline.
+        $blockedReferrerIds = array_merge([$user->id], $this->getDescendantIds($user));
+        $assignableReferrers = User::query()
+            ->where('is_admin', false)
+            ->whereNotIn('id', $blockedReferrerIds)
+            ->orderByRaw('COALESCE(username, name, phone, email) asc')
+            ->get(['id', 'name', 'username', 'phone', 'email', 'referral_code']);
+
+        return view('admin.users.show', compact('user', 'stats', 'orderSets', 'userOrderSets', 'userOrders', 'gateways', 'assignableReferrers'));
+    }
+
+    public function updateReferrer(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'referred_by' => 'nullable|integer|exists:users,id',
+        ]);
+
+        $newReferrerId = $validated['referred_by'] ?? null;
+        $newReferrerId = $newReferrerId !== null ? (int) $newReferrerId : null;
+
+        if ($newReferrerId === (int) $user->id) {
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('error', 'A user cannot be their own referrer.');
+        }
+
+        $descendantIds = $this->getDescendantIds($user);
+        if ($newReferrerId !== null && in_array($newReferrerId, $descendantIds, true)) {
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('error', 'Invalid referrer selected. A downline user cannot be set as upline.');
+        }
+
+        $newReferrer = null;
+        if ($newReferrerId !== null) {
+            $newReferrer = User::find($newReferrerId);
+            if (!$newReferrer) {
+                return redirect()
+                    ->route('admin.users.show', $user)
+                    ->with('error', 'Selected referrer does not exist.');
+            }
+        }
+
+        if ((int) ($user->referred_by ?? 0) === (int) ($newReferrerId ?? 0)) {
+            return redirect()
+                ->route('admin.users.show', $user)
+                ->with('success', 'Referrer is already set to the selected user.');
+        }
+
+        DB::transaction(function () use ($user, $newReferrerId, $newReferrer) {
+            $user->update([
+                'referred_by' => $newReferrerId,
+                'invitation_code' => $newReferrer?->referral_code,
+            ]);
+        });
+
+        $newReferrerLabel = $newReferrer
+            ? ($newReferrer->username ?? $newReferrer->name ?? $newReferrer->phone ?? $newReferrer->email)
+            : 'N/A';
+
+        return redirect()
+            ->route('admin.users.show', $user)
+            ->with('success', 'Referrer updated successfully. New upline: ' . $newReferrerLabel . '. Future level commissions will follow this new referral chain.');
     }
 
     public function addBalance(Request $request, User $user)
@@ -699,5 +761,29 @@ class UserController extends Controller
         ]);
 
         return view('admin.users.tree', compact('user'));
+    }
+
+    /**
+     * Get all descendant IDs (downline) for a user.
+     */
+    private function getDescendantIds(User $user): array
+    {
+        $descendantIds = [];
+        $queue = [(int) $user->id];
+
+        while (!empty($queue)) {
+            $parentId = array_shift($queue);
+            $children = User::where('referred_by', $parentId)->pluck('id')->all();
+
+            foreach ($children as $childId) {
+                $childId = (int) $childId;
+                if (!in_array($childId, $descendantIds, true)) {
+                    $descendantIds[] = $childId;
+                    $queue[] = $childId;
+                }
+            }
+        }
+
+        return $descendantIds;
     }
 }

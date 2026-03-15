@@ -389,7 +389,13 @@
                         </div>
 
                         <div class="col-sm-6 mb-3">
-                            <label class="text-muted mb-1">Referred By</label>
+                            <label class="text-muted mb-1 d-flex align-items-center gap-2">
+                                <span>Referred By</span>
+                                <button type="button" class="btn btn-xs btn-outline-primary py-0 px-2"
+                                    data-bs-toggle="modal" data-bs-target="#changeReferrerModal">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </button>
+                            </label>
                             <p class="mb-0 fw-semibold">
                                 @if($user->referrer)
                                     <a href="{{ route('admin.users.show', $user->referrer) }}">
@@ -913,6 +919,54 @@
         </div>
     </div>
 
+    <!-- Change Referrer Modal -->
+    <div class="modal fade" id="changeReferrerModal" tabindex="-1" aria-labelledby="changeReferrerModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeReferrerModalLabel">Change Referred By</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('admin.users.update-referrer', $user) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            This change affects future referral tree flow. New commissions (Level 1/2/3) will follow the
+                            new upline chain.
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="referred_by" class="form-label">Select New Referrer</label>
+                            <select name="referred_by" id="referred_by" class="default-select form-control wide">
+                                <option value="">No Referrer (N/A)</option>
+                                @foreach($assignableReferrers as $refUser)
+                                    <option value="{{ $refUser->id }}" @selected((int) $user->referred_by === (int) $refUser->id)>
+                                        {{ $refUser->username ?? $refUser->name ?? $refUser->phone ?? $refUser->email }}
+                                        @if($refUser->referral_code)
+                                            (Code: {{ $refUser->referral_code }})
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted d-block mt-2">
+                                Current user and downline users are excluded automatically to prevent tree loop.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Update Referrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Ban User Modal -->
     <div class="modal fade" id="banUserModal" tabindex="-1" aria-labelledby="banUserModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1360,16 +1414,16 @@
         function createManageCryptoRow(index, item = {}) {
             const row = document.createElement('tr');
             row.innerHTML = `
-                                    <td>
-                                        <input type="text" class="form-control form-control-sm" value="${item.name ?? ''}" readonly>
-                                    </td>
-                                    <td>
-                                        <input type="number" step="0.0001" min="0" class="form-control form-control-sm" name="manage_crypto[${index}][quantity]" value="${item.quantity ?? ''}" placeholder="0">
-                                    </td>
-                                    <td>
-                                        <input type="number" step="0.01" min="0" class="form-control form-control-sm" name="manage_crypto[${index}][price]" value="${item.price ?? ''}" placeholder="0.00">
-                                    </td>
-                                `;
+                                        <td>
+                                            <input type="text" class="form-control form-control-sm" value="${item.name ?? ''}" readonly>
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.0001" min="0" class="form-control form-control-sm" name="manage_crypto[${index}][quantity]" value="${item.quantity ?? ''}" placeholder="0">
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" name="manage_crypto[${index}][price]" value="${item.price ?? ''}" placeholder="0.00">
+                                        </td>
+                                    `;
             return row;
         }
 
