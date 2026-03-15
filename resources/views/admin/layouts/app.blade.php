@@ -481,7 +481,7 @@
                                             fill="#36C95F" />
                                     </svg>
                                     <span
-                                        class="badge light text-white bg-primary rounded-circle">{{ $adminNotificationUnread ?? 0 }}</span>
+                                        class="badge light text-white bg-primary rounded-circle notification-badge-count">{{ $adminNotificationUnread ?? 0 }}</span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end shadow"
                                     style="width: 360px; max-width: 92vw;">
@@ -491,12 +491,13 @@
                                             <i class="fas fa-bell me-2"></i>
                                             <span class="fw-semibold">Notifications</span>
                                         </div>
-                                        @if($adminNotificationUnread ?? 0)
-                                            <span class="badge bg-white text-primary">{{ $adminNotificationUnread }}</span>
-                                        @endif
+                                        <span class="badge bg-white text-primary notification-unread-pill"
+                                            @if(($adminNotificationUnread ?? 0) < 1) style="display: none;" @endif>
+                                            {{ $adminNotificationUnread ?? 0 }}
+                                        </span>
                                     </div>
 
-                                    <div class="list-group list-group-flush"
+                                    <div id="notification-list-container" class="list-group list-group-flush"
                                         style="max-height: 380px; overflow-y: auto;">
                                         @if(!empty($adminNotificationLatest) && count($adminNotificationLatest))
                                             @foreach($adminNotificationLatest as $note)
@@ -543,22 +544,22 @@
                                         @endif
                                     </div>
 
-                                    @if(!empty($adminNotificationLatest) && count($adminNotificationLatest))
-                                        <div
-                                            class="px-3 py-2 border-top d-flex align-items-center justify-content-end gap-2">
-                                            <form method="POST" action="{{ route('admin.notifications.read-all') }}"
-                                                class="m-0">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-light text-muted">
-                                                    <i class="fas fa-check me-1"></i>Mark all read
-                                                </button>
-                                            </form>
-                                            <a href="{{ route('admin.notifications.index') }}"
-                                                class="btn btn-sm btn-primary text-white">
-                                                <i class="fas fa-eye me-1"></i>View all
-                                            </a>
-                                        </div>
-                                    @endif
+                                    <div id="notification-footer-actions"
+                                        class="px-3 py-2 border-top d-flex align-items-center justify-content-end gap-2"
+                                        @if(empty($adminNotificationLatest) || !count($adminNotificationLatest))
+                                        style="display: none;" @endif>
+                                        <form method="POST" action="{{ route('admin.notifications.read-all') }}"
+                                            class="m-0">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-light text-muted">
+                                                <i class="fas fa-check me-1"></i>Mark all read
+                                            </button>
+                                        </form>
+                                        <a href="{{ route('admin.notifications.index') }}"
+                                            class="btn btn-sm btn-primary text-white">
+                                            <i class="fas fa-eye me-1"></i>View all
+                                        </a>
+                                    </div>
                                 </div>
                             </li>
                             {{-- <li class="nav-item dropdown notification_dropdown">
@@ -679,6 +680,203 @@
 
     <!-- PHP Flasher -->
     @flasher_render
+
+    <!-- Admin Notification Audio Polling -->
+    <audio id="admin-notification-sound" src="{{ asset('admin/audio/success.mp3') }}" preload="auto"></audio>
+    <script>
+        (function () {
+            const POLL_INTERVAL = 30000; // 30 seconds
+            const CHECK_URL = '{{ route('admin.notifications.check') }}';
+            const audioEl = document.getElementById('admin-notification-sound');
+            const listContainer = document.getElementById('notification-list-container');
+            const footerActions = document.getElementById('notification-footer-actions');
+            const notificationToggle = document.querySelector('.notification_dropdown [data-bs-toggle="dropdown"]');
+
+            // Initialise with the current server-side unread count so we don't
+            // fire the sound on first page load.
+            let lastUnreadCount = {{ $adminNotificationUnread ?? 0 }};
+            let lastNotificationId = null;
+            let audioUnlocked = false;
+            let userInteracted = false;
+            let pendingSound = false;
+            let hasInitialSyncCompleted = false;
+
+            function escapeHtml(value) {
+                return String(value ?? '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function updateUnreadBadges(count) {
+                document.querySelectorAll('.notification-badge-count').forEach(function (el) {
+                    el.textContent = count;
+                });
+
+                document.querySelectorAll('.notification-unread-pill').forEach(function (el) {
+                    if (count > 0) {
+                        el.style.display = '';
+                        el.textContent = count;
+                    } else {
+                        el.style.display = 'none';
+                    }
+                });
+            }
+
+            function renderNotificationList(notifications) {
+                if (!listContainer) return;
+
+                if (!Array.isArray(notifications) || notifications.length === 0) {
+                    listContainer.innerHTML = [
+                        '<div class="text-center py-5">',
+                        '<i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>',
+                        '<p class="text-muted mb-0">No notifications yet</p>',
+                        '</div>'
+                    ].join('');
+
+                    if (footerActions) {
+                        footerActions.style.display = 'none';
+                    }
+                    return;
+                }
+
+                const html = notifications.map(function (note) {
+                    const isRead = !!note.is_read;
+                    const iconBg = isRead ? 'bg-light' : 'bg-primary';
+                    const iconColor = isRead ? 'text-muted' : 'text-white';
+                    const titleColor = isRead ? 'text-muted' : 'text-dark';
+                    const unreadDot = isRead
+                        ? ''
+                        : '<span class="badge bg-danger rounded-circle p-1" style="width: 10px; height: 10px;"></span>';
+
+                    return [
+                        '<a href="', escapeHtml(note.go_url),
+                        '" class="list-group-item list-group-item-action p-3 border-0 d-flex align-items-start gap-3" style="white-space: normal;">',
+                        '<div class="flex-shrink-0">',
+                        '<span class="d-inline-flex align-items-center justify-content-center rounded-circle ', iconBg,
+                        '" style="width: 38px; height: 38px;">',
+                        '<i class="fas fa-', escapeHtml(note.icon), ' ', iconColor, '"></i>',
+                        '</span>',
+                        '</div>',
+                        '<div class="flex-grow-1 min-w-0">',
+                        '<div class="d-flex justify-content-between align-items-start">',
+                        '<h6 class="mb-1 ', titleColor, '" style="font-size: 14px; font-weight: 700;">', escapeHtml(note.title), '</h6>',
+                        unreadDot,
+                        '</div>',
+                        '<p class="mb-2 text-secondary" style="font-size: 13px; line-height: 1.45;">', escapeHtml(note.message), '</p>',
+                        '<div class="d-flex justify-content-between align-items-center">',
+                        '<small class="text-muted" style="font-size: 11px;"><i class="fas fa-user me-1"></i>', escapeHtml(note.user_name), '</small>',
+                        '<small class="text-muted" style="font-size: 11px;"><i class="far fa-clock me-1"></i>', escapeHtml(note.time_ago), '</small>',
+                        '</div>',
+                        '</div>',
+                        '</a>'
+                    ].join('');
+                }).join('');
+
+                listContainer.innerHTML = html;
+                if (footerActions) {
+                    footerActions.style.display = '';
+                }
+            }
+
+            // Browsers block autoplay until the user has interacted with the page.
+            // We capture the first interaction to pre-unlock the audio element.
+            function unlockAudio() {
+                userInteracted = true;
+                if (audioUnlocked || !audioEl) return;
+
+                const previousMuted = audioEl.muted;
+                audioEl.muted = true;
+
+                audioEl.play().then(() => {
+                    audioEl.pause();
+                    audioEl.currentTime = 0;
+                    audioEl.muted = previousMuted;
+                    audioUnlocked = true;
+
+                    if (pendingSound) {
+                        pendingSound = false;
+                        playNotificationSound();
+                    }
+                }).catch(() => {
+                    audioEl.muted = previousMuted;
+                });
+            }
+            document.addEventListener('click', unlockAudio, { once: true });
+            document.addEventListener('keydown', unlockAudio, { once: true });
+            document.addEventListener('touchstart', unlockAudio, { once: true });
+
+            function playNotificationSound() {
+                if (!audioEl) return;
+                audioEl.currentTime = 0;
+                audioEl.play().then(() => {
+                    audioUnlocked = true;
+                    pendingSound = false;
+                }).catch(() => {
+                    // Autoplay may be blocked before first interaction.
+                    // Queue a pending sound; it will play after unlock.
+                    if (!userInteracted) {
+                        pendingSound = true;
+                        return;
+                    }
+
+                    // If already interacted, retry once quickly.
+                    setTimeout(function () {
+                        audioEl.currentTime = 0;
+                        audioEl.play().then(() => {
+                            audioUnlocked = true;
+                            pendingSound = false;
+                        }).catch(() => { });
+                    }, 120);
+                });
+            }
+
+            function pollNotifications() {
+                fetch(CHECK_URL, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin'
+                })
+                    .then(function (res) {
+                        if (!res.ok) return null;
+                        return res.json();
+                    })
+                    .then(function (data) {
+                        if (!data) return;
+                        const newCount = parseInt(data.unread_count, 10) || 0;
+                        const latestNotificationId = data.latest_notification_id || null;
+
+                        updateUnreadBadges(newCount);
+                        renderNotificationList(data.notifications || []);
+
+                        const hasNewNotification = hasInitialSyncCompleted
+                            && latestNotificationId
+                            && latestNotificationId !== lastNotificationId;
+
+                        if (hasNewNotification || newCount > lastUnreadCount) {
+                            playNotificationSound();
+                        }
+
+                        hasInitialSyncCompleted = true;
+                        lastNotificationId = latestNotificationId;
+                        lastUnreadCount = newCount;
+                    })
+                    .catch(function () { });
+            }
+
+            // Refresh instantly when opening the dropdown so UI feels live.
+            if (notificationToggle) {
+                notificationToggle.addEventListener('click', function () {
+                    pollNotifications();
+                });
+            }
+
+            // Keep it in sync if page stays open for long.
+            pollNotifications();
+            setInterval(pollNotifications, POLL_INTERVAL);
+        })();
+    </script>
 </body>
 
 </html>

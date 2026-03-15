@@ -225,6 +225,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Notifications (admin)
         Route::get('/notifications', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
+        Route::get('/notifications/check', [\App\Http\Controllers\Admin\NotificationController::class, 'checkUnread'])->name('notifications.check');
         Route::get('/notifications/{notification}/go', [\App\Http\Controllers\Admin\NotificationController::class, 'go'])->name('notifications.go');
         Route::post('/notifications/read-all', [\App\Http\Controllers\Admin\NotificationController::class, 'markAllRead'])->name('notifications.read-all');
         Route::post('/notifications/{notification}/read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->name('notifications.read');
