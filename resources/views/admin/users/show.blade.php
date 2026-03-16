@@ -384,7 +384,7 @@
                         </div>
 
                         <div class="col-sm-6 mb-3">
-                            <label class="text-muted mb-1">Referral </label>
+                            <label class="text-muted mb-1">Referral Code</label>
                             <p class="mb-0 fw-semibold">{{ $user->referral_code }}</p>
                         </div>
 
@@ -1414,16 +1414,16 @@
         function createManageCryptoRow(index, item = {}) {
             const row = document.createElement('tr');
             row.innerHTML = `
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm" value="${item.name ?? ''}" readonly>
-                                        </td>
-                                        <td>
-                                            <input type="number" step="0.0001" min="0" class="form-control form-control-sm" name="manage_crypto[${index}][quantity]" value="${item.quantity ?? ''}" placeholder="0">
-                                        </td>
-                                        <td>
-                                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" name="manage_crypto[${index}][price]" value="${item.price ?? ''}" placeholder="0.00">
-                                        </td>
-                                    `;
+                                            <td>
+                                                <input type="text" class="form-control form-control-sm" value="${item.name ?? ''}" readonly>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.0001" min="0" class="form-control form-control-sm" name="manage_crypto[${index}][quantity]" value="${item.quantity ?? ''}" placeholder="0">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" min="0" class="form-control form-control-sm" name="manage_crypto[${index}][price]" value="${item.price ?? ''}" placeholder="0.00">
+                                            </td>
+                                        `;
             return row;
         }
 
