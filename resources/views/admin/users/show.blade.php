@@ -384,7 +384,7 @@
                         </div>
 
                         <div class="col-sm-6 mb-3">
-                            <label class="text-muted mb-1">Referral Code</label>
+                            <label class="text-muted mb-1">Referral </label>
                             <p class="mb-0 fw-semibold">{{ $user->referral_code }}</p>
                         </div>
 
