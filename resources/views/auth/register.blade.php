@@ -20,7 +20,7 @@
         }
 
         #phone {
-            padding-left: 118px !important;
+            padding-left: 60px !important;
         }
     </style>
 @endpush
@@ -264,7 +264,15 @@
             }
 
             const cleanDialCode = String(dialCode || '').replace(/\D/g, '');
-            const cleanSubscriber = String(subscriberNumber || '').replace(/\D/g, '');
+            let cleanSubscriber = String(subscriberNumber || '').replace(/\D/g, '');
+
+            // Prevent duplicated country prefix when switching countries repeatedly.
+            if (cleanDialCode && cleanSubscriber.startsWith(`00${cleanDialCode}`)) {
+                cleanSubscriber = cleanSubscriber.slice(cleanDialCode.length + 2);
+            } else if (cleanDialCode && cleanSubscriber.startsWith(cleanDialCode)) {
+                cleanSubscriber = cleanSubscriber.slice(cleanDialCode.length);
+            }
+
             phoneInput.value = cleanDialCode ? `+${cleanDialCode}${cleanSubscriber}` : cleanSubscriber;
         }
 
@@ -285,7 +293,7 @@
                 preferredCountries: ['bd', 'in', 'pk', 'my', 'sa', 'ae', 'uk', 'us'],
                 separateDialCode: false,
                 nationalMode: false,
-                autoInsertDialCode: true,
+                autoInsertDialCode: false,
                 autoPlaceholder: 'aggressive',
                 formatOnDisplay: true,
                 strictMode: false,
