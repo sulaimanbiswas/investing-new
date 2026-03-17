@@ -349,15 +349,27 @@
                         phoneCountryInput.value = (selected.iso2 || '').toLowerCase();
                     }
 
-                    // Validate against selected country rules.
-                    if (!phoneIti.isValidNumber()) {
+                    // Re-sync using the typed number to avoid country dropdown mismatch false negatives.
+                    phoneIti.setNumber(normalized);
+                    syncCountryMeta();
+
+                    const e164Like = normalized.replace(/\s+/g, '');
+                    const looksLikeInternational = /^\+[1-9]\d{7,14}$/.test(e164Like);
+                    const pluginValid = typeof phoneIti.isValidNumber === 'function'
+                        ? phoneIti.isValidNumber()
+                        : false;
+                    const pluginPossible = typeof phoneIti.isPossibleNumber === 'function'
+                        ? phoneIti.isPossibleNumber()
+                        : false;
+
+                    if (!pluginValid && !pluginPossible && !looksLikeInternational) {
                         e.preventDefault();
-                        phoneInput.setCustomValidity('Please enter a valid phone number for the selected country.');
+                        phoneInput.setCustomValidity('Please enter a valid phone number including country code.');
                         phoneInput.reportValidity();
                         return;
                     }
 
-                    normalized = phoneIti.getNumber(); // E.164 format, e.g. +8801...
+                    normalized = phoneIti.getNumber() || normalized; // E.164 format, e.g. +8801...
                 }
 
                 const digitsOnly = normalized.replace(/\D/g, '');
