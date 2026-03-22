@@ -172,6 +172,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all order requests for this user.
+     */
+    public function orderRequests()
+    {
+        return $this->hasMany(OrderRequest::class);
+    }
+
+    /**
      * Per-gateway wallet addresses.
      */
     public function walletAddresses()

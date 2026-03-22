@@ -20,21 +20,47 @@
         @if($hasActiveOrder)
             <div class="bg-gradient-to-br from-green-400 via-green-500 to-emerald-600 rounded-xl shadow-xl p-2">
                 <div class="flex items-center gap-4 text-center">
-                    
                     <div class="flex-1">
                         <p class="text-white text-sm font-medium opacity-90 mb-1">Current Boost</p>
                         <p class="text-white text-xl font-bold">Order Available</p>
                     </div>
-                                    </div>
+                </div>
             </div>
         @else
-            <div class="bg-gradient-to-br from-slate-500 via-slate-600 to-gray-700 rounded-xl shadow-lg p-2">
-                <div class="flex items-center gap-4">
-                    
-                    <div class="flex-1 text-center">
+            <div class="bg-gradient-to-br from-slate-500 via-slate-600 to-gray-700 rounded-xl shadow-lg p-4">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <div class="text-center sm:text-left flex-1 min-w-[180px]">
                         <p class="text-white text-sm font-medium opacity-90 mb-1">Current Boost</p>
-                        <p class="text-white text-xl font-bold">No Order</p>
+                        <p class="text-white text-xl font-bold">
+                            @if($hasPendingOrderRequest)
+                                Requested
+                            @else
+                                No Order
+                            @endif
+                        </p>
+                        <p class="text-white/80 text-xs mt-1">Balance: {{ number_format((float) $user->balance, 2) }} USDT</p>
                     </div>
+
+                    @if($hasPendingOrderRequest)
+                        <button type="button"
+                            class="px-5 py-2.5 rounded-lg bg-amber-400/20 border border-amber-300/40 text-amber-100 text-sm font-semibold cursor-not-allowed"
+                            disabled>
+                            <i class="fas fa-clock mr-1"></i> Requested
+                        </button>
+                    @elseif((float) $user->balance < 20)
+                        <a href="{{ route('deposit') }}"
+                            class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gradient-to-r from-rose-500 to-pink-600 text-white text-sm font-semibold shadow-lg hover:shadow-xl transition-all">
+                            <i class="fas fa-wallet mr-2"></i> Deposit
+                        </a>
+                    @else
+                        <form action="{{ route('menu.request-order') }}" method="POST" class="inline-block">
+                            @csrf
+                            <button type="submit"
+                                class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 text-white text-sm font-semibold shadow-lg hover:shadow-xl transition-all">
+                                <i class="fas fa-paper-plane mr-2"></i> Request Order
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
         @endif

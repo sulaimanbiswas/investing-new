@@ -57,6 +57,20 @@
                 </a>
             </li>
 
+            <li>
+                <a href="{{ route('admin.order-requests.index') }}" class="ai-icon" aria-expanded="false">
+                    <i class="flaticon-381-file"></i>
+                    <span class="nav-text">Order Requests
+                        @php
+                            $pendingOrderRequests = \App\Models\OrderRequest::where('status', 'pending')->count();
+                        @endphp
+                        @if($pendingOrderRequests > 0)
+                            <span class="badge bg-danger badge-sm ms-2">{{ $pendingOrderRequests }}</span>
+                        @endif
+                    </span>
+                </a>
+            </li>
+
             @if((int) auth('admin')->id() === 1)
                 <li>
                     <a href="{{ route('admin.products.index') }}" class="ai-icon" aria-expanded="false">

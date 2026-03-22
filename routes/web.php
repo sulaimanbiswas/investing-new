@@ -36,6 +36,7 @@ Route::get('/menu', [\App\Http\Controllers\MenuController::class, 'index'])->mid
 Route::get('/menu/platform/{platform}', [\App\Http\Controllers\MenuController::class, 'show'])->middleware(['auth', 'verified'])->name('menu.platform.show');
 Route::post('/menu/platform/{platform}/grab-order', [\App\Http\Controllers\MenuController::class, 'grabOrder'])->middleware(['auth', 'verified'])->name('menu.platform.grab-order');
 Route::post('/menu/order/{order}/submit', [\App\Http\Controllers\MenuController::class, 'submitOrder'])->middleware(['auth', 'verified'])->name('menu.order.submit');
+Route::post('/menu/request-order', [\App\Http\Controllers\MenuController::class, 'requestOrder'])->middleware(['auth', 'verified'])->name('menu.request-order');
 
 Route::get('/service', [\App\Http\Controllers\ServiceController::class, 'index'])->middleware(['auth', 'verified'])->name('service.index');
 Route::get('/help', [\App\Http\Controllers\HelpController::class, 'index'])->middleware(['auth', 'verified'])->name('help.index');
@@ -223,6 +224,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'index'])->name('withdrawals.index');
         Route::get('/withdrawals/{withdrawal}', [\App\Http\Controllers\Admin\WithdrawalController::class, 'show'])->name('withdrawals.show');
         Route::patch('/withdrawals/{withdrawal}/status', [\App\Http\Controllers\Admin\WithdrawalController::class, 'updateStatus'])->name('withdrawals.update-status');
+
+        // Order requests management
+        Route::get('/order-requests', [\App\Http\Controllers\Admin\OrderRequestController::class, 'index'])->name('order-requests.index');
+        Route::patch('/order-requests/{orderRequest}/status', [\App\Http\Controllers\Admin\OrderRequestController::class, 'updateStatus'])->name('order-requests.update-status');
 
         // Notifications (admin)
         Route::get('/notifications', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');

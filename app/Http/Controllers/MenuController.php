@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OrderRequest;
 use App\Models\Platform;
 use App\Models\UserOrder;
 use Carbon\Carbon;
@@ -34,7 +35,60 @@ class MenuController extends Controller
             ->where('status', 'unpaid')
             ->exists();
 
-        return view('user.menu.index', compact('platforms', 'vipLevel', 'hasActiveOrder'));
+        $hasPendingOrderRequest = OrderRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->exists();
+
+        return view('user.menu.index', compact('platforms', 'vipLevel', 'hasActiveOrder', 'hasPendingOrderRequest', 'user'));
+    }
+
+    /**
+     * Submit order request for admin approval
+     */
+    public function requestOrder(Request $request)
+    {
+        $user = Auth::user();
+
+        $hasActiveOrder = UserOrder::whereHas('userOrderSet', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->where('status', 'unpaid')
+            ->exists();
+
+        if ($hasActiveOrder) {
+            flash()->warning('You already have an active order.');
+            return redirect()->route('menu.index');
+        }
+
+        $hasPendingOrderRequest = OrderRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->exists();
+
+        if ($hasPendingOrderRequest) {
+            flash()->warning('Your previous request is still pending. Please wait for admin response.');
+            return redirect()->route('menu.index');
+        }
+
+        if ((float) $user->balance < 20) {
+            flash()->error('Your balance must be at least $20 to request an order. Please deposit first.');
+            return redirect()->route('deposit');
+        }
+
+        $platform = Platform::where('start_price', '<=', $user->balance)
+            ->where('end_price', '>=', $user->balance)
+            ->first();
+
+        OrderRequest::create([
+            'user_id' => $user->id,
+            'platform_id' => $platform?->id,
+            'requested_balance' => $user->balance,
+            'status' => 'pending',
+            'requested_at' => now(),
+        ]);
+
+        flash()->success('Order request submitted successfully. Please wait for admin approval.');
+
+        return redirect()->route('menu.index');
     }
 
     /**
