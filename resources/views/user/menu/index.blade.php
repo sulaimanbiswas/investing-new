@@ -35,7 +35,7 @@
                             @if($hasPendingOrderRequest)
                                 Requested
                             @else
-                                No 
+                                No Order
                             @endif
                         </p>
                         <p class="text-white/80 text-xs mt-1">Balance: {{ number_format((float) $user->balance, 2) }} USDT</p>
