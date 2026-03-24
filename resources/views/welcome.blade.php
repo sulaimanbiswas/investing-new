@@ -231,8 +231,7 @@
             <div class="flex justify-between items-center h-16 md:h-20">
                 <!-- Logo -->
                 <a href="/" class="flex items-center space-x-2">
-                    <div
-                        class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
+                    <div class="w-10 h-10  rounded-lg flex items-center justify-center">
                         {{-- <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
