@@ -25,20 +25,20 @@
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">{{ $platformRule->name }}</h1>
 
             <!-- Meta Info -->
-            <div class="flex flex-wrap items-center gap-4 mb-6 pb-6 border-b border-gray-100">
+            {{-- <div class="flex flex-wrap items-center gap-4 mb-6 pb-6 border-b border-gray-100">
                 @if($platformRule->created_at)
-                    <div class="flex items-center gap-2 text-sm text-gray-500">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Published {{ $platformRule->created_at->format('M d, Y') }}</span>
-                    </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Published {{ $platformRule->created_at->format('M d, Y') }}</span>
+                </div>
                 @endif
                 @if($platformRule->updated_at && $platformRule->updated_at != $platformRule->created_at)
-                    <div class="flex items-center gap-2 text-sm text-gray-500">
-                        <i class="fas fa-clock"></i>
-                        <span>Updated {{ $platformRule->updated_at->format('M d, Y') }}</span>
-                    </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500">
+                    <i class="fas fa-clock"></i>
+                    <span>Updated {{ $platformRule->updated_at->format('M d, Y') }}</span>
+                </div>
                 @endif
-            </div>
+            </div> --}}
 
             <!-- Description Content -->
             <div class="prose prose-sm sm:prose max-w-none text-gray-600">

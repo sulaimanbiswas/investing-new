@@ -34,12 +34,12 @@
                     </div>
 
                     <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                        @if($rule->created_at)
-                            <div class="flex items-center gap-2 text-sm text-gray-500">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>{{ $rule->created_at->format('M d, Y') }}</span>
-                            </div>
-                        @endif
+                        {{-- @if($rule->created_at)
+                        <div class="flex items-center gap-2 text-sm text-gray-500">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>{{ $rule->created_at->format('M d, Y') }}</span>
+                        </div>
+                        @endif --}}
                         <span class="text-sm text-indigo-600 font-medium">Read More <i
                                 class="fas fa-arrow-right ml-1"></i></span>
                     </div>
