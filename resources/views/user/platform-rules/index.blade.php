@@ -9,7 +9,7 @@
             class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
             <i class="fas fa-arrow-left text-gray-700"></i>
         </a>
-        <h1 class="text-2xl font-bold text-gray-800">Platform </h1>
+        <h1 class="text-2xl font-bold text-gray-800">Platform Guidelines</h1>
     </div>
 
     <!-- Guidelines Grid -->
