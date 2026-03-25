@@ -19,9 +19,9 @@
             padding-bottom: 14px;
         }
 
-        /* .order-requests-user {
-                min-width: 210px;
-            } */
+        .order-requests-user {
+            min-width: 210px;
+        }
 
         .order-requests-platform {
             min-width: 150px;
@@ -255,7 +255,7 @@
                                         </a>
 
                                         @if($orderRequest->status === 'pending')
-                                            <form method="POST"
+                                            {{-- <form method="POST"
                                                 action="{{ route('admin.order-requests.update-status', $orderRequest) }}"
                                                 class="d-inline">
                                                 @csrf
@@ -266,7 +266,7 @@
                                                     <i class="fa fa-check"></i>
                                                     Accept
                                                 </button>
-                                            </form>
+                                            </form> --}}
 
                                             <form method="POST"
                                                 action="{{ route('admin.order-requests.update-status', $orderRequest) }}"
