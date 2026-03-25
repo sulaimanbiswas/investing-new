@@ -3,6 +3,59 @@
 @section('title', 'Admin | Order Requests')
 
 @section('content')
+    <style>
+        .order-requests-table thead th {
+            font-size: 11px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #6c757d;
+            white-space: nowrap;
+            border-bottom-width: 1px;
+        }
+
+        .order-requests-table tbody td {
+            vertical-align: middle;
+            padding-top: 14px;
+            padding-bottom: 14px;
+        }
+
+        .order-requests-user {
+            min-width: 210px;
+        }
+
+        .order-requests-platform {
+            min-width: 150px;
+        }
+
+        .request-id-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 24px;
+            padding: 0 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #f5f6fa;
+            color: #3f4254;
+        }
+
+        .actions-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .filter-card {
+            border: 1px solid #eceef3;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+            background: #fcfcfe;
+        }
+    </style>
+
     <div class="page-titles">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
@@ -66,32 +119,45 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="card-title mb-0">Order Request List</h4>
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white d-flex flex-wrap gap-2 justify-content-between align-items-center border-bottom">
+            <div>
+                <h4 class="card-title mb-0">Order Request List</h4>
+                <small class="text-muted">Manage request approval flow from one place</small>
+            </div>
+            <span class="badge badge-light text-dark px-3 py-2">Total: {{ number_format($orderRequests->total()) }}</span>
         </div>
         <div class="card-body">
-            <form method="GET" class="row mb-3 g-2">
-                <div class="col-md-4">
-                    <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
-                        placeholder="Search by user/platform...">
-                </div>
-                <div class="col-md-3">
-                    <select name="status" class="default-select form-control form-control-sm wide">
-                        <option value="">All Status</option>
-                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="accepted" {{ request('status') === 'accepted' ? 'selected' : '' }}>Accepted</option>
-                        <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                    </select>
-                </div>
-                <div class="col-md-2 d-grid">
-                    <button class="btn btn-secondary btn-sm" type="submit">Filter</button>
+            <form method="GET" class="filter-card">
+                <div class="row g-2 align-items-end">
+                    <div class="col-xl-5 col-md-6">
+                        <label class="form-label mb-1">Search</label>
+                        <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
+                            placeholder="Search by user, username, email or platform...">
+                    </div>
+                    <div class="col-xl-3 col-md-4">
+                        <label class="form-label mb-1">Status</label>
+                        <select name="status" class="default-select form-control form-control-sm wide">
+                            <option value="">All Status</option>
+                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="accepted" {{ request('status') === 'accepted' ? 'selected' : '' }}>Accepted</option>
+                            <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                        </select>
+                    </div>
+                    <div class="col-xl-4 col-md-12 d-flex flex-wrap gap-2">
+                        <button class="btn btn-primary btn-sm" type="submit">
+                            <i class="fa fa-search me-1"></i> Apply Filter
+                        </button>
+                        <a href="{{ route('admin.order-requests.index') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-rotate-left me-1"></i> Reset
+                        </a>
+                    </div>
                 </div>
             </form>
 
-            <div class="table-responsive recentOrderTable">
-                <table class="table verticle-middle table-responsive-md">
-                    <thead>
+            <div class="table-responsive recentOrderTable border rounded">
+                <table class="table table-hover table-striped align-middle mb-0 order-requests-table">
+                    <thead class="bg-light">
                         <tr>
                             <th>#</th>
                             <th>User</th>
@@ -106,32 +172,48 @@
                     <tbody>
                         @forelse($orderRequests as $orderRequest)
                             <tr>
-                                <td>{{ $loop->iteration + ($orderRequests->currentPage() - 1) * $orderRequests->perPage() }}</td>
                                 <td>
-                                    <strong>{{ $orderRequest->user->name }}</strong><br>
+                                    <span class="request-id-chip">
+                                        {{ $loop->iteration + ($orderRequests->currentPage() - 1) * $orderRequests->perPage() }}
+                                    </span>
+                                </td>
+                                <td class="order-requests-user">
+                                    <div class="fw-semibold text-dark">{{ $orderRequest->user->name }}</div>
                                     <small class="text-muted">{{ '@' . ($orderRequest->user->username ?? $orderRequest->user->email) }}</small>
                                 </td>
-                                <td>{{ $orderRequest->platform->name ?? 'N/A' }}</td>
-                                <td><strong>${{ number_format((float) $orderRequest->requested_balance, 2) }}</strong></td>
-                                <td>
-                                    @if($orderRequest->status === 'pending')
-                                        <span class="badge badge-warning">Pending</span>
-                                    @elseif($orderRequest->status === 'accepted')
-                                        <span class="badge badge-success">Accepted</span>
+                                <td class="order-requests-platform">
+                                    @if($orderRequest->platform)
+                                        <span class="badge badge-light text-dark border">{{ $orderRequest->platform->name }}</span>
                                     @else
-                                        <span class="badge badge-danger">Rejected</span>
+                                        <span class="text-muted">N/A</span>
                                     @endif
                                 </td>
-                                <td>{{ optional($orderRequest->requested_at)->format('d M Y h:i A') }}</td>
+                                <td>
+                                    <strong class="text-primary">${{ number_format((float) $orderRequest->requested_balance, 2) }}</strong>
+                                </td>
+                                <td>
+                                    @if($orderRequest->status === 'pending')
+                                        <span class="badge badge-warning light">Pending</span>
+                                    @elseif($orderRequest->status === 'accepted')
+                                        <span class="badge badge-success light">Accepted</span>
+                                    @else
+                                        <span class="badge badge-danger light">Rejected</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="text-dark">{{ optional($orderRequest->requested_at)->format('d M Y') }}</div>
+                                    <small class="text-muted">{{ optional($orderRequest->requested_at)->format('h:i A') }}</small>
+                                </td>
                                 <td>
                                     @if($orderRequest->processedBy)
-                                        <span class="text-dark">{{ $orderRequest->processedBy->name }}</span>
+                                        <div class="text-dark">{{ $orderRequest->processedBy->name }}</div>
+                                        <small class="text-muted">{{ optional($orderRequest->processed_at)->format('d M Y h:i A') }}</small>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="d-flex flex-wrap gap-2">
+                                    <div class="actions-stack">
                                         <a href="{{ route('admin.users.show', $orderRequest->user_id) }}" class="btn btn-info btn-xs light">
                                             View User
                                         </a>
@@ -155,20 +237,28 @@
                                     </div>
 
                                     @if($orderRequest->admin_note)
-                                        <p class="mb-0 mt-2 text-muted small">{{ $orderRequest->admin_note }}</p>
+                                        <p class="mb-0 mt-2 text-muted small">
+                                            <i class="fa fa-note-sticky me-1"></i>{{ $orderRequest->admin_note }}
+                                        </p>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center">No order requests found</td>
+                                <td colspan="8" class="text-center py-5">
+                                    <div class="mb-2">
+                                        <i class="fa fa-inbox fs-24 text-muted"></i>
+                                    </div>
+                                    <div class="fw-semibold">No order requests found</div>
+                                    <small class="text-muted">Try changing search/filter and check again.</small>
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <div class="mt-3">
+            <div class="mt-3 d-flex justify-content-end">
                 {{ $orderRequests->links() }}
             </div>
         </div>
