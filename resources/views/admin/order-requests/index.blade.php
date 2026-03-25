@@ -44,7 +44,22 @@
         .actions-stack {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 4px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.1;
+        }
+
+        .action-btn i {
+            font-size: 10px;
         }
 
         .filter-card {
@@ -234,8 +249,9 @@
                                 <td>
                                     <div class="actions-stack">
                                         <a href="{{ route('admin.users.show', $orderRequest->user_id) }}"
-                                            class="btn btn-info btn-xs light">
-                                            View User
+                                            class="btn btn-info btn-xs light action-btn" title="View User">
+                                            <i class="fa fa-user"></i>
+                                            View
                                         </a>
 
                                         @if($orderRequest->status === 'pending')
@@ -245,7 +261,11 @@
                                                 @csrf
                                                 @method('PATCH')
                                                 <input type="hidden" name="status" value="accepted">
-                                                <button type="submit" class="btn btn-success btn-xs">Accept</button>
+                                                <button type="submit" class="btn btn-success btn-xs action-btn"
+                                                    title="Accept Request">
+                                                    <i class="fa fa-check"></i>
+                                                    Accept
+                                                </button>
                                             </form>
 
                                             <form method="POST"
@@ -255,7 +275,11 @@
                                                 @method('PATCH')
                                                 <input type="hidden" name="status" value="rejected">
                                                 <input type="hidden" name="admin_note" value="Request rejected by admin">
-                                                <button type="submit" class="btn btn-danger btn-xs">Reject</button>
+                                                <button type="submit" class="btn btn-danger btn-xs action-btn"
+                                                    title="Reject Request">
+                                                    <i class="fa fa-times"></i>
+                                                    Reject
+                                                </button>
                                             </form>
                                         @endif
                                     </div>
