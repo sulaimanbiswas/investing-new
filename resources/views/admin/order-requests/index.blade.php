@@ -132,7 +132,8 @@
                 <div class="row g-2 align-items-end">
                     <div class="col-xl-5 col-md-6">
                         <label class="form-label mb-1">Search</label>
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm"
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            class="form-control form-control-sm"
                             placeholder="Search by user, username, email or platform...">
                     </div>
                     <div class="col-xl-3 col-md-4">
@@ -140,8 +141,10 @@
                         <select name="status" class="default-select form-control form-control-sm wide">
                             <option value="">All Status</option>
                             <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="accepted" {{ request('status') === 'accepted' ? 'selected' : '' }}>Accepted</option>
-                            <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                            <option value="accepted" {{ request('status') === 'accepted' ? 'selected' : '' }}>Accepted
+                            </option>
+                            <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected
+                            </option>
                         </select>
                     </div>
                     <div class="col-xl-4 col-md-12 d-flex flex-wrap gap-2">
@@ -166,6 +169,9 @@
                             <th>Status</th>
                             <th>Requested At</th>
                             <th>Processed By</th>
+                            <th>
+                                Description
+                            </th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -179,7 +185,8 @@
                                 </td>
                                 <td class="order-requests-user">
                                     <div class="fw-semibold text-dark">{{ $orderRequest->user->name }}</div>
-                                    <small class="text-muted">{{ '@' . ($orderRequest->user->username ?? $orderRequest->user->email) }}</small>
+                                    <small
+                                        class="text-muted">{{ '@' . ($orderRequest->user->username ?? $orderRequest->user->email) }}</small>
                                 </td>
                                 <td class="order-requests-platform">
                                     @if($orderRequest->platform)
@@ -189,7 +196,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <strong class="text-primary">${{ number_format((float) $orderRequest->requested_balance, 2) }}</strong>
+                                    <strong
+                                        class="text-primary">${{ number_format((float) $orderRequest->requested_balance, 2) }}</strong>
                                 </td>
                                 <td>
                                     @if($orderRequest->status === 'pending')
@@ -202,31 +210,47 @@
                                 </td>
                                 <td>
                                     <div class="text-dark">{{ optional($orderRequest->requested_at)->format('d M Y') }}</div>
-                                    <small class="text-muted">{{ optional($orderRequest->requested_at)->format('h:i A') }}</small>
+                                    <small
+                                        class="text-muted">{{ optional($orderRequest->requested_at)->format('h:i A') }}</small>
                                 </td>
                                 <td>
                                     @if($orderRequest->processedBy)
                                         <div class="text-dark">{{ $orderRequest->processedBy->name }}</div>
-                                        <small class="text-muted">{{ optional($orderRequest->processed_at)->format('d M Y h:i A') }}</small>
+                                        <small
+                                            class="text-muted">{{ optional($orderRequest->processed_at)->format('d M Y h:i A') }}</small>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($orderRequest->admin_note)
+                                        <p class="mb-0 mt-2 text-muted small">
+                                            </i>{{ $orderRequest->admin_note }}
+                                        </p>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
                                 <td>
                                     <div class="actions-stack">
-                                        <a href="{{ route('admin.users.show', $orderRequest->user_id) }}" class="btn btn-info btn-xs light">
+                                        <a href="{{ route('admin.users.show', $orderRequest->user_id) }}"
+                                            class="btn btn-info btn-xs light">
                                             View User
                                         </a>
 
                                         @if($orderRequest->status === 'pending')
-                                            <form method="POST" action="{{ route('admin.order-requests.update-status', $orderRequest) }}" class="d-inline">
+                                            <form method="POST"
+                                                action="{{ route('admin.order-requests.update-status', $orderRequest) }}"
+                                                class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <input type="hidden" name="status" value="accepted">
                                                 <button type="submit" class="btn btn-success btn-xs">Accept</button>
                                             </form>
 
-                                            <form method="POST" action="{{ route('admin.order-requests.update-status', $orderRequest) }}" class="d-inline">
+                                            <form method="POST"
+                                                action="{{ route('admin.order-requests.update-status', $orderRequest) }}"
+                                                class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <input type="hidden" name="status" value="rejected">
@@ -236,11 +260,7 @@
                                         @endif
                                     </div>
 
-                                    @if($orderRequest->admin_note)
-                                        <p class="mb-0 mt-2 text-muted small">
-                                            <i class="fa fa-note-sticky me-1"></i>{{ $orderRequest->admin_note }}
-                                        </p>
-                                    @endif
+
                                 </td>
                             </tr>
                         @empty
