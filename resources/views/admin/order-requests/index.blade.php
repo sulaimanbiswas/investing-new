@@ -19,9 +19,9 @@
             padding-bottom: 14px;
         }
 
-        .order-requests-user {
-            min-width: 210px;
-        }
+        /* .order-requests-user {
+                min-width: 210px;
+            } */
 
         .order-requests-platform {
             min-width: 150px;
