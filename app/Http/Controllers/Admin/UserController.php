@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\OrderRequest;
 use App\Models\User;
 use App\Models\OrderSet;
 use App\Models\UserOrderSet;
@@ -368,6 +369,16 @@ class UserController extends Controller
 
                 $ordersCreated++;
             }
+
+            // If user has pending order requests, mark them as accepted after successful order set assignment.
+            OrderRequest::where('user_id', $user->id)
+                ->where('status', 'pending')
+                ->update([
+                    'status' => 'accepted',
+                    'admin_note' => 'Automatically accepted when order set was assigned by admin.',
+                    'processed_by' => auth('admin')->id() ?? Auth::id(),
+                    'processed_at' => now(),
+                ]);
 
             DB::commit();
 
