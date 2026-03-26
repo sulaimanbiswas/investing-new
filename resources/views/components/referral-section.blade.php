@@ -85,6 +85,10 @@
                 </div>
                 <div class="space-y-2 max-h-60 overflow-y-auto">
                     @foreach(auth()->user()->referrals()->latest()->take(5)->get() as $referral)
+                        @php
+                            $depositAmount = (float) ($referral->deposits()->where('status', 'approved')->sum('amount') ?? 0);
+                            $withdrawAmount = (float) ($referral->withdrawals()->where('status', 'approved')->sum('amount') ?? 0);
+                        @endphp
                         <div class="bg-white/10 rounded-lg p-3 flex items-center justify-between text-sm">
                             <div class="flex items-center gap-3">
                                 <div
@@ -93,10 +97,13 @@
                                 </div>
                                 <div>
                                     <div class="font-semibold text-sm sm:text-base">{{ $referral->name }}</div>
-                                    <div class="text-xs text-indigo-200">{{ "@" . $referral->username }}</div>
+                                    <div class="text-xs text-indigo-200">{{ $referral->created_at->format('M d, Y') }}</div>
                                 </div>
                             </div>
-                            <div class="text-xs text-indigo-200">{{ $referral->created_at->diffForHumans() }}</div>
+                            <div class="text-right leading-tight">
+                                <div class="text-xs text-indigo-200">Deposit: ${{ number_format($depositAmount, 2) }}</div>
+                                <div class="text-xs text-indigo-200">Withdraw: ${{ number_format($withdrawAmount, 2) }}</div>
+                            </div>
                         </div>
                     @endforeach
                 </div>
