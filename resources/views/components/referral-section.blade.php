@@ -4,35 +4,35 @@
         <!-- Header -->
         <div class="flex items-center gap-3 mb-4">
             <i class="fas fa-users text-2xl sm:text-3xl"></i>
-            <h3 class="text-xl sm:text-2xl font-bold">Referral Program</h3>
+            <h3 class="text-xl sm:text-2xl font-bold">{{ __('ui.referral_program') }}</h3>
         </div>
 
-        <p class="mb-4 text-indigo-100 text-sm sm:text-base">Share your unique referral code and earn rewards!</p>
+        <p class="mb-4 text-indigo-100 text-sm sm:text-base">{{ __('ui.referral_program_desc') }}</p>
 
         <!-- Referral Code -->
         <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
-            <label class="text-xs sm:text-sm text-indigo-100 block mb-2">Your Referral Code</label>
+            <label class="text-xs sm:text-sm text-indigo-100 block mb-2">{{ __('ui.your_referral_code') }}</label>
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <input type="text" readonly value="{{ auth()->user()->referral_code }}" id="referralCode"
                     class="flex-1 bg-white text-gray-900 font-mono font-bold text-lg sm:text-xl px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-0 focus:ring-2 focus:ring-yellow-400">
                 <button onclick="copyReferralCode(this)"
                     class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-all hover:scale-105 flex items-center justify-center gap-2">
                     <i class="fas fa-copy"></i>
-                    <span>Copy</span>
+                    <span>{{ __('ui.copy') }}</span>
                 </button>
             </div>
         </div>
 
         <!-- Referral Link -->
         <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
-            <label class="text-xs sm:text-sm text-indigo-100 block mb-2">Your Referral Link</label>
+            <label class="text-xs sm:text-sm text-indigo-100 block mb-2">{{ __('ui.your_referral_link') }}</label>
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <input type="text" readonly value="{{ auth()->user()->referral_link }}" id="referralLink"
                     class="flex-1 bg-white text-gray-900 font-mono text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-0 focus:ring-2 focus:ring-yellow-400 truncate">
                 <button onclick="copyReferralLink(this)"
                     class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg transition-all hover:scale-105 flex items-center justify-center gap-2">
                     <i class="fas fa-copy"></i>
-                    <span>Copy</span>
+                    <span>{{ __('ui.copy') }}</span>
                 </button>
             </div>
         </div>
@@ -59,13 +59,13 @@
         <div class="grid grid-cols-2 gap-3 sm:gap-4">
             <div class="bg-white/20 backdrop-blur-sm rounded-lg p-3 sm:p-4">
                 <div class="text-2xl sm:text-3xl font-bold mb-1">{{ $totalTeamSize }}</div>
-                <div class="text-indigo-100 text-xs sm:text-sm">Total Referrals (3 Levels)</div>
+                <div class="text-indigo-100 text-xs sm:text-sm">{{ __('ui.total_referrals_3_levels') }}</div>
             </div>
             <div class="bg-white/20 backdrop-blur-sm rounded-lg p-3 sm:p-4">
                 <div class="text-xl sm:text-2xl font-bold mb-1 truncate">
-                    {{ auth()->user()->referrer ? auth()->user()->referrer->name : 'None' }}
+                    {{ auth()->user()->referrer ? auth()->user()->referrer->name : __('ui.none') }}
                 </div>
-                <div class="text-indigo-100 text-xs sm:text-sm">Referred By</div>
+                <div class="text-indigo-100 text-xs sm:text-sm">{{ __('ui.referred_by') }}</div>
             </div>
         </div>
 
@@ -73,12 +73,12 @@
         @if($level1Count > 0)
             <div class="mt-4 bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
                 <div class="flex items-center justify-between mb-3">
-                    <h4 class="font-semibold text-sm sm:text-base">Your Direct Referrals ({{ $level1Count }})
+                    <h4 class="font-semibold text-sm sm:text-base">{{ __('ui.your_direct_referrals') }} ({{ $level1Count }})
                     </h4>
                     @if($level1Count > 5)
                         <a href="{{ route('teams') }}"
                             class="text-xs sm:text-sm text-yellow-300 hover:text-yellow-100 font-semibold flex items-center gap-1">
-                            <span>View All</span>
+                            <span>{{ __('ui.view_all') }}</span>
                             <i class="fas fa-arrow-right"></i>
                         </a>
                     @endif
@@ -114,7 +114,7 @@
             const originalText = label.textContent;
 
             icon.className = 'fas fa-clipboard-check';
-            label.textContent = 'Copied';
+            label.textContent = @json(__('ui.copied'));
             btn.classList.add('bg-green-500');
             btn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
 

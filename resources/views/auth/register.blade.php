@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Register')
+@section('title', __('ui.register_now'))
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.0/build/css/intlTelInput.css">
@@ -22,11 +22,30 @@
         #phone {
             padding-left: 60px !important;
         }
+
+        [dir="rtl"] .iti__country-container {
+            left: auto;
+            right: 0;
+        }
+
+        [dir="rtl"] .iti__selected-country {
+            padding-left: 0;
+            padding-right: 12px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+        }
+
+        [dir="rtl"] #phone {
+            padding-left: 12px !important;
+            padding-right: 60px !important;
+        }
     </style>
 @endpush
 
 @section('content')
-    <h1 class="text-4xl font-bold text-center text-yellow-500 mb-10">Register</h1>
+    <h1 class="text-4xl font-bold text-center text-yellow-500 mb-10">{{ __('ui.register_now') }}</h1>
 
     @if ($errors->any())
         <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6">
@@ -41,21 +60,22 @@
 
         <div class="relative mb-5">
             <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-            <input type="text" name="name" placeholder="Full Name" value="{{ old('name') }}"
+            <input type="text" name="name" placeholder="{{ __('ui.full_name') }}" value="{{ old('name') }}"
                 class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
                 required autofocus>
         </div>
 
         <div class="relative mb-5">
             <i class="fas fa-user-tag absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-            <input type="text" name="username" placeholder="Username" value="{{ old('username') }}"
+            <input type="text" name="username" placeholder="{{ __('ui.username') }}" value="{{ old('username') }}"
                 class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
                 required>
         </div>
 
         <div class="relative mb-5">
             <i class="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-            <input type="tel" id="phone" name="phone" placeholder="Phone Number (Required)" value="{{ old('phone') }}"
+            <input type="tel" id="phone" name="phone" placeholder="{{ __('ui.phone_number_required') }}"
+                value="{{ old('phone') }}"
                 class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
                 inputmode="tel" autocomplete="tel" required>
             <input type="hidden" id="phone_country" name="phone_country" value="{{ old('phone_country', 'bd') }}">
@@ -70,7 +90,7 @@
 
         <div class="relative mb-5">
             <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-            <input type="password" id="password" name="password" placeholder="Password"
+            <input type="password" id="password" name="password" placeholder="{{ __('ui.password') }}"
                 class="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
                 minlength="6" required>
             <button type="button" onclick="togglePassword('password')"
@@ -81,8 +101,9 @@
 
         <div class="relative mb-5">
             <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-            <input type="password" id="withdrawal_password" name="withdrawal_password" placeholder="Withdrawal Password"
-                value="{{ old('withdrawal_password') }}" required minlength="6"
+            <input type="password" id="withdrawal_password" name="withdrawal_password"
+                placeholder="{{ __('ui.withdrawal_password') }}" value="{{ old('withdrawal_password') }}" required
+                minlength="6"
                 class="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50">
             <button type="button" onclick="togglePassword('withdrawal_password')"
                 class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-500 transition-colors">
@@ -93,7 +114,7 @@
         <div class="mb-5">
             <div class="relative">
                 <i class="fas fa-users absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-                <input type="text" name="invitation_code" placeholder="Invitation code (required)"
+                <input type="text" name="invitation_code" placeholder="{{ __('ui.invitation_code_required') }}"
                     value="{{ old('invitation_code', $referralCode ?? '') }}"
                     class="w-full pl-12 pr-4 py-3 border-2 {{ isset($referralCode) && $referralCode ? 'border-green-400 bg-green-50' : 'border-gray-200 bg-indigo-50' }} rounded-xl text-base transition-all focus:outline-none {{ isset($referralCode) && $referralCode ? 'cursor-not-allowed' : 'focus:border-indigo-500 focus:bg-white' }}"
                     {{ isset($referralCode) && $referralCode ? 'readonly' : '' }} required>
@@ -104,7 +125,7 @@
             @if(isset($referralCode) && $referralCode)
                 <p class="text-xs text-green-600 mt-2 ml-1 flex items-center gap-1">
                     <i class="fas fa-check-circle"></i>
-                    <span>Invitation code applied from referral link</span>
+                    <span>{{ __('ui.invitation_code_applied') }}</span>
                 </p>
             @endif
         </div>
@@ -114,8 +135,8 @@
                 <div class="flex gap-3">
                     <div class="relative flex-1">
                         <i class="fas fa-shield-alt absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-                        <input type="text" id="verification_code" name="verification_code" placeholder="Verification Code"
-                            value="{{ old('verification_code') }}"
+                        <input type="text" id="verification_code" name="verification_code"
+                            placeholder="{{ __('ui.verification_code') }}" value="{{ old('verification_code') }}"
                             class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
                             required>
                     </div>
@@ -127,18 +148,18 @@
                     </button>
                 </div>
                 <p id="captchaError" class="text-red-600 text-sm mt-2 ml-1 hidden">
-                    <i class="fas fa-exclamation-circle"></i> Invalid verification code. Please try again.
+                    <i class="fas fa-exclamation-circle"></i> {{ __('ui.invalid_verification_code') }}
                 </p>
             @endif
         </div>
 
         <button type="submit"
-            class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-base font-semibold uppercase tracking-wide transition-all hover:-translate-y-1 hover:shadow-xl mt-3">Register</button>
+            class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-base font-semibold uppercase tracking-wide transition-all hover:-translate-y-1 hover:shadow-xl mt-3">{{ __('ui.register_now') }}</button>
     </form>
 
     <div class="text-center mt-6 text-sm text-gray-600">
-        Already have an account? <a href="{{ route('login') }}"
-            class="text-yellow-500 font-semibold hover:text-yellow-600 hover:underline transition">Sign In</a>
+        {{ __('ui.already_have_account') }} <a href="{{ route('login') }}"
+            class="text-yellow-500 font-semibold hover:text-yellow-600 hover:underline transition">{{ __('ui.sign_in') }}</a>
     </div>
 @endsection
 

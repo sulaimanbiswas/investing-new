@@ -9,7 +9,7 @@
             class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
             <i class="fas fa-arrow-left text-gray-700"></i>
         </a>
-        <h1 class="text-xl font-bold text-gray-800">Platform Details</h1>
+        <h1 class="text-xl font-bold text-gray-800">{{ __('ui.platform_details') }}</h1>
     </div>
 
     <div
@@ -32,7 +32,7 @@
                 <h2 class="text-base font-bold text-white ">
                     {{ $platform->name }}
                 </h2>
-                <p class="text-gray-100 text-sm">Commission Rate: <span
+                <p class="text-gray-100 text-sm">{{ __('ui.commission_rate') }}: <span
                         class="font-bold text-green-200">{{ number_format($platform->commission, 1) }}%</span></p>
             </div>
         </div>
@@ -45,7 +45,7 @@
                 <div class="relative">
                     <div class="flex items-center gap-2 mb-2">
                         <i class="fas fa-wallet text-white text-xl"></i>
-                        <p class="text-white text-sm opacity-90">Account Balance</p>
+                        <p class="text-white text-sm opacity-90">{{ __('ui.account_balance') }}</p>
                     </div>
                     <p class="text-white text-3xl font-bold mb-1">{{ number_format($user->balance, 2) }}</p>
                     <p class="text-white text-lg opacity-90">USDT</p>
@@ -59,14 +59,15 @@
     <!-- Unpaid Order (Single) -->
     @if($unpaidOrder && $packageName == $userVipLevel && $hasVipLevel && !$hasReachedDailyLimit)
         <div class="mb-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-3">Your Current Order</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-3">{{ __('ui.your_current_order') }}</h3>
             <div class="bg-white rounded-xl shadow-md p-5 border-2 border-orange-300">
                 <div class="mb-4">
                     <div class="flex items-center justify-between mb-2">
                         <div>
-                            <p class="text-sm text-gray-600 mb-1">Order #{{ $unpaidOrder->order_number }}</p>
+                            <p class="text-sm text-gray-600 mb-1">
+                                {{ __('ui.order_number_label') }}{{ $unpaidOrder->order_number }}</p>
                             <p class="text-xs text-gray-500">
-                                {{ $unpaidOrder->type === 'combo' ? 'Combo Order' : 'Single Order' }}
+                                {{ $unpaidOrder->type === 'combo' ? __('ui.combo_order') : __('ui.single_order') }}
                             </p>
                         </div>
                         {{-- @if($unpaidOrder->userOrderSet && $unpaidOrder->userOrderSet->orderSet &&
@@ -85,7 +86,7 @@
                             <div class="flex items-start gap-4 p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
                                 @if(!empty($product['image']))
                                     <div class="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden">
-                                        <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] ?? 'Product' }}"
+                                        <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] ?? __('ui.product') }}"
                                             class="w-full h-full object-cover">
                                     </div>
                                 @else
@@ -95,9 +96,9 @@
                                     </div>
                                 @endif
                                 <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900 mb-1">{{ $product['name'] ?? 'Product' }}</h4>
+                                    <h4 class="font-bold text-gray-900 mb-1">{{ $product['name'] ?? __('ui.product') }}</h4>
                                     <div class="flex items-center gap-4 text-sm">
-                                        <span class="text-gray-700">Price:
+                                        <span class="text-gray-700">{{ __('ui.price') }}:
                                             <strong>${{ number_format($product['price'] ?? 0, 2) }}</strong></span>
                                         <span class="text-gray-700">x <strong>{{ $product['quantity'] ?? 0 }}</strong></span>
                                     </div>
@@ -110,15 +111,15 @@
                 <!-- Order Summary -->
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-2 mb-4 border-2 border-blue-200">
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-700 font-medium">Order Amount:</span>
+                        <span class="text-gray-700 font-medium">{{ __('ui.order_amount') }}:</span>
                         <span class="font-bold text-gray-900">${{ number_format($unpaidOrder->order_amount, 2) }} USDT</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-700 font-medium">Commission:</span>
+                        <span class="text-gray-700 font-medium">{{ __('ui.commission') }}:</span>
                         <span class="font-bold text-green-600">${{ number_format($unpaidOrder->profit_amount, 2) }} USDT</span>
                     </div>
                     <div class="flex justify-between border-t-2 border-blue-300 pt-2">
-                        <span class="font-bold text-gray-900">Expected Income:</span>
+                        <span class="font-bold text-gray-900">{{ __('ui.expected_income') }}:</span>
                         <span
                             class="font-bold text-orange-500 text-xl">${{ number_format($unpaidOrder->order_amount + $unpaidOrder->profit_amount, 2) }}
                             USDT</span>
@@ -129,7 +130,7 @@
                     class="submit-order-btn w-full bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-4 rounded-xl shadow-lg hover:from-red-600 hover:to-red-700 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2"
                     data-order-id="{{ $unpaidOrder->id }}">
                     <i class="fas fa-check-circle text-xl"></i>
-                    <span>Submit Order</span>
+                    <span>{{ __('ui.submit_order') }}</span>
                 </button>
             </div>
         </div>
@@ -140,11 +141,11 @@
             <div
                 class="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
                 <i class="fas fa-wallet text-4xl mb-2"></i>
-                <p class="text-xl font-bold">Not in Level Level</p>
-                <p class="text-sm opacity-90 text-center px-4">You are not in any Level level. Deposit and start earning!</p>
+                <p class="text-xl font-bold">{{ __('ui.not_in_level') }}</p>
+                <p class="text-sm opacity-90 text-center px-4">{{ __('ui.not_in_level_desc') }}</p>
                 <a href="{{ route('deposit') }}"
                     class="mt-2 bg-white text-indigo-600 font-bold py-3 px-6 rounded-xl hover:bg-gray-100 active:scale-95 transition-all duration-200">
-                    <i class="fas fa-plus-circle mr-2"></i>Deposit Now
+                    <i class="fas fa-plus-circle mr-2"></i>{{ __('ui.deposit_now') }}
                 </a>
             </div>
         @elseif($packageName != $userVipLevel && $hasVipLevel)
@@ -152,17 +153,16 @@
                     class="w-full bg-gradient-to-r from-red-500 to-yellow-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
                     <i class="fas fa-exclamation-circle text-4xl mb-2"></i>
                     <p class="text-xl font-bold">
-                        You are not eligible for this platform
+                        {{ __('ui.not_eligible_for_platform') }}
                     </p>
                     <p class="text-sm opacity-90 text-center px-4">
-                        You are not eligible for this platform. Your current Level level is <span
-                            class="font-bold">{{ $userVipLevel }}</span>.<br>
-                        Please upgrade to <span class="font-bold">{{ $platform->package_name }}</span> to access and complete orders
-                        here.
+                        {{ __('ui.not_eligible_platform_desc') }} <span class="font-bold">{{ $userVipLevel }}</span>.<br>
+                        {{ __('ui.please_upgrade_to') }} <span class="font-bold">{{ $platform->package_name }}</span>
+                        {{ __('ui.to_access_complete_orders') }}
                     </p>
                     <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
                         <p class="text-xs font-medium">
-                            Goto {{ $userVipLevel }}
+                            {{ __('ui.goto_level') }} {{ $userVipLevel }}
                         </p>
 
                     </div>
@@ -172,32 +172,31 @@
         <div
             class="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
             <i class="fas fa-check-circle text-4xl mb-2"></i>
-            <p class="text-xl font-bold">All Orders Completed!</p>
-            <p class="text-sm opacity-90 text-center px-4">Your daily limit has been reached. You can complete more orders
-                tomorrow.</p>
+            <p class="text-xl font-bold">{{ __('ui.all_orders_completed') }}</p>
+            <p class="text-sm opacity-90 text-center px-4">{{ __('ui.daily_limit_reached_desc') }}</p>
             <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
-                <p class="text-xs font-medium">{{ $todayCompletedCount }}/{{ $user->daily_order_limit }} orders completed
-                    today</p>
+                <p class="text-xs font-medium">{{ $todayCompletedCount }}/{{ $user->daily_order_limit }}
+                    {{ __('ui.orders_completed_today') }}</p>
             </div>
         </div>
     @elseif($unpaidOrder)
         <div
             class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
             <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
-            <p class="text-lg">Complete Your Unpaid Order</p>
-            <p class="text-sm opacity-90">Please submit your pending order above</p>
+            <p class="text-lg">{{ __('ui.complete_unpaid_order') }}</p>
+            <p class="text-sm opacity-90">{{ __('ui.submit_pending_order_above') }}</p>
         </div>
     @elseif(!$unpaidOrder && !$hasReachedDailyLimit)
         <div
             class="w-full bg-gradient-to-r from-teal-400 to-green-500 text-white font-bold py-6 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-3">
             <i class="fas fa-check-circle text-4xl mb-2"></i>
-            <p class="text-xl font-bold">All Orders Completed!</p>
+            <p class="text-xl font-bold">{{ __('ui.all_orders_completed') }}</p>
             <p class="text-sm opacity-90 text-center px-4">
-                You have completed all your orders for today.
+                {{ __('ui.completed_all_orders_today') }}
             </p>
             <div class="mt-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
                 <p class="text-xs font-medium">
-                    Contact support for more orders.
+                    {{ __('ui.contact_support_for_more_orders') }}
                 </p>
             </div>
         </div>
@@ -205,8 +204,8 @@
         <div
             class="w-full bg-gradient-to-r from-gray-500 to-gray-700 text-white font-bold py-5 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-2">
             <i class="fas fa-info-circle text-2xl mb-1"></i>
-            <p class="text-lg">You are in {{ $userVipLevel }}</p>
-            <p class="text-sm opacity-90">Complete orders to earn commission</p>
+            <p class="text-lg">{{ __('ui.you_are_in') }} {{ $userVipLevel }}</p>
+            <p class="text-sm opacity-90">{{ __('ui.complete_orders_to_earn_commission') }}</p>
         </div>
     @endif
     </div>
@@ -220,7 +219,7 @@
                     <i class="fas fa-clock text-blue-600 text-xl"></i>
                 </div>
                 <p class="text-3xl font-bold text-gray-900 mb-1">{{ $todayOrdersCount }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Today's Time</p>
+                <p class="text-gray-600 text-xs text-center font-medium">{{ __('ui.todays_time') }}</p>
             </div>
         </div>
 
@@ -231,7 +230,7 @@
                     <i class="fas fa-coins text-green-600 text-xl"></i>
                 </div>
                 <p class="text-2xl font-bold text-green-600 mb-1">{{ number_format($todayCommission, 2) }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Today's Commission</p>
+                <p class="text-gray-600 text-xs text-center font-medium">{{ __('ui.todays_commission') }}</p>
             </div>
         </div>
 
@@ -242,7 +241,7 @@
                     <i class="fas fa-chart-line text-orange-600 text-xl"></i>
                 </div>
                 <p class="text-2xl font-bold text-orange-600 mb-1">{{ number_format($cashGap, 2) }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Cash gap between task</p>
+                <p class="text-gray-600 text-xs text-center font-medium">{{ __('ui.cash_gap_between_task') }}</p>
             </div>
         </div>
 
@@ -253,7 +252,7 @@
                     <i class="fas fa-shopping-cart text-purple-600 text-xl"></i>
                 </div>
                 <p class="text-2xl font-bold text-purple-600 mb-1">{{ number_format($yesterdayCommission, 2) }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Yesterday's buy commission</p>
+                <p class="text-gray-600 text-xs text-center font-medium">{{ __('ui.yesterday_buy_commission') }}</p>
             </div>
         </div>
 
@@ -264,7 +263,7 @@
                     <i class="fas fa-users text-indigo-600 text-xl"></i>
                 </div>
                 <p class="text-2xl font-bold text-indigo-600 mb-1">{{ number_format($yesterdayTeamCommission, 2) }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Yesterday's team commission</p>
+                <p class="text-gray-600 text-xs text-center font-medium">{{ __('ui.yesterday_team_commission') }}</p>
             </div>
         </div>
 
@@ -275,7 +274,7 @@
                     <i class="fas fa-lock text-red-600 text-xl"></i>
                 </div>
                 <p class="text-2xl font-bold text-red-600 mb-1">{{ number_format($user->freeze_amount, 2) }}</p>
-                <p class="text-gray-600 text-xs text-center font-medium">Money frozen in account</p>
+                <p class="text-gray-600 text-xs text-center font-medium">{{ __('ui.money_frozen_in_account') }}</p>
             </div>
         </div>
     </div>
@@ -287,19 +286,17 @@
             <div class="bg-orange-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <i class="fas fa-lightbulb text-white"></i>
             </div>
-            <h3 class="font-bold text-gray-900 text-lg">Hint:</h3>
+            <h3 class="font-bold text-gray-900 text-lg">{{ __('ui.hint') }}:</h3>
         </div>
         <div class="space-y-3 text-sm text-gray-700 ml-11">
             <p class="leading-relaxed flex items-start gap-2">
                 <span class="font-bold text-red-600 flex-shrink-0">1:</span>
                 <span><span class="font-bold text-green-600">{{ number_format($platform->commission, 1) }}%</span> of
-                    the
-                    amount of completed transaction earned.</span>
+                    {{ __('ui.of_completed_transaction_earned') }}</span>
             </p>
             <p class="leading-relaxed flex items-start gap-2">
                 <span class="font-bold text-red-600 flex-shrink-0">2:</span>
-                <span>The system send task randomly. Complete them as soon as possible after match them, so as you avoid
-                    hanging all the time.</span>
+                <span>{{ __('ui.system_sends_tasks_randomly') }}</span>
             </p>
         </div>
     </div>
@@ -319,20 +316,20 @@
             </div>
 
             <!-- Title -->
-            <h3 class="text-xl font-bold text-gray-900 text-center mb-2">Confirm Submission</h3>
+            <h3 class="text-xl font-bold text-gray-900 text-center mb-2">{{ __('ui.confirm_submission') }}</h3>
 
             <!-- Message -->
-            <p class="text-gray-600 text-center mb-6">Are you sure you want to submit this order?</p>
+            <p class="text-gray-600 text-center mb-6">{{ __('ui.submit_order_confirmation') }}</p>
 
             <!-- Buttons -->
             <div class="flex gap-3">
                 <button type="button" id="cancelConfirmBtn"
                     class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 active:scale-95 transition-all duration-200">
-                    Cancel
+                    {{ __('ui.cancel') }}
                 </button>
                 <button type="button" id="proceedConfirmBtn"
                     class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 rounded-xl hover:from-green-600 hover:to-green-700 active:scale-95 transition-all duration-200">
-                    Confirm
+                    {{ __('ui.confirm') }}
                 </button>
             </div>
         </div>
@@ -352,7 +349,7 @@
             </div>
 
             <!-- Title -->
-            <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">Success!</h3>
+            <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">{{ __('ui.success') }}</h3>
 
             <!-- Message -->
             <p id="successMessage" class="text-gray-600 text-center mb-2"></p>
@@ -361,7 +358,7 @@
             <!-- Button -->
             <button type="button" id="closeSuccessBtn"
                 class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 rounded-xl hover:from-green-600 hover:to-green-700 active:scale-95 transition-all duration-200">
-                Continue
+                {{ __('ui.continue') }}
             </button>
         </div>
     </div>
@@ -381,24 +378,24 @@
             </div>
 
             <!-- Title -->
-            <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">Insufficient Balance</h3>
+            <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">{{ __('ui.insufficient_balance') }}</h3>
 
             <!-- Order Summary -->
             @if($unpaidOrder)
                 <div
                     class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-2 mb-4 border-2 border-blue-200">
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-700 font-medium">Order Amount:</span>
+                        <span class="text-gray-700 font-medium">{{ __('ui.order_amount') }}:</span>
                         <span class="font-bold text-gray-900">${{ number_format($unpaidOrder->order_amount, 2) }}
                             USDT</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-700 font-medium">Commission:</span>
+                        <span class="text-gray-700 font-medium">{{ __('ui.commission') }}:</span>
                         <span class="font-bold text-green-600">${{ number_format($unpaidOrder->profit_amount, 2) }}
                             USDT</span>
                     </div>
                     <div class="flex justify-between border-t-2 border-blue-300 pt-2">
-                        <span class="font-bold text-gray-900">Expected Income:</span>
+                        <span class="font-bold text-gray-900">{{ __('ui.expected_income') }}:</span>
                         <span
                             class="font-bold text-orange-500 text-xl">${{ number_format($unpaidOrder->order_amount + $unpaidOrder->profit_amount, 2) }}
                             USDT</span>
@@ -413,11 +410,11 @@
             <div class="flex flex-col gap-3">
                 <a href="{{ route('deposit') }}"
                     class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 rounded-xl hover:from-green-600 hover:to-green-700 active:scale-95 transition-all duration-200 text-center">
-                    <i class="fas fa-plus-circle mr-2"></i>Deposit Now
+                    <i class="fas fa-plus-circle mr-2"></i>{{ __('ui.deposit_now') }}
                 </a>
                 <button type="button" id="closeInsufficientBalanceBtn"
                     class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 active:scale-95 transition-all duration-200">
-                    Close
+                    {{ __('ui.close') }}
                 </button>
             </div>
         </div>
@@ -430,7 +427,7 @@
         <!-- Modal Header -->
         <div
             class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-3xl">
-            <h3 class="text-xl font-bold text-gray-900">Successful Order</h3>
+            <h3 class="text-xl font-bold text-gray-900">{{ __('ui.successful_order') }}</h3>
             <button type="button" id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition">
                 <i class="fas fa-times text-2xl"></i>
             </button>
@@ -440,7 +437,7 @@
         <div class="p-6">
             <!-- Order Number -->
             <div class="text-center mb-6">
-                <p class="text-sm text-gray-600 mb-1">Order No:</p>
+                <p class="text-sm text-gray-600 mb-1">{{ __('ui.order_no') }}:</p>
                 <p id="orderNumber" class="text-2xl font-bold text-red-600"></p>
             </div>
 
@@ -452,19 +449,19 @@
             <!-- Transaction Details -->
             <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 space-y-3">
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-700 font-medium">Transaction Time</span>
+                    <span class="text-gray-700 font-medium">{{ __('ui.transaction_time') }}</span>
                     <span id="transactionTime" class="text-gray-900 font-semibold text-sm"></span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-700 font-medium">Order Amount</span>
+                    <span class="text-gray-700 font-medium">{{ __('ui.order_amount') }}</span>
                     <span id="orderAmount" class="text-gray-900 font-bold"></span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-700 font-medium">Commission</span>
+                    <span class="text-gray-700 font-medium">{{ __('ui.commission') }}</span>
                     <span id="commission" class="text-green-600 font-bold"></span>
                 </div>
                 <div class="flex items-center justify-between border-t border-gray-300 pt-3">
-                    <span class="text-gray-900 font-bold text-lg">Expected Income</span>
+                    <span class="text-gray-900 font-bold text-lg">{{ __('ui.expected_income') }}</span>
                     <span id="expectedIncome" class="text-orange-500 font-bold text-xl"></span>
                 </div>
             </div>
@@ -472,7 +469,7 @@
             <!-- Submit Button -->
             <button type="button" id="submitOrderBtn"
                 class="w-full mt-6 bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:from-red-600 hover:to-red-700 active:scale-95 transition-all duration-200">
-                Submit Order
+                {{ __('ui.submit_order') }}
             </button>
         </div>
     </div>
@@ -523,7 +520,7 @@
                 confirmModal.classList.remove('flex');
 
                 currentButton.disabled = true;
-                currentButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                currentButton.innerHTML = @json('<i class="fas fa-spinner fa-spin"></i> ' . __('ui.processing'));
 
                 try {
                     const response = await fetch(`/menu/order/${orderId}/submit`, {
@@ -538,7 +535,7 @@
 
                     if (data.success) {
                         document.getElementById('successMessage').textContent = data.message;
-                        document.getElementById('newBalanceText').textContent = 'New Balance: $' + data.new_balance;
+                        document.getElementById('newBalanceText').textContent = @json(__('ui.new_balance')) + ': $' + data.new_balance;
                         successModal.classList.remove('hidden');
                         successModal.classList.add('flex');
                     } else {
@@ -551,13 +548,13 @@
                             alert(data.message);
                         }
                         currentButton.disabled = false;
-                        currentButton.innerHTML = '<i class="fas fa-check-circle text-xl"></i><span>Submit Order</span>';
+                        currentButton.innerHTML = @json('<i class="fas fa-check-circle text-xl"></i><span>' . __('ui.submit_order') . '</span>');
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('An error occurred. Please try again.');
+                    alert(@json(__('ui.error_try_again')));
                     currentButton.disabled = false;
-                    currentButton.innerHTML = '<i class="fas fa-check-circle text-xl"></i><span>Submit Order</span>';
+                    currentButton.innerHTML = @json('<i class="fas fa-check-circle text-xl"></i><span>' . __('ui.submit_order') . '</span>');
                 }
             });
         }
@@ -586,7 +583,7 @@
                 const btn = this;
 
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin text-2xl"></i><span class="text-lg">Loading...</span>';
+                btn.innerHTML = @json('<i class="fas fa-spinner fa-spin text-2xl"></i><span class="text-lg">' . __('ui.loading') . '</span>');
 
                 try {
                     const response = await fetch(`/menu/platform/${platformId}/grab-order`, {
@@ -608,10 +605,10 @@
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('An error occurred. Please try again.');
+                    alert(@json(__('ui.error_try_again')));
                 } finally {
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-hand-holding-usd text-2xl"></i><span class="text-lg">Grab the order immediately</span>';
+                    btn.innerHTML = @json('<i class="fas fa-hand-holding-usd text-2xl"></i><span class="text-lg">' . __('ui.grab_order_immediately') . '</span>');
                 }
             });
         }
@@ -633,14 +630,14 @@
                     const productDiv = document.createElement('div');
                     productDiv.className = 'flex items-center gap-4 p-4 bg-white rounded-xl border-2 border-gray-200';
                     productDiv.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="fas fa-box text-white text-2xl"></i>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="flex-1">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <i class="fas fa-box text-white text-2xl"></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="flex-1">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <h4 class="font-bold text-gray-900 mb-1">${product.name}</h4>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <p class="text-sm text-gray-600">${product.price} x ${product.quantity}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            `;
                     productsList.appendChild(productDiv);
                 });
             }
@@ -668,7 +665,7 @@
 
                 const btn = this;
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                btn.innerHTML = @json('<i class="fas fa-spinner fa-spin"></i> ' . __('ui.processing'));
 
                 try {
                     const response = await fetch(`/menu/order/${window.currentOrderId}/submit`, {
@@ -684,7 +681,7 @@
                     if (data.success) {
                         modal.classList.add('hidden');
                         document.getElementById('successMessage').textContent = data.message;
-                        document.getElementById('newBalanceText').textContent = 'New Balance: $' + data.new_balance;
+                        document.getElementById('newBalanceText').textContent = @json(__('ui.new_balance')) + ': $' + data.new_balance;
                         successModal.classList.remove('hidden');
                         successModal.classList.add('flex');
                     } else {
@@ -698,13 +695,13 @@
                             alert(data.message);
                         }
                         btn.disabled = false;
-                        btn.innerHTML = 'Submit Order';
+                        btn.innerHTML = @json(__('ui.submit_order'));
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('An error occurred. Please try again.');
+                    alert(@json(__('ui.error_try_again')));
                     btn.disabled = false;
-                    btn.innerHTML = 'Submit Order';
+                    btn.innerHTML = @json(__('ui.submit_order'));
                 }
             });
         }

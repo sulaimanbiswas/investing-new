@@ -11,6 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            App\Http\Middleware\SetFrontendLocale::class,
+        ]);
+
         // Ensure the 'auth' alias uses our custom Authenticate middleware for proper admin redirects
         $middleware->alias([
             'auth' => App\Http\Middleware\Authenticate::class,

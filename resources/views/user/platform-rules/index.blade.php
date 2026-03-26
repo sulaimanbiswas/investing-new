@@ -1,6 +1,6 @@
 @extends('layouts.user.app')
 
-@section('title', 'Platform Guidelines - ' . config('app.name'))
+@section('title', __('ui.platform_guidelines') . ' - ' . config('app.name'))
 
 @section('content')
     <!-- Header -->
@@ -9,7 +9,7 @@
             class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
             <i class="fas fa-arrow-left text-gray-700"></i>
         </a>
-        <h1 class="text-2xl font-bold text-gray-800">Platform Guidelines</h1>
+        <h1 class="text-2xl font-bold text-gray-800">{{ __('ui.platform_guidelines') }}</h1>
     </div>
 
     <!-- Guidelines Grid -->
@@ -40,7 +40,7 @@
                             <span>{{ $rule->created_at->format('M d, Y') }}</span>
                         </div>
                         @endif --}}
-                        <span class="text-sm text-indigo-600 font-medium">Read More <i
+                        <span class="text-sm text-indigo-600 font-medium">{{ __('ui.read_more') }} <i
                                 class="fas fa-arrow-right ml-1"></i></span>
                     </div>
                 </div>
@@ -48,8 +48,8 @@
         @empty
             <div class="bg-white rounded-xl shadow-sm p-12 text-center">
                 <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                <h3 class="text-xl font-semibold text-gray-600 mb-2">No Guidelines Available</h3>
-                <p class="text-gray-500">Platform guidelines will appear here once published.</p>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">{{ __('ui.no_guidelines_available') }}</h3>
+                <p class="text-gray-500">{{ __('ui.guidelines_appear_when_published') }}</p>
             </div>
         @endforelse
     </div>
@@ -59,7 +59,7 @@
         <div class="mt-6 bg-indigo-50 rounded-xl p-4 text-center">
             <p class="text-sm text-indigo-700">
                 <i class="fas fa-info-circle mr-1"></i>
-                Please read and follow these guidelines for a better experience.
+                {{ __('ui.guidelines_footer_hint') }}
             </p>
         </div>
     @endif

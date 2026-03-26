@@ -1,6 +1,6 @@
 @extends('layouts.user.app')
 
-@section('title', 'Home - ' . config('app.name'))
+@section('title', __('ui.home') . ' - ' . config('app.name'))
 
 @section('content')
     <!-- Quick Action Icons -->
@@ -13,7 +13,7 @@
                 <i class="fas fa-credit-card text-white text-xl"></i>
 
             </div>
-            <span class="text-xs font-medium text-gray-700">Recharge</span>
+            <span class="text-xs font-medium text-gray-700">{{ __('ui.recharge') }}</span>
         </a>
         <a href="{{ route('withdrawal') }}"
             class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
@@ -21,7 +21,7 @@
                 class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600  rounded-full flex items-center justify-center">
                 <i class="fas fa-wallet text-white text-xl"></i>
             </div>
-            <span class="text-xs font-medium text-gray-700">Withdrawal</span>
+            <span class="text-xs font-medium text-gray-700">{{ __('ui.withdrawal') }}</span>
         </a>
         <a href="{{ route('teams') }}"
             class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
@@ -29,7 +29,7 @@
                 class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
                 <i class="fas fa-users text-white text-xl"></i>
             </div>
-            <span class="text-xs font-medium text-gray-700">Teams</span>
+            <span class="text-xs font-medium text-gray-700">{{ __('ui.teams') }}</span>
         </a>
         <a href="{{ route('invitation') }}"
             class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
@@ -37,7 +37,7 @@
                 class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center">
                 <i class="fas fa-user-plus text-white text-xl"></i>
             </div>
-            <span class="text-xs font-medium text-gray-700">Invitation</span>
+            <span class="text-xs font-medium text-gray-700">{{ __('ui.invitation') }}</span>
         </a>
     </div>
 
@@ -83,14 +83,14 @@
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" id="dontShowAgain"
                             class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500">
-                        <span class="text-sm text-gray-700">Don't show again</span>
+                        <span class="text-sm text-gray-700">{{ __('ui.dont_show_again') }}</span>
                     </label>
                 </div>
 
                 <!-- Button -->
                 <button type="button" id="closeNotificationBtn"
                     class="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-bold py-3 rounded-xl hover:from-indigo-600 hover:to-indigo-700 active:scale-95 transition-all duration-200">
-                    Close
+                    {{ __('ui.close') }}
                 </button>
             </div>
         </div>

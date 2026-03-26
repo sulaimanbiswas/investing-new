@@ -1,12 +1,12 @@
 @extends('layouts.user.app')
 
-@section('title', 'Withdrawal - ' . config('app.name'))
+@section('title', __('ui.withdrawal') . ' - ' . config('app.name'))
 
 @section('content')
     <!-- Header with Back Button -->
     <div class="mb-6 flex items-center gap-3">
         @include('components.back-button')
-        <h1 class="text-2xl font-bold text-gray-800">Withdrawal Request</h1>
+        <h1 class="text-2xl font-bold text-gray-800">{{ __('ui.withdrawal_request') }}</h1>
     </div>
 
     <!-- Available Balance Card -->
@@ -19,8 +19,8 @@
                     <i class="fas fa-wallet text-white text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-600">Your Balance Overview</p>
-                    <h3 class="text-lg font-bold text-gray-900">Account Balance</h3>
+                    <p class="text-sm text-gray-600">{{ __('ui.your_balance_overview') }}</p>
+                    <h3 class="text-lg font-bold text-gray-900">{{ __('ui.account_balance') }}</h3>
                 </div>
             </div>
 
@@ -28,7 +28,7 @@
                 <div class="flex items-center justify-between">
                     <span class="text-sm text-gray-600 flex items-center gap-2">
                         <i class="fas fa-coins text-blue-500"></i>
-                        Total Balance
+                        {{ __('ui.total_balance') }}
                     </span>
                     <span class="text-2xl font-bold text-gray-900">{{ number_format($user->balance, 2) }}</span>
                 </div>
@@ -38,7 +38,7 @@
                 <div class="flex items-center justify-between">
                     <span class="text-sm text-red-700 flex items-center gap-2">
                         <i class="fas fa-lock text-red-500"></i>
-                        Frozen Amount
+                        {{ __('ui.frozen_amount') }}
                     </span>
                     <span class="text-xl font-bold text-red-600">- {{ number_format($user->freeze_amount, 2) }}</span>
                 </div>
@@ -49,7 +49,7 @@
                     <div>
                         <p class="text-green-100 text-sm mb-1 flex items-center gap-2">
                             <i class="fas fa-check-circle"></i>
-                            Available to Withdraw
+                            {{ __('ui.available_to_withdraw') }}
                         </p>
                         <p class="text-white text-4xl font-bold">{{ number_format($availableBalance, 2) }}</p>
                     </div>
@@ -74,8 +74,8 @@
                             <i class="fas fa-wallet text-white text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-green-100 text-sm">Available Balance</p>
-                            <p class="text-white text-xs opacity-90">Ready to withdraw</p>
+                            <p class="text-green-100 text-sm">{{ __('ui.available_balance') }}</p>
+                            <p class="text-white text-xs opacity-90">{{ __('ui.ready_to_withdraw') }}</p>
                         </div>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
 
     <!-- Withdrawal Gateway Selection -->
     <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
-        <h3 class="text-sm font-medium text-gray-700 mb-3">Withdrawal Method</h3>
+        <h3 class="text-sm font-medium text-gray-700 mb-3">{{ __('ui.withdrawal_method') }}</h3>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             @forelse($gateways as $gateway)
                 <label class="gateway-card cursor-pointer">
@@ -125,7 +125,7 @@
             @empty
                 <div class="col-span-full text-center py-8 text-gray-500">
                     <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
-                    <p>No withdrawal methods available</p>
+                    <p>{{ __('ui.no_withdrawal_methods_available') }}</p>
                 </div>
             @endforelse
         </div>
@@ -165,13 +165,14 @@
 
             <!-- Withdrawal Amount -->
             <div>
-                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Withdrawal Amount</label>
+                <label for="amount"
+                    class="block text-sm font-medium text-gray-700 mb-1">{{ __('ui.withdrawal_amount') }}</label>
                 <div
                     class="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden focus-within:border-green-500 transition">
                     <span class="px-2 py-3 bg-gray-50 text-gray-700 font-semibold" id="currency-label">USDT</span>
                     <input type="number" id="amount" name="amount" step="0.01" min="0.01"
-                        class="flex-1 px-4 py-3 border-0 focus:ring-0 focus:outline-none" placeholder="Enter amount"
-                        required>
+                        class="flex-1 px-4 py-3 border-0 focus:ring-0 focus:outline-none"
+                        placeholder="{{ __('ui.enter_amount') }}" required>
                     <button type="button" id="maxBtn" {{--
                         class="h-full px-2 py-3.5 bg-green-500 text-white font-semibold rounded-none rounded-r-xl focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95 transition-all duration-200 min-w-[48px] max-w-[60px] text-xs flex items-center justify-center whitespace-nowrap"
                         --}}>
@@ -188,20 +189,20 @@
             <!-- Withdrawal Password -->
             <div>
                 <label for="withdrawal_password" class="block text-sm font-medium text-gray-700 mb-1">
-                    Withdrawal Password <span class="text-red-500">*</span>
+                    {{ __('ui.withdrawal_password') }} <span class="text-red-500">*</span>
                 </label>
                 <input type="password" id="withdrawal_password" name="withdrawal_password"
                     class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500"
-                    placeholder="Enter your withdrawal password" required>
-                <p class="text-xs text-gray-500 mt-1">Enter the password you set during registration</p>
+                    placeholder="{{ __('ui.enter_withdrawal_password') }}" required>
+                <p class="text-xs text-gray-500 mt-1">{{ __('ui.enter_password_registration') }}</p>
             </div>
 
             <div class="flex items-center justify-center gap-3">
                 <a href="{{ route('profile.home') }}"
-                    class="flex-1 px-4 py-3 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-center">Cancel</a>
+                    class="flex-1 px-4 py-3 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-center">{{ __('ui.cancel') }}</a>
                 <button type="submit" id="submit-btn" disabled
                     class="flex-1 px-4 py-3 rounded-lg bg-gray-400 text-white shadow font-semibold disabled:cursor-not-allowed transition">
-                    Withdraw
+                    {{ __('ui.withdraw') }}
                 </button>
             </div>
 
@@ -209,11 +210,11 @@
                 <div class="flex items-start gap-2">
                     <i class="fas fa-exclamation-triangle text-yellow-600 mt-0.5"></i>
                     <div class="text-sm text-yellow-800">
-                        <p class="font-semibold mb-1">Important Notes:</p>
+                        <p class="font-semibold mb-1">{{ __('ui.important_notes') }}</p>
                         <ul class="list-disc list-inside space-y-1 text-xs">
-                            <li>Please ensure all information is correct</li>
-                            <li>Withdrawal will be processed after admin approval</li>
-                            <li>Processing time: 1-24 hours</li>
+                            <li>{{ __('ui.ensure_info_correct') }}</li>
+                            <li>{{ __('ui.withdraw_after_admin') }}</li>
+                            <li>{{ __('ui.processing_time') }}</li>
                         </ul>
                     </div>
                 </div>
@@ -234,7 +235,7 @@
                 </div>
 
                 <!-- Title -->
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">Request Submitted!</h3>
+                <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">{{ __('ui.request_submitted') }}</h3>
 
                 <!-- Message -->
                 <p id="successMessage" class="text-gray-600 text-center mb-6"></p>
@@ -244,11 +245,11 @@
                 <div class="flex gap-3">
                     <button type="button" id="closeSuccessBtn"
                         class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 active:scale-95 transition-all duration-200">
-                        Close
+                        {{ __('ui.close') }}
                     </button>
                     <a href="{{ route('service.index') }}" id="gotoMenuBtn"
                         class="flex-1 bg-green-500 text-white font-bold py-3 rounded-xl hover:bg-green-600 active:scale-95 transition-all duration-200 text-center">
-                        Help Center
+                        {{ __('ui.help_center') }}
                     </a>
                 </div>
 
@@ -270,7 +271,7 @@
 
                 <!-- Title -->
                 <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">
-                    Withdrawal Error
+                    {{ __('ui.withdrawal_error') }}
                 </h3>
 
                 <!-- Message -->

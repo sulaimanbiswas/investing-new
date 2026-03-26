@@ -1,22 +1,23 @@
 @extends('layouts.user.app')
 
-@section('title', 'Deposit Confirm - ' . config('app.name'))
+@section('title', __('ui.deposit_confirm') . ' - ' . config('app.name'))
 
 @section('content')
     <!-- Header -->
     <div class="mb-6 flex items-center gap-3">
         @include('components.back-button')
-        <h1 class="text-2xl font-bold text-gray-800">Deposit Confirm</h1>
+        <h1 class="text-2xl font-bold text-gray-800">{{ __('ui.deposit_confirm') }}</h1>
     </div>
 
     <!-- Confirmation Message -->
     <div class="bg-white rounded-xl shadow-sm p-5 mb-5 text-center">
-        <p class="text-gray-700">You have requested <span
+        <p class="text-gray-700">{{ __('ui.you_have_requested') }} <span
                 class="font-bold text-indigo-600">{{ number_format($deposit->amount, 2) }}
-                {{ $gateway->currency }}</span>. Please pay <span
+                {{ $gateway->currency }}</span>. {{ __('ui.please_pay') }} <span
                 class="font-bold text-green-600">{{ number_format($deposit->amount, 2) }} {{ $gateway->currency }}</span>
             for
-            successful payment</p>
+            {{ __('ui.payment_success_hint') }}
+        </p>
     </div>
 
     <!-- QR Code -->
@@ -43,15 +44,13 @@
 
         <!-- Tips -->
         <div class="space-y-2 text-sm">
-            <p class="font-semibold text-gray-800">Tips:</p>
+            <p class="font-semibold text-gray-800">{{ __('ui.tips') }}</p>
             <ol class="list-decimal list-inside space-y-2 text-gray-600">
-                <li>The recharge address is a <span class="text-red-600 font-semibold">one-time address</span>, please do
-                    not use it or transfer it repeatedly.</li>
-                <li>The minimum recharge amount is subject to the actual transfer amount, not less than <span
-                        class="font-semibold">{{ number_format($gateway->min_limit, 2) }} {{ $gateway->currency }}</span>.
+                <li>{{ __('ui.deposit_tip_1') }}</li>
+                <li>{{ __('ui.deposit_tip_2') }} <span class="font-semibold">{{ number_format($gateway->min_limit, 2) }}
+                        {{ $gateway->currency }}</span>.
                 </li>
-                <li>After recharging, it will take about <span class="text-indigo-600 font-semibold">2 minutes</span> to
-                    confirm the payment. Please wait patiently.</li>
+                <li>{{ __('ui.deposit_tip_3') }}</li>
             </ol>
         </div>
     </div>
@@ -64,28 +63,28 @@
 
             @if($gateway->requires_txn_id)
                 <div class="bg-white rounded-xl shadow-sm p-5">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Transaction ID <span
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('ui.transaction_id') }} <span
                             class="text-red-600">*</span></label>
                     <input type="text" name="txn_id" id="txn_id" required
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition"
-                        placeholder="Enter your transaction ID">
-                    <p class="text-xs text-gray-500 mt-2">Please enter the transaction ID from your payment</p>
+                        placeholder="{{ __('ui.enter_transaction_id') }}">
+                    <p class="text-xs text-gray-500 mt-2">{{ __('ui.enter_transaction_id_hint') }}</p>
                 </div>
             @endif
 
             @if($gateway->requires_screenshot)
                 <div class="bg-white rounded-xl shadow-sm p-5">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Payment Screenshot <span
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('ui.payment_screenshot') }} <span
                             class="text-red-600">*</span></label>
                     <input type="file" name="screenshot" id="screenshot" accept="image/*" required
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition">
-                    <p class="text-xs text-gray-500 mt-2">Upload a clear screenshot of your payment confirmation</p>
+                    <p class="text-xs text-gray-500 mt-2">{{ __('ui.upload_payment_screenshot_hint') }}</p>
                 </div>
             @endif
 
             <button type="submit" id="submitBtn"
                 class="w-full bg-indigo-600 text-white font-semibold py-4 rounded-xl hover:bg-indigo-700 active:scale-95 transition">
-                Confirm Payment
+                {{ __('ui.confirm_payment') }}
             </button>
         </form>
     @else
@@ -98,7 +97,7 @@
                 <div class="mb-4">
                     <i class="fas fa-check-circle text-green-500 text-5xl"></i>
                 </div>
-                <h2 class="text-xl font-bold text-gray-800 mb-2">No Verification Required</h2>
+                <h2 class="text-xl font-bold text-gray-800 mb-2">{{ __('ui.no_verification_required') }}</h2>
                 <p class="text-gray-600 mb-4">Your payment will be confirmed automatically. Click the button below to proceed.
                 </p>
             </div> --}}
@@ -106,7 +105,7 @@
             <button type="submit" id="submitBtn"
                 class="w-full bg-green-600 text-white font-semibold py-4 rounded-xl hover:bg-green-700 active:scale-95 transition flex items-center justify-center gap-2">
                 <i class="fas fa-check"></i>
-                Pay Now
+                {{ __('ui.pay_now') }}
             </button>
         </form>
     @endif
@@ -140,7 +139,7 @@
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
+            submitBtn.textContent = '{{ __('ui.submitting') }}';
 
             // If any file input exists, use FormData, else use JSON
             const txnId = document.getElementById('txn_id')?.value;
@@ -182,17 +181,17 @@
             if (data.success && data.redirect) {
                 window.location.href = data.redirect;
             } else {
-                flasher.error(data.message || 'Failed to process deposit');
+                flasher.error(data.message || '{{ __('ui.failed_process_deposit') }}');
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Confirm Payment';
+                submitBtn.textContent = '{{ __('ui.confirm_payment') }}';
             }
         }
 
         function handleDepositError(error, submitBtn) {
-            flasher.error('An error occurred. Please try again.');
+            flasher.error('{{ __('ui.error_try_again') }}');
             console.error(error);
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Confirm Payment';
+            submitBtn.textContent = '{{ __('ui.confirm_payment') }}';
         }
     </script>
 @endpush

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8">
@@ -247,25 +247,109 @@
 
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#home" class="text-gray-700 hover:text-indigo-600 transition font-medium">Home</a>
-                    <a href="#features" class="text-gray-700 hover:text-indigo-600 transition font-medium">Features</a>
-                    <a href="#how-it-works" class="text-gray-700 hover:text-indigo-600 transition font-medium">How It
-                        Works</a>
+                    <a href="#home"
+                        class="text-gray-700 hover:text-indigo-600 transition font-medium">{{ __('ui.home') }}</a>
+                    <a href="#features"
+                        class="text-gray-700 hover:text-indigo-600 transition font-medium">{{ __('ui.features') }}</a>
+                    <a href="#how-it-works"
+                        class="text-gray-700 hover:text-indigo-600 transition font-medium">{{ __('ui.how_it_works') }}</a>
                     <a href="#testimonials"
-                        class="text-gray-700 hover:text-indigo-600 transition font-medium">Testimonials</a>
+                        class="text-gray-700 hover:text-indigo-600 transition font-medium">{{ __('ui.testimonials') }}</a>
                 </div>
 
                 <!-- CTA Buttons -->
                 <div class="flex items-center space-x-4">
+                    @php
+                        $localeCountries = [
+                            'en' => 'us',
+                            'es' => 'es',
+                            'pt' => 'pt',
+                            'pt-br' => 'br',
+                            'ru' => 'ru',
+                            'ko' => 'kr',
+                            'ja' => 'jp',
+                            'nl' => 'nl',
+                            'el' => 'gr',
+                            'de' => 'de',
+                            'bn' => 'bd',
+                            'ar' => 'sa',
+                            'tr' => 'tr',
+                            'zh-cn' => 'cn',
+                            'hi' => 'in',
+                            'ro' => 'ro',
+                            'ur' => 'pk',
+                        ];
+
+                        $localeNames = [
+                            'en' => 'English',
+                            'es' => 'Español',
+                            'pt' => 'Português',
+                            'pt-br' => 'Português (Brasil)',
+                            'ru' => 'Русский',
+                            'ko' => '한국어',
+                            'ja' => '日本語',
+                            'nl' => 'Nederlands',
+                            'el' => 'Ελληνικά',
+                            'de' => 'Deutsch',
+                            'bn' => 'বাংলা',
+                            'ar' => 'العربية',
+                            'tr' => 'Türkçe',
+                            'zh-cn' => '中文(简体)',
+                            'hi' => 'हिन्दी',
+                            'ro' => 'Română',
+                            'ur' => 'اردو',
+                        ];
+
+                        $currentLocale = app()->getLocale();
+                        $normalizedCurrentLocale = strtolower(str_replace('_', '-', $currentLocale));
+                        $currentCountryCode = $localeCountries[$normalizedCurrentLocale] ?? 'us';
+                        $currentLocaleName = $localeNames[$normalizedCurrentLocale] ?? strtoupper($currentLocale);
+                    @endphp
+                    <form method="POST" action="{{ route('locale.switch', app()->getLocale()) }}"
+                        class="hidden md:block" x-data="{ open: false }" @click.away="open = false">
+                        @csrf
+                        <input type="hidden" name="locale" value="{{ $currentLocale }}" x-ref="localeInput">
+                        <div class="relative">
+                            <button type="button" @click="open = !open"
+                                class="h-10 min-w-[160px] rounded-xl border border-gray-200 bg-white px-3 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-indigo-300 focus:border-indigo-500 focus:outline-none inline-flex items-center justify-between gap-2">
+                                <span class="inline-flex items-center gap-2 truncate">
+                                    <img src="https://flagcdn.com/20x15/{{ $currentCountryCode }}.png"
+                                        srcset="https://flagcdn.com/40x30/{{ $currentCountryCode }}.png 2x"
+                                        alt="{{ $currentLocaleName }}" class="h-[15px] w-5 rounded-sm object-cover">
+                                    <span class="truncate">{{ $currentLocaleName }}</span>
+                                </span>
+                                <i class="fas fa-chevron-down text-[10px] text-gray-500"></i>
+                            </button>
+
+                            <div x-show="open" x-transition x-cloak style="display:none"
+                                class="absolute right-0 mt-2 max-h-72 w-52 overflow-auto rounded-xl border border-gray-200 bg-white p-1 shadow-xl z-50">
+                                @foreach(($supportedLocales ?? []) as $code => $label)
+                                    @php
+                                        $normalizedCode = strtolower(str_replace('_', '-', $code));
+                                        $localeName = $localeNames[$normalizedCode] ?? $label;
+                                        $countryCode = $localeCountries[$normalizedCode] ?? 'us';
+                                    @endphp
+                                    <button type="button"
+                                        @click="$refs.localeInput.value='{{ $code }}'; $el.closest('form').action='{{ url('/locale') }}/{{ $code }}'; $el.closest('form').submit();"
+                                        class="w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition hover:bg-indigo-50 {{ $currentLocale === $code ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700' }} inline-flex items-center gap-2">
+                                        <img src="https://flagcdn.com/20x15/{{ $countryCode }}.png"
+                                            srcset="https://flagcdn.com/40x30/{{ $countryCode }}.png 2x"
+                                            alt="{{ $localeName }}" class="h-[15px] w-5 rounded-sm object-cover">
+                                        <span>{{ $localeName }}</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+                    </form>
+
                     @auth
                         <a href="{{ route('dashboard') }}"
-                            class="hidden sm:block px-4 py-2 text-indigo-600 hover:text-indigo-700 font-medium transition">Dashboard</a>
+                            class="hidden sm:block px-4 py-2 text-indigo-600 hover:text-indigo-700 font-medium transition">{{ __('ui.dashboard') }}</a>
                     @else
                         <a href="{{ route('login') }}"
-                            class="hidden sm:block px-4 py-2 text-indigo-600 hover:text-indigo-700 font-medium transition">Login</a>
+                            class="hidden sm:block px-4 py-2 text-indigo-600 hover:text-indigo-700 font-medium transition">{{ __('ui.login') }}</a>
                         <a href="{{ route('register') }}"
-                            class="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full hover:shadow-lg transform hover:-translate-y-0.5 transition font-medium">Get
-                            Started</a>
+                            class="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full hover:shadow-lg transform hover:-translate-y-0.5 transition font-medium">{{ __('ui.get_started') }}</a>
                     @endauth
 
                     <!-- Mobile Menu Button -->
@@ -282,18 +366,54 @@
             <div id="mobile-menu" class="hidden md:hidden pb-4">
                 <div class="flex flex-col space-y-3">
                     <a href="#home"
-                        class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">Home</a>
+                        class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">{{ __('ui.home') }}</a>
                     <a href="#features"
-                        class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">Features</a>
+                        class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">{{ __('ui.features') }}</a>
                     <a href="#how-it-works"
-                        class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">How It Works</a>
+                        class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">{{ __('ui.how_it_works') }}</a>
                     <a href="#pricing"
-                        class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">Pricing</a>
+                        class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">{{ __('ui.pricing') }}</a>
                     <a href="#testimonials"
-                        class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">Testimonials</a>
+                        class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">{{ __('ui.testimonials') }}</a>
+                    <form method="POST" action="{{ route('locale.switch', app()->getLocale()) }}"
+                        x-data="{ open: false }" @click.away="open = false">
+                        @csrf
+                        <input type="hidden" name="locale" value="{{ $currentLocale }}" x-ref="localeInput">
+                        <div class="relative mt-2">
+                            <button type="button" @click="open = !open"
+                                class="h-10 w-full rounded-xl border border-gray-200 bg-white px-3 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-indigo-300 focus:border-indigo-500 focus:outline-none inline-flex items-center justify-between gap-2">
+                                <span class="inline-flex items-center gap-2 truncate">
+                                    <img src="https://flagcdn.com/20x15/{{ $currentCountryCode }}.png"
+                                        srcset="https://flagcdn.com/40x30/{{ $currentCountryCode }}.png 2x"
+                                        alt="{{ $currentLocaleName }}" class="h-[15px] w-5 rounded-sm object-cover">
+                                    <span class="truncate">{{ $currentLocaleName }}</span>
+                                </span>
+                                <i class="fas fa-chevron-down text-[10px] text-gray-500"></i>
+                            </button>
+
+                            <div x-show="open" x-transition x-cloak style="display:none"
+                                class="absolute left-0 right-0 mt-2 max-h-72 overflow-auto rounded-xl border border-gray-200 bg-white p-1 shadow-xl z-50">
+                                @foreach(($supportedLocales ?? []) as $code => $label)
+                                    @php
+                                        $normalizedCode = strtolower(str_replace('_', '-', $code));
+                                        $localeName = $localeNames[$normalizedCode] ?? $label;
+                                        $countryCode = $localeCountries[$normalizedCode] ?? 'us';
+                                    @endphp
+                                    <button type="button"
+                                        @click="$refs.localeInput.value='{{ $code }}'; $el.closest('form').action='{{ url('/locale') }}/{{ $code }}'; $el.closest('form').submit();"
+                                        class="w-full rounded-lg px-3 py-2 text-left text-xs font-medium transition hover:bg-indigo-50 {{ $currentLocale === $code ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700' }} inline-flex items-center gap-2">
+                                        <img src="https://flagcdn.com/20x15/{{ $countryCode }}.png"
+                                            srcset="https://flagcdn.com/40x30/{{ $countryCode }}.png 2x"
+                                            alt="{{ $localeName }}" class="h-[15px] w-5 rounded-sm object-cover">
+                                        <span>{{ $localeName }}</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+                    </form>
                     @guest
                         <a href="{{ route('login') }}"
-                            class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">Login</a>
+                            class="text-gray-700 hover:text-indigo-600 transition font-medium px-2 py-1">{{ __('ui.login') }}</a>
                     @endguest
                 </div>
             </div>
@@ -321,7 +441,7 @@
                         <div
                             class="inline-block mb-4 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold animate-slide-up relative overflow-hidden group">
                             <span class="relative z-10 flex items-center gap-2">
-                                <span class="animate-bounce">🚀</span> Trusted by 50,000+ Investors
+                                <span class="animate-bounce">🚀</span> {{ __('ui.trusted_by_investors') }}
                             </span>
                             <div
                                 class="absolute inset-0 bg-gradient-to-r from-indigo-200 to-purple-200 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left">
@@ -329,27 +449,26 @@
                         </div>
                         <h1
                             class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight animate-slide-up delay-100">
-                            Invest Smarter,
+                            {{ __('ui.invest_smarter') }},
                             <span
-                                class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent inline-block animate-gradient">Grow
-                                Faster</span>
+                                class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent inline-block animate-gradient">
+                                {{ __('ui.grow_faster') }}</span>
                         </h1>
                         <p class="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed animate-slide-up delay-200">
-                            Build your wealth with confidence using our intelligent investment platform. Start with as
-                            little as $10 and watch your money grow.
+                            {{ __('ui.hero_subtitle') }}
                         </p>
                         <div
                             class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-up delay-300">
                             <a href="{{ route('register') }}"
                                 class="group px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-semibold hover:shadow-2xl transform hover:-translate-y-1 transition relative overflow-hidden">
-                                <span class="relative z-10">Start Investing Now</span>
+                                <span class="relative z-10">{{ __('ui.start_investing_now') }}</span>
                                 <div
                                     class="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left">
                                 </div>
                             </a>
                             <a href="#how-it-works"
                                 class="group px-8 py-4 bg-white text-gray-700 rounded-full font-semibold border-2 border-gray-200 hover:border-indigo-600 hover:text-indigo-600 transition relative overflow-hidden">
-                                <span class="relative z-10">Learn More</span>
+                                <span class="relative z-10">{{ __('ui.learn_more') }}</span>
                                 <div
                                     class="absolute inset-0 bg-gradient-to-r from-indigo-50 to-purple-50 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left">
                                 </div>
@@ -361,7 +480,8 @@
                                 <div
                                     class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 group-hover:scale-110 transition-transform">
                                     $2.5B+</div>
-                                <div class="text-sm text-gray-600 group-hover:text-indigo-600 transition">Total Invested
+                                <div class="text-sm text-gray-600 group-hover:text-indigo-600 transition">
+                                    {{ __('ui.total_invested') }}
                                 </div>
                             </div>
                             <div class="w-px h-12 bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
@@ -369,7 +489,8 @@
                                 <div
                                     class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 group-hover:scale-110 transition-transform">
                                     50K+</div>
-                                <div class="text-sm text-gray-600 group-hover:text-purple-600 transition">Active Users
+                                <div class="text-sm text-gray-600 group-hover:text-purple-600 transition">
+                                    {{ __('ui.active_users') }}
                                 </div>
                             </div>
                             <div class="w-px h-12 bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
@@ -378,7 +499,8 @@
                                     class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-red-600 group-hover:scale-110 transition-transform flex items-center gap-1">
                                     4.9<span class="text-yellow-500">★</span>
                                 </div>
-                                <div class="text-sm text-gray-600 group-hover:text-pink-600 transition">User Rating
+                                <div class="text-sm text-gray-600 group-hover:text-pink-600 transition">
+                                    {{ __('ui.user_rating') }}
                                 </div>
                             </div>
                         </div>
@@ -390,7 +512,7 @@
                             <!-- Main Card -->
                             <div class="bg-white rounded-3xl shadow-2xl p-8 hover-lift animate-scale-in delay-200">
                                 <div class="flex items-center justify-between mb-6">
-                                    <h3 class="text-lg font-semibold text-gray-900">Portfolio Value</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ __('ui.portfolio_value') }}</h3>
                                     <span
                                         class="text-green-500 text-sm font-semibold flex items-center animate-pulse bg-green-50 px-3 py-1 rounded-full">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -403,7 +525,7 @@
                                 </div>
                                 <div class="mb-6">
                                     <div class="text-4xl font-bold text-gray-900 mb-2">$45,678.90</div>
-                                    <div class="text-sm text-gray-500">+$8,943.21 this month</div>
+                                    <div class="text-sm text-gray-500">{{ __('ui.this_month_profit_sample') }}</div>
                                 </div>
                                 <div
                                     class="h-32 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl mb-6 flex items-end justify-around p-4">
@@ -417,21 +539,24 @@
                                 <div class="grid grid-cols-3 gap-4">
                                     <div class="bg-indigo-50 rounded-lg p-3 hover-lift cursor-pointer group">
                                         <div class="text-xs text-gray-600 mb-1 group-hover:text-indigo-600 transition">
-                                            Stocks</div>
+                                            {{ __('ui.stocks') }}
+                                        </div>
                                         <div
                                             class="text-lg font-bold text-indigo-600 group-hover:scale-110 transition-transform inline-block">
                                             45%</div>
                                     </div>
                                     <div class="bg-purple-50 rounded-lg p-3 hover-lift cursor-pointer group">
                                         <div class="text-xs text-gray-600 mb-1 group-hover:text-purple-600 transition">
-                                            Crypto</div>
+                                            {{ __('ui.crypto') }}
+                                        </div>
                                         <div
                                             class="text-lg font-bold text-purple-600 group-hover:scale-110 transition-transform inline-block">
                                             30%</div>
                                     </div>
                                     <div class="bg-pink-50 rounded-lg p-3 hover-lift cursor-pointer group">
                                         <div class="text-xs text-gray-600 mb-1 group-hover:text-pink-600 transition">
-                                            Bonds</div>
+                                            {{ __('ui.bonds') }}
+                                        </div>
                                         <div
                                             class="text-lg font-bold text-pink-600 group-hover:scale-110 transition-transform inline-block">
                                             25%</div>
@@ -450,7 +575,7 @@
                                         </svg>
                                     </div>
                                     <div>
-                                        <div class="text-sm font-semibold text-gray-900">New Profit</div>
+                                        <div class="text-sm font-semibold text-gray-900">{{ __('ui.new_profit') }}</div>
                                         <div class="text-lg font-bold text-green-600">+$1,234</div>
                                     </div>
                                 </div>
@@ -468,7 +593,7 @@
                                         </svg>
                                     </div>
                                     <div>
-                                        <div class="text-sm font-semibold text-gray-900">ROI</div>
+                                        <div class="text-sm font-semibold text-gray-900">{{ __('ui.roi') }}</div>
                                         <div class="text-lg font-bold text-indigo-600">32.5%</div>
                                     </div>
                                 </div>
@@ -484,12 +609,11 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                        Why Choose <span
+                        {{ __('ui.why_choose') }} <span
                             class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{{ setting('site_title', "Invest Pro") }}</span>
                     </h2>
                     <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                        Experience the future of investing with our cutting-edge features designed to maximize your
-                        returns.
+                        {{ __('ui.features_subtitle') }}
                     </p>
                 </div>
 
@@ -505,9 +629,11 @@
                             </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition">
-                            Lightning Fast</h3>
-                        <p class="text-gray-600 group-hover:text-gray-700 transition">Execute trades in milliseconds
-                            with our advanced infrastructure and real-time market data.</p>
+                            {{ __('ui.feature_lightning_fast_title') }}
+                        </h3>
+                        <p class="text-gray-600 group-hover:text-gray-700 transition">
+                            {{ __('ui.feature_lightning_fast_desc') }}
+                        </p>
                         <div
                             class="mt-4 h-1 w-0 group-hover:w-full bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-500 rounded-full">
                         </div>
@@ -525,9 +651,11 @@
                             </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition">
-                            Bank-Level Security</h3>
-                        <p class="text-gray-600 group-hover:text-gray-700 transition">Your investments are protected
-                            with 256-bit encryption and multi-factor authentication.</p>
+                            {{ __('ui.feature_bank_security_title') }}
+                        </h3>
+                        <p class="text-gray-600 group-hover:text-gray-700 transition">
+                            {{ __('ui.feature_bank_security_desc') }}
+                        </p>
                         <div
                             class="mt-4 h-1 w-0 group-hover:w-full bg-gradient-to-r from-purple-600 to-pink-600 transition-all duration-500 rounded-full">
                         </div>
@@ -544,10 +672,12 @@
                                 </path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-pink-600 transition">Smart
-                            Analytics</h3>
-                        <p class="text-gray-600 group-hover:text-gray-700 transition">AI-powered insights help you make
-                            informed decisions and optimize your portfolio.</p>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-pink-600 transition">
+                            {{ __('ui.feature_smart_analytics_title') }}
+                        </h3>
+                        <p class="text-gray-600 group-hover:text-gray-700 transition">
+                            {{ __('ui.feature_smart_analytics_desc') }}
+                        </p>
                         <div
                             class="mt-4 h-1 w-0 group-hover:w-full bg-gradient-to-r from-pink-600 to-red-600 transition-all duration-500 rounded-full">
                         </div>
@@ -564,9 +694,8 @@
                                 </path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">Zero Fees</h3>
-                        <p class="text-gray-600">No hidden charges. Keep 100% of your profits with our transparent
-                            pricing model.</p>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('ui.feature_zero_fees_title') }}</h3>
+                        <p class="text-gray-600">{{ __('ui.feature_zero_fees_desc') }}</p>
                     </div>
 
                     <!-- Feature 5 -->
@@ -580,9 +709,9 @@
                                 </path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">Expert Support</h3>
-                        <p class="text-gray-600">24/7 customer support from investment experts ready to help you
-                            succeed.</p>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('ui.feature_expert_support_title') }}
+                        </h3>
+                        <p class="text-gray-600">{{ __('ui.feature_expert_support_desc') }}</p>
                     </div>
 
                     <!-- Feature 6 -->
@@ -596,9 +725,8 @@
                                 </path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">Mobile Ready</h3>
-                        <p class="text-gray-600">Invest on the go with our fully responsive mobile app available on iOS
-                            and Android.</p>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('ui.feature_mobile_ready_title') }}</h3>
+                        <p class="text-gray-600">{{ __('ui.feature_mobile_ready_desc') }}</p>
                     </div>
                 </div>
             </div>
@@ -609,11 +737,11 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                        How It <span
-                            class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Works</span>
+                        {{ __('ui.how_it') }} <span
+                            class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{{ __('ui.works') }}</span>
                     </h2>
                     <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                        Start your investment journey in just 3 simple steps. It's easier than you think!
+                        {{ __('ui.how_it_works_subtitle') }}
                     </p>
                 </div>
 
@@ -643,10 +771,10 @@
                                 </div>
                             </div>
                             <h3 class="text-2xl font-bold text-gray-900 mb-4 group-hover:text-indigo-600 transition">
-                                Create Account</h3>
+                                {{ __('ui.create_account') }}
+                            </h3>
                             <p class="text-gray-600 leading-relaxed group-hover:text-gray-700 transition">
-                                Sign up in under 2 minutes with just your email. No lengthy forms or complicated
-                                verification process.
+                                {{ __('ui.create_account_desc') }}
                             </p>
                         </div>
 
@@ -666,11 +794,8 @@
                                     class="absolute -top-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-purple-600 font-bold text-purple-600">
                                     2</div>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Add Funds</h3>
-                            <p class="text-gray-600 leading-relaxed">
-                                Deposit money securely using your preferred payment method. Multiple options available
-                                including cards and bank transfers.
-                            </p>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">{{ __('ui.add_funds') }}</h3>
+                            <p class="text-gray-600 leading-relaxed">{{ __('ui.add_funds_desc') }}</p>
                         </div>
 
                         <!-- Step 3 -->
@@ -688,11 +813,8 @@
                                     class="absolute -top-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-pink-600 font-bold text-pink-600">
                                     3</div>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Start Investing</h3>
-                            <p class="text-gray-600 leading-relaxed">
-                                Choose from our curated investment packages and watch your money grow with real-time
-                                tracking and insights.
-                            </p>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-4">{{ __('ui.start_investing') }}</h3>
+                            <p class="text-gray-600 leading-relaxed">{{ __('ui.start_investing_desc') }}</p>
                         </div>
                     </div>
                 </div>
@@ -701,7 +823,7 @@
                 <div class="text-center mt-16">
                     <a href="{{ route('register') }}"
                         class="inline-block px-10 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-semibold text-lg hover:shadow-2xl transform hover:-translate-y-1 transition">
-                        Get Started Today
+                        {{ __('ui.get_started_today') }}
                     </a>
                 </div>
             </div>
@@ -712,13 +834,12 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                        What Our <span
-                            class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Investors</span>
-                        Say
+                        {{ __('ui.what_our') }} <span
+                            class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{{ __('ui.investors') }}</span>
+                        {{ __('ui.say') }}
                     </h2>
                     <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                        Join thousands of satisfied investors who are building their wealth with
-                        {{ setting('site_title', "Invest Pro") }}.
+                        {{ __('ui.testimonials_subtitle') }}
                     </p>
                 </div>
 
@@ -1030,21 +1151,19 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div class="max-w-4xl mx-auto text-center">
                     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-                        Ready to Start Your Investment Journey?
+                        {{ __('ui.ready_to_start_investment_journey') }}
                     </h2>
                     <p class="text-lg sm:text-xl text-white/90 mb-10 leading-relaxed">
-                        Join 50,000+ investors who are already building wealth with
-                        {{ setting('site_title', "Invest Pro") }}. Start with as little as
-                        $10 and watch your money grow.
+                        {{ __('ui.cta_subtitle') }}
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
                         <a href="{{ route('register') }}"
                             class="px-10 py-4 bg-white text-purple-600 rounded-full font-bold text-lg hover:shadow-2xl transform hover:-translate-y-1 transition">
-                            Create Free Account
+                            {{ __('ui.create_free_account') }}
                         </a>
                         <a href="#features"
                             class="px-10 py-4 bg-transparent text-white rounded-full font-semibold text-lg border-2 border-white hover:bg-white hover:text-purple-600 transition">
-                            Learn More
+                            {{ __('ui.learn_more') }}
                         </a>
                     </div>
                     <div class="flex items-center justify-center gap-8 text-white">
@@ -1054,7 +1173,7 @@
                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                     clip-rule="evenodd"></path>
                             </svg>
-                            <span class="text-sm font-medium">No credit card required</span>
+                            <span class="text-sm font-medium">{{ __('ui.no_credit_card_required') }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -1062,7 +1181,7 @@
                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                     clip-rule="evenodd"></path>
                             </svg>
-                            <span class="text-sm font-medium">Cancel anytime</span>
+                            <span class="text-sm font-medium">{{ __('ui.cancel_anytime') }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -1070,7 +1189,7 @@
                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                     clip-rule="evenodd"></path>
                             </svg>
-                            <span class="text-sm font-medium">100% Secure</span>
+                            <span class="text-sm font-medium">{{ __('ui.secure_100') }}</span>
                         </div>
                     </div>
                 </div>
@@ -1099,8 +1218,7 @@
                         </span>
                     </div>
                     <p class="text-gray-400 text-sm leading-relaxed">
-                        Your trusted partner for smart investments. Build wealth with confidence using our advanced
-                        investment platform.
+                        {{ __('ui.footer_company_desc') }}
                     </p>
                     <div class="flex space-x-4">
                         <a href="#"
@@ -1136,46 +1254,67 @@
 
                 <!-- Quick Links -->
                 <div>
-                    <h3 class="text-white font-semibold mb-4">Quick Links</h3>
+                    <h3 class="text-white font-semibold mb-4">{{ __('ui.quick_links') }}</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">About Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Our Team</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Careers</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Blog</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Press</a></li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.about_us') }}</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.our_team') }}</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.careers') }}</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.blog') }}</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.press') }}</a>
+                        </li>
                     </ul>
                 </div>
 
                 <!-- Resources -->
                 <div>
-                    <h3 class="text-white font-semibold mb-4">Resources</h3>
+                    <h3 class="text-white font-semibold mb-4">{{ __('ui.resources') }}</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Help Center</a>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.help_center') }}</a>
                         </li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Documentation</a>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.documentation') }}</a>
                         </li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">API Reference</a>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.api_reference') }}</a>
                         </li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Community</a>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.community') }}</a>
                         </li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Tutorials</a>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.tutorials') }}</a>
                         </li>
                     </ul>
                 </div>
 
                 <!-- Legal -->
                 <div>
-                    <h3 class="text-white font-semibold mb-4">Legal</h3>
+                    <h3 class="text-white font-semibold mb-4">{{ __('ui.legal') }}</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Privacy
-                                Policy</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Terms of
-                                Service</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Cookie Policy</a>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.privacy_policy') }}</a>
                         </li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Disclaimer</a>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.terms_of_service') }}</a>
                         </li>
-                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Licenses</a></li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.cookie_policy') }}</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.disclaimer') }}</a>
+                        </li>
+                        <li><a href="#"
+                                class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.licenses') }}</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -1183,12 +1322,14 @@
             <!-- Bottom Bar -->
             <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
                 <p class="text-gray-400 text-sm mb-4 md:mb-0">
-                    © {{ date('Y') }} {{ setting('site_title', "Invest Pro") }}. All rights reserved.
+                    © {{ date('Y') }} {{ setting('site_title', "Invest Pro") }}. {{ __('ui.all_rights_reserved') }}
                 </p>
                 <div class="flex items-center space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Contact</a>
-                    <a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Support</a>
-                    <a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">Status</a>
+                    <a href="#"
+                        class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.contact') }}</a>
+                    <a href="#"
+                        class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.support') }}</a>
+                    <a href="#" class="text-gray-400 hover:text-indigo-400 transition text-sm">{{ __('ui.status') }}</a>
                 </div>
             </div>
         </div>

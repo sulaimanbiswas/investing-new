@@ -1,6 +1,6 @@
 @extends('layouts.user.app')
 
-@section('title', 'Deposit Records - ' . config('app.name'))
+@section('title', __('ui.deposit_records') . ' - ' . config('app.name'))
 
 @section('content')
     <!-- Header -->
@@ -9,7 +9,7 @@
             class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
             <i class="fas fa-arrow-left text-gray-700"></i>
         </a>
-        <h1 class="text-2xl font-bold text-gray-800">Deposit Records</h1>
+        <h1 class="text-2xl font-bold text-gray-800">{{ __('ui.deposit_records') }}</h1>
     </div>
 
     <!-- Deposit List -->
@@ -19,13 +19,16 @@
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="text-lg font-bold text-gray-800">Deposit</span>
+                            <span class="text-lg font-bold text-gray-800">{{ __('ui.deposit') }}</span>
                             @if($deposit->status === 'approved')
-                                <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">approved</span>
+                                <span
+                                    class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">{{ __('ui.approved') }}</span>
                             @elseif($deposit->status === 'pending')
-                                <span class="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded">pending</span>
+                                <span
+                                    class="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded">{{ __('ui.pending') }}</span>
                             @elseif($deposit->status === 'rejected')
-                                <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">rejected</span>
+                                <span
+                                    class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">{{ __('ui.rejected') }}</span>
                             @else
                                 <span
                                     class="text-xs font-semibold text-gray-600 bg-gray-50 px-2 py-1 rounded">{{ $deposit->status }}</span>
@@ -52,7 +55,7 @@
                                 <i class="fas fa-wallet text-indigo-600 text-xs"></i>
                             </div>
                         @endif
-                        <span class="text-sm text-gray-600">{{ $deposit->gateway->name ?? 'Gateway' }}</span>
+                        <span class="text-sm text-gray-600">{{ $deposit->gateway->name ?? __('ui.gateway') }}</span>
                     </div>
                     <div class="flex items-center gap-1 text-lg font-bold text-gray-800">
                         <i class="fas fa-coins text-yellow-500 text-base"></i>
@@ -62,14 +65,14 @@
 
                 @if($deposit->txn_id)
                     <div class="mt-3 pt-3 border-t border-gray-100">
-                        <div class="text-xs text-gray-500 mb-1">Transaction ID</div>
+                        <div class="text-xs text-gray-500 mb-1">{{ __('ui.transaction_id') }}</div>
                         <div class="text-sm text-gray-700 font-mono break-all">{{ $deposit->txn_id }}</div>
                     </div>
                 @endif
 
                 @if($deposit->screenshot_path)
                     <div class="mt-3 pt-3 border-t border-gray-100">
-                        <div class="text-xs text-gray-500 mb-2">Payment Screenshot</div>
+                        <div class="text-xs text-gray-500 mb-2">{{ __('ui.payment_screenshot') }}</div>
                         <a href="{{ asset($deposit->screenshot_path) }}" target="_blank" class="inline-block">
                             <img src="{{ asset($deposit->screenshot_path) }}" alt="Screenshot"
                                 class="w-32 h-32 object-cover rounded-lg border-2 border-gray-200 hover:border-indigo-500 transition">
@@ -79,7 +82,7 @@
 
                 @if($deposit->admin_note)
                     <div class="mt-3 pt-3 border-t border-gray-100">
-                        <div class="text-xs text-gray-500 mb-1">Admin Note</div>
+                        <div class="text-xs text-gray-500 mb-1">{{ __('ui.admin_note') }}</div>
                         <div class="text-sm text-gray-700">{{ $deposit->admin_note }}</div>
                     </div>
                 @endif
@@ -89,11 +92,11 @@
                 <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-inbox text-gray-400 text-3xl"></i>
                 </div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-2">No Deposits Yet</h3>
-                <p class="text-gray-500 mb-4">You haven't made any deposits yet</p>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ __('ui.no_deposits_yet') }}</h3>
+                <p class="text-gray-500 mb-4">{{ __('ui.no_deposit_history') }}</p>
                 <a href="{{ route('deposit') }}"
                     class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition">
-                    Make Your First Deposit
+                    {{ __('ui.make_first_deposit') }}
                 </a>
             </div>
         @endforelse

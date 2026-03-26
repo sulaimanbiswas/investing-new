@@ -1,12 +1,12 @@
 @extends('layouts.user.app')
 
-@section('title', 'Customer Service - ' . config('app.name'))
+@section('title', __('ui.customer_service') . ' - ' . config('app.name'))
 
 @section('content')
     <!-- Header with Back Button -->
     <div class="mb-6 flex items-center gap-3">
         @include('components.back-button')
-        <h1 class="text-2xl font-bold text-gray-800">Customer Service</h1>
+        <h1 class="text-2xl font-bold text-gray-800">{{ __('ui.customer_service') }}</h1>
     </div>
 
     <!-- Customer Service Illustration -->
@@ -32,8 +32,8 @@
                 </div>
 
                 <div class="text-center mb-4">
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Customer Service Center</h3>
-                    <p class="text-gray-600 text-sm">Online Customer Service Time</p>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">{{ __('ui.customer_service_center') }}</h3>
+                    <p class="text-gray-600 text-sm">{{ __('ui.online_customer_service_time') }}</p>
                 </div>
             </div>
         </div>
@@ -52,8 +52,8 @@
                             <i class="fab fa-telegram-plane text-white text-2xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900">Telegram Care Center</h3>
-                            <p class="text-gray-500 text-sm">Contact us on Telegram</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ __('ui.telegram_care_center') }}</h3>
+                            <p class="text-gray-500 text-sm">{{ __('ui.contact_us_on_telegram') }}</p>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right text-gray-400 text-xl"></i>
@@ -72,8 +72,8 @@
                             <i class="fab fa-whatsapp text-white text-2xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900">WhatsApp Care Center</h3>
-                            <p class="text-gray-500 text-sm">Contact us on WhatsApp</p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ __('ui.whatsapp_care_center') }}</h3>
+                            <p class="text-gray-500 text-sm">{{ __('ui.contact_us_on_whatsapp') }}</p>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right text-gray-400 text-xl"></i>
@@ -91,8 +91,8 @@
                         <i class="fas fa-question-circle text-white text-2xl"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900">Help</h3>
-                        <p class="text-gray-500 text-sm">FAQ and support</p>
+                        <h3 class="text-lg font-bold text-gray-900">{{ __('ui.help') }}</h3>
+                        <p class="text-gray-500 text-sm">{{ __('ui.faq_and_support') }}</p>
                     </div>
                 </div>
                 <i class="fas fa-chevron-right text-gray-400 text-xl"></i>
@@ -107,10 +107,9 @@
                 <i class="fas fa-info text-white text-sm"></i>
             </div>
             <div>
-                <h4 class="font-bold text-gray-900 mb-2">Need Assistance?</h4>
+                <h4 class="font-bold text-gray-900 mb-2">{{ __('ui.need_assistance') }}</h4>
                 <p class="text-gray-700 text-sm leading-relaxed">
-                    Our customer service team is available 24/7 to help you with any questions or issues. Choose your
-                    preferred communication method above to get started.
+                    {{ __('ui.customer_service_assistance_desc') }}
                 </p>
             </div>
         </div>

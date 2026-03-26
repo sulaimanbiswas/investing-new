@@ -37,6 +37,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::share('supportedLocales', config('localization.supported_locales', ['en' => 'English']));
+        View::share('currentLocale', app()->getLocale());
+
         // Configure route model bindings
         Route::bind('userOrderSet', function ($value) {
             return UserOrderSet::findOrFail($value);

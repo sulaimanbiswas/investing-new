@@ -1,6 +1,6 @@
 @extends('layouts.user.app')
 
-@section('title', 'Profile - ' . config('app.name'))
+@section('title', __('ui.profile') . ' - ' . config('app.name'))
 
 @section('content')
     <!-- Header Card -->
@@ -35,13 +35,14 @@
                     <span
                         class="{{ $colorClass }} text-white text-xs font-bold px-2.5 py-1 rounded inline-flex items-center gap-1">
                         <i class="fas {{ $iconClass }}"></i>
-                        {{ $vipName ?? 'Level 0' }}
+                        {{ $vipName ?? __('ui.level_with_number', ['number' => 0]) }}
                     </span>
                     @if(auth()->user()->username)
                         <span class="text-xs bg-white/20 px-2 py-1 rounded">{{ '@' . auth()->user()->username }}</span>
                     @endif
                 </div>
-                <div class="text-white/80 text-sm mt-1">Invitation Code: {{ auth()->user()->referral_code ?? '—' }}</div>
+                <div class="text-white/80 text-sm mt-1">{{ __('ui.invitation_code') }}:
+                    {{ auth()->user()->referral_code ?? '—' }}</div>
             </div>
             {{-- <a href="{{ route('notifications.index') }}" class="relative">
                 <i class="fas fa-comment-dots text-white/90 text-xl"></i>
@@ -67,7 +68,7 @@
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-5">
             <div class="flex flex-col gap-2">
-                <div class="text-white/80 text-xs">Account Balance</div>
+                <div class="text-white/80 text-xs">{{ __('ui.account_balance') }}</div>
                 <div class="flex items-center gap-2">
                     <span class="text-xs">USDT</span>
                     <span class="text-3xl font-bold">{{ number_format(auth()->user()->balance ?? 0, 2) }}</span>
@@ -79,14 +80,14 @@
                         class="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 ">
                         <i class="fas fa-credit-card text-white text-3xl"></i>
                     </div>
-                    <span class="text-sm">Deposit</span>
+                    <span class="text-sm">{{ __('ui.deposit') }}</span>
                 </a>
                 <a href="{{ route('withdrawal') }}" class="flex flex-col items-center justify-center gap-2 ">
                     <div
                         class="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center bg-gradient-to-br to-indigo-500 from-purple-600">
                         <i class="fas fa-wallet text-white text-3xl"></i>
                     </div>
-                    <span class="text-sm">Withdraw</span>
+                    <span class="text-sm">{{ __('ui.withdraw') }}</span>
                 </a>
             </div> --}}
 
@@ -95,13 +96,13 @@
                     <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
                         <i class="fas fa-wallet text-2xl text-white"></i>
                     </div>
-                    <span class="text-sm">Deposit</span>
+                    <span class="text-sm">{{ __('ui.deposit') }}</span>
                 </a>
                 <a href="{{ route('withdrawal') }}" class="flex flex-col items-center justify-center">
                     <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
                         <i class="fas fa-money-bill-wave text-2xl text-white"></i>
                     </div>
-                    <span class="text-sm">Withdraw</span>
+                    <span class="text-sm">{{ __('ui.withdraw') }}</span>
                 </a>
             </div>
         </div>
@@ -114,25 +115,25 @@
                 <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
                     <i class="fas fa-users"></i>
                 </div>
-                <span class="text-xs">Teams</span>
+                <span class="text-xs">{{ __('ui.teams') }}</span>
             </a>
             <a href="{{ route('records.index') }}" class="flex flex-col items-center gap-2">
                 <div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
                     <i class="fas fa-file-alt"></i>
                 </div>
-                <span class="text-xs">Record</span>
+                <span class="text-xs">{{ __('ui.record') }}</span>
             </a>
             <a href="{{ route('wallet.edit') }}" class="flex flex-col items-center gap-2">
                 <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
                     <i class="fas fa-wallet"></i>
                 </div>
-                <span class="text-xs">Wallet Address</span>
+                <span class="text-xs">{{ __('ui.wallet_address') }}</span>
             </a>
             <a href="{{ route('invitation') }}" class="flex flex-col items-center gap-2">
                 <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
                     <i class="fas fa-user-plus"></i>
                 </div>
-                <span class="text-xs">Invite</span>
+                <span class="text-xs">{{ __('ui.invite') }}</span>
             </a>
         </div>
     </div>
@@ -147,7 +148,7 @@
                             <i class="fas fa-id-card text-gray-600"></i>
                         </div>
                         <div>
-                            <div class="font-semibold text-gray-800">Profile Setting</div>
+                            <div class="font-semibold text-gray-800">{{ __('ui.profile_setting') }}</div>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right text-gray-400"></i>
@@ -160,7 +161,7 @@
                             <i class="fas fa-clipboard-list text-gray-600"></i>
                         </div>
                         <div>
-                            <div class="font-semibold text-gray-800">Deposit Records</div>
+                            <div class="font-semibold text-gray-800">{{ __('ui.deposit_records') }}</div>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right text-gray-400"></i>
@@ -173,7 +174,7 @@
                             <i class="fas fa-exchange-alt text-gray-600"></i>
                         </div>
                         <div>
-                            <div class="font-semibold text-gray-800">Withdrawal Records</div>
+                            <div class="font-semibold text-gray-800">{{ __('ui.withdrawal_records') }}</div>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right text-gray-400"></i>
@@ -187,7 +188,7 @@
                             <i class="fas fa-coins text-purple-600"></i>
                         </div>
                         <div>
-                            <div class="font-semibold text-gray-800">Referral Commissions</div>
+                            <div class="font-semibold text-gray-800">{{ __('ui.referral_commissions') }}</div>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right text-gray-400"></i>
@@ -202,7 +203,7 @@
                                 <i class="fas fa-power-off text-gray-600"></i>
                             </div>
                             <div>
-                                <div class="font-semibold text-gray-800">Log Out</div>
+                                <div class="font-semibold text-gray-800">{{ __('ui.logout') }}</div>
                             </div>
                         </div>
                         <i class="fas fa-chevron-right text-gray-400"></i>
