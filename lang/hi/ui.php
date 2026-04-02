@@ -15,6 +15,7 @@ return [
     'profile_settings' => 'प्रोफ़ाइल सेटिंग्स',
     'profile_setting' => 'प्रोफ़ाइल सेटिंग',
     'settings' => 'सेटिंग्स',
+    'level' => 'स्तर',
     'logout' => 'लॉगआउट',
     'support' => 'सहायता',
     'menu' => 'मेनू',

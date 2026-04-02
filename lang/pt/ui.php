@@ -17,6 +17,7 @@ return [
     'settings' => 'Configurações',
     'logout' => 'Sair',
     'support' => 'Suporte',
+    'level' => 'Nível',
     'menu' => 'Menu',
     'record' => 'Registro',
     'notifications' => 'Notificações',

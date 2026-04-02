@@ -16,6 +16,7 @@ return [
     'profile_setting' => 'プロフィール設定',
     'settings' => '設定',
     'logout' => 'ログアウト',
+    'level' => 'レベル',
     'support' => 'サポート',
     'menu' => 'メニュー',
     'record' => '記録',

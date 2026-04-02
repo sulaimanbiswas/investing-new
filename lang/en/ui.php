@@ -10,6 +10,7 @@ return [
     'login' => 'Login',
     'get_started' => 'Get Started',
     'dashboard' => 'Dashboard',
+    'level' => 'Level',
     'profile' => 'Profile',
     'edit_profile' => 'Edit Profile',
     'profile_settings' => 'Profile Settings',

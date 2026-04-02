@@ -17,6 +17,7 @@ return [
     'settings' => '设置',
     'logout' => '退出登录',
     'support' => '支持',
+    'level' => '等级',
     'menu' => '菜单',
     'record' => '记录',
     'notifications' => '通知',

@@ -17,6 +17,7 @@ return [
     'settings' => 'Instellingen',
     'logout' => 'Uitloggen',
     'support' => 'Steun',
+    'level' => 'Level',
     'menu' => 'Menu',
     'record' => 'Overzicht',
     'notifications' => 'Meldingen',

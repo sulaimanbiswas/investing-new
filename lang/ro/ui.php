@@ -18,6 +18,7 @@ return [
     'logout' => 'Deconectare',
     'support' => 'Suport',
     'menu' => 'Meniu',
+    'level' => 'Nivel',
     'record' => 'Istoric',
     'notifications' => 'Notificări',
     'recharge' => 'Reîncărcați',

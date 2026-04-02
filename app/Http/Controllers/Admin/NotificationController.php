@@ -118,6 +118,7 @@ class NotificationController extends Controller
         return match (true) {
             str_contains($type, 'deposit') => route('admin.deposits.index'),
             str_contains($type, 'withdrawal') => route('admin.withdrawals.index'),
+            str_contains($type, 'order_request') => route('admin.order-requests.index'),
             str_contains($type, 'user_registered') => route('admin.users.show', $notification->user_id),
             default => route('admin.dashboard'),
         };

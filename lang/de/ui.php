@@ -438,4 +438,5 @@ return [
     'verification_link_sent' => 'Ein neuer Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet.',
     'resend_verification_email' => 'Bestätigungs-E-Mail erneut senden',
     'confirm_password_description' => 'Dies ist ein sicherer Bereich der Anwendung. Bitte bestätigen Sie Ihr Passwort, bevor Sie fortfahren.',
+    'level' => 'Level',
 ];

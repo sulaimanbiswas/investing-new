@@ -16,18 +16,18 @@ class TeamsController extends Controller
         $user = Auth::user();
 
         // Get Level 1: Direct referrals
-        $level1 = $user->referrals()->with('referrals')->get();
+        $level1 = $user->referrals()->with(['referrals', 'deposits', 'withdrawals'])->get();
         $level1Count = $level1->count();
 
         // Get Level 2: Referrals of referrals
         $level2 = User::whereIn('referred_by', $level1->pluck('id'))
-            ->with('referrer')
+            ->with(['referrer', 'deposits', 'withdrawals'])
             ->get();
         $level2Count = $level2->count();
 
         // Get Level 3: Referrals of level 2
         $level3 = User::whereIn('referred_by', $level2->pluck('id'))
-            ->with('referrer')
+            ->with(['referrer', 'deposits', 'withdrawals'])
             ->get();
         $level3Count = $level3->count();
 

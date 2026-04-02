@@ -11,6 +11,7 @@ return [
     'get_started' => 'Empezar',
     'dashboard' => 'Panel de control',
     'profile' => 'Perfil',
+    'level' => 'Nivel',
     'edit_profile' => 'Editar perfil',
     'profile_settings' => 'Ajustes de perfil',
     'profile_setting' => 'Ajuste de perfil',

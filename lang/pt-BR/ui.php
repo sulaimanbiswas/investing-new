@@ -16,6 +16,7 @@ return [
     'profile_setting' => 'Configuração de perfil',
     'settings' => 'Configurações',
     'logout' => 'Sair',
+    'level' => 'Nível',
     'support' => 'Suporte',
     'menu' => 'Menu',
     'record' => 'Registro',

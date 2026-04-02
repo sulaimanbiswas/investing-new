@@ -433,4 +433,5 @@ return [
     'verification_link_sent' => 'تم إرسال رابط تحقق جديد إلى عنوان بريدك الإلكتروني.',
     'resend_verification_email' => 'إعادة إرسال بريد التحقق',
     'confirm_password_description' => 'هذه منطقة آمنة من التطبيق. يرجى تأكيد كلمة المرور الخاصة بك قبل المتابعة.',
+    'level' => 'المستوى',
 ];

@@ -8,6 +8,7 @@ return [
     'how_it_works' => 'Πως λειτουργει',
     'testimonials' => 'Αξιολογησεις',
     'login' => 'Συνδεση',
+    'level' => 'Επίπεδο',
     'get_started' => 'Ξεκινηστε',
     'dashboard' => 'Πινακας ελεγχου',
     'profile' => 'Προφιλ',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\OrderRequest;
+use App\Models\Notification;
 use App\Models\Platform;
 use App\Models\UserOrder;
 use Carbon\Carbon;
@@ -78,12 +79,28 @@ class MenuController extends Controller
             ->where('end_price', '>=', $user->balance)
             ->first();
 
-        OrderRequest::create([
+        $orderRequest = OrderRequest::create([
             'user_id' => $user->id,
             'platform_id' => $platform?->id,
             'requested_balance' => $user->balance,
             'status' => 'pending',
             'requested_at' => now(),
+        ]);
+
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'order_request_submitted',
+            'title' => 'New Order Request',
+            'message' => sprintf(
+                '%s submitted an order request for $%s.',
+                $user->name,
+                number_format((float) $orderRequest->requested_balance, 2)
+            ),
+            'data' => [
+                'order_request_id' => $orderRequest->id,
+            ],
+            'is_read' => false,
+            'is_for_admin' => true,
         ]);
 
         flash()->success('Order request submitted successfully. Please wait for admin approval.');

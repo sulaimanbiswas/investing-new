@@ -16,6 +16,7 @@ return [
     'profile_setting' => 'Profil Ayarı',
     'settings' => 'Ayarlar',
     'logout' => 'Çıkış Yap',
+    'level' => 'Seviye',
     'support' => 'Destek',
     'menu' => 'Menü',
     'record' => 'Kayıt',

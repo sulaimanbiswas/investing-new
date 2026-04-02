@@ -17,6 +17,7 @@ return [
     'settings' => 'Настройки',
     'logout' => 'Выйти',
     'support' => 'Поддержка',
+    'level' => 'Уровень',
     'menu' => 'Меню',
     'record' => 'Записи',
     'notifications' => 'Уведомления',
