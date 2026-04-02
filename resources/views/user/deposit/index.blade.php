@@ -1,6 +1,6 @@
 @extends('layouts.user.app')
 
-@section('title', 'Deposit - ' . config('app.name'))
+@section('title', __('ui.deposit') . ' - ' . config('app.name'))
 
 @section('content')
     <!-- Header -->
@@ -9,28 +9,31 @@
             class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 transition">
             <i class="fas fa-arrow-left text-gray-700"></i>
         </a>
-        <h1 class="text-2xl font-bold text-gray-800">Deposit</h1>
+        <h1 class="text-2xl font-bold text-gray-800">{{ __('ui.deposit') }}</h1>
     </div>
 
     @if(isset($pendingDeposit) && $pendingDeposit)
         <!-- Pending Deposit Modal -->
         <div id="pendingDepositModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center relative">
-                <h2 class="text-xl font-bold text-red-600 mb-4">Pending Deposit Exists</h2>
-                <p class="mb-4 text-gray-700">You already have a pending deposit request. Please complete or wait for admin
-                    approval before making a new deposit.</p>
+                <h2 class="text-xl font-bold text-red-600 mb-4">{{ __('ui.pending_deposit_exists') }}</h2>
+                <p class="mb-4 text-gray-700">{{ __('ui.pending_deposit_warning') }}</p>
                 <div class="bg-gray-50 rounded-lg p-4 mb-4 text-left">
-                    <div class="mb-2"><span class="font-semibold">Amount:</span> {{ number_format($pendingDeposit->amount, 2) }}
+                    <div class="mb-2"><span class="font-semibold">{{ __('ui.amount') }}:</span>
+                        {{ number_format($pendingDeposit->amount, 2) }}
                         {{ $pendingDeposit->currency }}
                     </div>
-                    <div class="mb-2"><span class="font-semibold">Gateway:</span> {{ $pendingDeposit->gateway->name ?? '' }}
+                    <div class="mb-2"><span class="font-semibold">{{ __('ui.gateway') }}:</span>
+                        {{ $pendingDeposit->gateway->name ?? '' }}
                     </div>
-                    <div class="mb-2"><span class="font-semibold">Order #:</span> {{ $pendingDeposit->order_number }}</div>
-                    <div><span class="font-semibold">Status:</span> <span class="text-orange-600 font-semibold">Pending</span>
+                    <div class="mb-2"><span class="font-semibold">{{ __('ui.order_number_label') }}:</span>
+                        {{ $pendingDeposit->order_number }}</div>
+                    <div><span class="font-semibold">{{ __('ui.status') }}:</span> <span
+                            class="text-orange-600 font-semibold">{{ __('ui.pending') }}</span>
                     </div>
                 </div>
                 <button id="pendingDepositBackBtn"
-                    class="mt-4 w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 transition">OK
+                    class="mt-4 w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 transition">{{ __('ui.ok') }}
                 </button>
             </div>
         </div>
@@ -48,7 +51,7 @@
     @else
         <!-- Payment Method Selection -->
         <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
-            <h3 class="text-sm font-medium text-gray-700 mb-3">Payment Method</h3>
+            <h3 class="text-sm font-medium text-gray-700 mb-3">{{ __('ui.payment_method') }}</h3>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 @forelse($gateways as $gateway)
                     <label class="payment-method-card cursor-pointer">
@@ -72,7 +75,7 @@
                 @empty
                     <div class="col-span-full text-center py-8 text-gray-500">
                         <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
-                        <p>No payment methods available</p>
+                        <p>{{ __('ui.no_payment_methods_available') }}</p>
                     </div>
                 @endforelse
             </div>
@@ -81,21 +84,21 @@
 
         <!-- Deposit Amount -->
         <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
-            <h3 class="text-sm font-medium text-gray-700 mb-3">Deposit Amount</h3>
+            <h3 class="text-sm font-medium text-gray-700 mb-3">{{ __('ui.deposit_amount') }}</h3>
             <div
                 class="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden focus-within:border-indigo-500 transition">
                 <span class="px-4 py-3 bg-gray-50 text-gray-700 font-semibold" id="currency-label">USDT</span>
-                <input type="number" id="amount" name="amount" placeholder="Enter amount" min="0" step="0.01"
+                <input type="number" id="amount" name="amount" placeholder="{{ __('ui.enter_amount') }}" min="0" step="0.01"
                     class="flex-1 px-4 py-3 border-0 focus:ring-0 focus:outline-none">
             </div>
-            <p class="text-xs text-gray-500 mt-2" id="amount-hint">Please select a payment method first</p>
+            <p class="text-xs text-gray-500 mt-2" id="amount-hint">{{ __('ui.select_payment_method_first') }}</p>
             <p class="text-xs text-red-600 mt-1" id="amount-error"></p>
         </div>
 
         <!-- Deposit Button -->
         <button type="button" id="deposit-btn" disabled
             class="w-full bg-gray-400 text-white font-semibold py-4 rounded-xl transition disabled:cursor-not-allowed">
-            Deposit Now
+            {{ __('ui.deposit_now') }}
         </button>
         <script>
             document.getElementById('deposit-btn').addEventListener('click', function () {
@@ -104,7 +107,7 @@
                 const amount = document.getElementById('amount').value;
                 const btn = this;
                 btn.disabled = true;
-                btn.textContent = 'Processing...';
+                btn.textContent = '{{ __('ui.processing') }}';
                 fetch('{{ route('deposit.create-initialed') }}', {
                     method: 'POST',
                     headers: {
@@ -119,14 +122,14 @@
                             window.location.href = data.redirect;
                         } else {
                             btn.disabled = false;
-                            btn.textContent = 'Deposit Now';
-                            alert(data.message || 'Failed to create deposit');
+                            btn.textContent = '{{ __('ui.deposit_now') }}';
+                            alert(data.message || '{{ __('ui.failed_create_deposit') }}');
                         }
                     })
                     .catch(error => {
                         btn.disabled = false;
-                        btn.textContent = 'Deposit Now';
-                        alert('An error occurred. Please try again.');
+                        btn.textContent = '{{ __('ui.deposit_now') }}';
+                        alert('{{ __('ui.error_try_again') }}');
                     });
             });
         </script>
@@ -183,7 +186,7 @@
                 btn.disabled = true;
                 btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
                 btn.classList.add('bg-gray-400');
-                amountError.textContent = 'Please enter a valid amount';
+                amountError.textContent = '{{ __('ui.invalid_amount') }}';
                 return;
             }
 

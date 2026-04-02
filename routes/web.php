@@ -8,6 +8,24 @@ use App\Http\Controllers\Admin\TransactionLogController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+Route::post('/locale/{locale}', function (string $locale) {
+    $supported = array_keys(config('localization.supported_locales', ['en' => 'English']));
+
+    if ($locale === 'zh') {
+        $locale = 'zh-CN';
+    }
+
+    if (strtolower($locale) === 'pt-br') {
+        $locale = 'pt-BR';
+    }
+
+    abort_unless(in_array($locale, $supported, true), 404);
+
+    session(['locale' => $locale]);
+
+    return back();
+})->name('locale.switch');
+
 Route::get('/', function () {
     return view('welcome');
 });

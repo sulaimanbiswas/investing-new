@@ -1,12 +1,12 @@
 @extends('layouts.user.app')
 
-@section('title', 'Invitation Program - ' . config('app.name'))
+@section('title', __('ui.invitation_program') . ' - ' . config('app.name'))
 
 @section('content')
     <!-- Header with Back Button -->
     <div class="mb-6 flex items-center gap-3">
         @include('components.back-button')
-        <h1 class="text-2xl font-bold text-gray-800">Invitation Program</h1>
+        <h1 class="text-2xl font-bold text-gray-800">{{ __('ui.invitation_program') }}</h1>
     </div>
 
     <!-- Referral System Section -->
@@ -16,7 +16,7 @@
     <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 mt-4">
         <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <i class="fas fa-info-circle text-indigo-600"></i>
-            How It Works
+            {{ __('ui.how_it_works') }}
         </h3>
         <div class="space-y-4">
             <div class="flex gap-4">
@@ -24,8 +24,8 @@
                     <span class="text-indigo-600 font-bold">1</span>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-gray-800 mb-1">Share Your Code</h4>
-                    <p class="text-gray-600 text-sm">Copy your unique referral code or link and share it with friends.</p>
+                    <h4 class="font-semibold text-gray-800 mb-1">{{ __('ui.share_your_code') }}</h4>
+                    <p class="text-gray-600 text-sm">{{ __('ui.share_your_code_desc') }}</p>
                 </div>
             </div>
             <div class="flex gap-4">
@@ -33,8 +33,8 @@
                     <span class="text-indigo-600 font-bold">2</span>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-gray-800 mb-1">Friends Sign Up</h4>
-                    <p class="text-gray-600 text-sm">When they register using your code, they become part of your team.</p>
+                    <h4 class="font-semibold text-gray-800 mb-1">{{ __('ui.friends_sign_up') }}</h4>
+                    <p class="text-gray-600 text-sm">{{ __('ui.friends_sign_up_desc') }}</p>
                 </div>
             </div>
             <div class="flex gap-4">
@@ -42,8 +42,8 @@
                     <span class="text-indigo-600 font-bold">3</span>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-gray-800 mb-1">Earn Rewards</h4>
-                    <p class="text-gray-600 text-sm">Get rewarded for every successful referral and their activities.</p>
+                    <h4 class="font-semibold text-gray-800 mb-1">{{ __('ui.earn_rewards') }}</h4>
+                    <p class="text-gray-600 text-sm">{{ __('ui.earn_rewards_desc') }}</p>
                 </div>
             </div>
         </div>
@@ -54,36 +54,36 @@
         class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl shadow-sm p-4 sm:p-6 mt-4 border border-indigo-100">
         <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <i class="fas fa-gift text-purple-600"></i>
-            Referral Benefits
+            {{ __('ui.referral_benefits') }}
         </h3>
         <div class="grid sm:grid-cols-2 gap-3">
             <div class="bg-white/70 backdrop-blur rounded-lg p-4">
                 <div class="flex items-center gap-3 mb-2">
                     <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    <h4 class="font-semibold text-gray-800">Commission Earnings</h4>
+                    <h4 class="font-semibold text-gray-800">{{ __('ui.commission_earnings') }}</h4>
                 </div>
-                <p class="text-gray-600 text-sm">Earn commission from your referrals' activities.</p>
+                <p class="text-gray-600 text-sm">{{ __('ui.commission_earnings_desc') }}</p>
             </div>
             <div class="bg-white/70 backdrop-blur rounded-lg p-4">
                 <div class="flex items-center gap-3 mb-2">
                     <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    <h4 class="font-semibold text-gray-800">Team Building</h4>
+                    <h4 class="font-semibold text-gray-800">{{ __('ui.team_building') }}</h4>
                 </div>
-                <p class="text-gray-600 text-sm">Build your own team and grow together.</p>
+                <p class="text-gray-600 text-sm">{{ __('ui.team_building_desc') }}</p>
             </div>
             <div class="bg-white/70 backdrop-blur rounded-lg p-4">
                 <div class="flex items-center gap-3 mb-2">
                     <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    <h4 class="font-semibold text-gray-800">Unlimited Referrals</h4>
+                    <h4 class="font-semibold text-gray-800">{{ __('ui.unlimited_referrals') }}</h4>
                 </div>
-                <p class="text-gray-600 text-sm">No limit on how many people you can refer.</p>
+                <p class="text-gray-600 text-sm">{{ __('ui.unlimited_referrals_desc') }}</p>
             </div>
             <div class="bg-white/70 backdrop-blur rounded-lg p-4">
                 <div class="flex items-center gap-3 mb-2">
                     <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    <h4 class="font-semibold text-gray-800">Passive Income</h4>
+                    <h4 class="font-semibold text-gray-800">{{ __('ui.passive_income') }}</h4>
                 </div>
-                <p class="text-gray-600 text-sm">Earn passive income from your network.</p>
+                <p class="text-gray-600 text-sm">{{ __('ui.passive_income_desc') }}</p>
             </div>
         </div>
     </div>

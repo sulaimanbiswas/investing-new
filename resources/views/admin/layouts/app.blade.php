@@ -552,12 +552,12 @@
                                             class="m-0">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-light text-muted">
-                                                <i class="fas fa-check me-1"></i>Mark all read
+                                                <i class="fas fa-check me-1"></i>{{ __('ui.mark_all_read') }}
                                             </button>
                                         </form>
                                         <a href="{{ route('admin.notifications.index') }}"
                                             class="btn btn-sm btn-primary text-white">
-                                            <i class="fas fa-eye me-1"></i>View all
+                                            <i class="fas fa-eye me-1"></i>{{ __('ui.view_all') }}
                                         </a>
                                     </div>
                                 </div>

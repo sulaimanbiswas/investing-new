@@ -1,18 +1,18 @@
 @extends('layouts.user.app')
 
-@section('title', 'My Teams - ' . config('app.name'))
+@section('title', __('ui.my_teams') . ' - ' . config('app.name'))
 
 @section('content')
     <!-- Header with Back Button -->
     <div class="mb-6 flex items-center gap-3">
         @include('components.back-button')
-        <h1 class="text-2xl font-bold text-gray-800">My Teams</h1>
+        <h1 class="text-2xl font-bold text-gray-800">{{ __('ui.my_teams') }}</h1>
     </div>
 
     <!-- Header Banner -->
     <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg p-6 mb-6 text-white">
-        <h1 class="text-2xl sm:text-3xl font-bold mb-2">Invite friends!</h1>
-        <p class="text-purple-100 text-sm">Improve team collaboration to earn more</p>
+        <h1 class="text-2xl sm:text-3xl font-bold mb-2">{{ __('ui.invite_friends') }}</h1>
+        <p class="text-purple-100 text-sm">{{ __('ui.improve_team_collaboration') }}</p>
 
         <!-- Quick Stats Card -->
         <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4 mt-4 flex items-center gap-3">
@@ -20,8 +20,8 @@
                 <i class="fas fa-users text-2xl"></i>
             </div>
             <div>
-                <div class="font-bold text-lg">Refer and Earn Rewards</div>
-                <div class="text-purple-100 text-sm">Share your referral link and start earning</div>
+                <div class="font-bold text-lg">{{ __('ui.refer_and_earn_rewards') }}</div>
+                <div class="text-purple-100 text-sm">{{ __('ui.share_referral_and_earn') }}</div>
             </div>
         </div>
     </div>
@@ -31,15 +31,15 @@
         <div class="flex border-b border-gray-200">
             <button onclick="switchLevel(1)" id="tab-1"
                 class="level-tab flex-1 px-4 py-3 text-center font-semibold transition border-b-2 border-purple-600 text-purple-600">
-                Level 1
+                {{ __('ui.level') }} 1
             </button>
             <button onclick="switchLevel(2)" id="tab-2"
                 class="level-tab flex-1 px-4 py-3 text-center font-semibold transition border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-                Level 2
+                {{ __('ui.level') }} 2
             </button>
             <button onclick="switchLevel(3)" id="tab-3"
                 class="level-tab flex-1 px-4 py-3 text-center font-semibold transition border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-                Level 3
+                {{ __('ui.level') }} 3
             </button>
         </div>
 
@@ -49,9 +49,9 @@
             <div id="level-1" class="level-content">
                 <div class="mb-4">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-bold text-gray-800">Direct Referrals</h3>
+                        <h3 class="font-bold text-gray-800">{{ __('ui.direct_referrals') }}</h3>
                         <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold">
-                            {{ $level1Count }} Members
+                            {{ $level1Count }} {{ __('ui.members') }}
                         </span>
                     </div>
                 </div>
@@ -78,8 +78,9 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <div class="text-xs text-gray-500">Deposit: ${{ number_format($depositAmount, 2) }}</div>
-                                        <div class="text-sm font-medium text-gray-700">Withdraw:
+                                        <div class="text-xs text-gray-500">{{ __('ui.deposit') }}:
+                                            ${{ number_format($depositAmount, 2) }}</div>
+                                        <div class="text-sm font-medium text-gray-700">{{ __('ui.withdrawal') }}:
                                             ${{ number_format($withdrawAmount, 2) }}</div>
                                     </div>
                                 </div>
@@ -89,8 +90,8 @@
                 @else
                     <div class="text-center py-12">
                         <i class="fas fa-users text-gray-300 text-5xl mb-4"></i>
-                        <p class="text-gray-500">No direct referrals yet</p>
-                        <p class="text-sm text-gray-400 mt-2">Share your referral link to build your team</p>
+                        <p class="text-gray-500">{{ __('ui.no_direct_referrals_yet') }}</p>
+                        <p class="text-sm text-gray-400 mt-2">{{ __('ui.share_referral_to_build_team') }}</p>
                     </div>
                 @endif
             </div>
@@ -99,9 +100,9 @@
             <div id="level-2" class="level-content hidden">
                 <div class="mb-4">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-bold text-gray-800">Second Level Referrals</h3>
+                        <h3 class="font-bold text-gray-800">{{ __('ui.second_level_referrals') }}</h3>
                         <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold">
-                            {{ $level2Count }} Members
+                            {{ $level2Count }} {{ __('ui.members') }}
                         </span>
                     </div>
                 </div>
@@ -123,12 +124,16 @@
                                         <div>
                                             <div class="font-semibold text-gray-800">{{ $user->name }}</div>
                                             <div class="text-sm text-gray-600">{{ "@" . $user->username }}</div>
+                                            <div class="text-xs text-blue-600 mt-1">
+                                                <i class="fas fa-link"></i> {{ __('ui.referred_by') }} {{ $user->referrer->name }}
+                                            </div>
                                             <div class="text-xs text-blue-600 mt-1">{{ $user->created_at->format('M d, Y') }}</div>
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <div class="text-xs text-gray-500">Deposit: ${{ number_format($depositAmount, 2) }}</div>
-                                        <div class="text-sm font-medium text-gray-700">Withdraw:
+                                        <div class="text-xs text-gray-500">{{ __('ui.deposit') }}:
+                                            ${{ number_format($depositAmount, 2) }}</div>
+                                        <div class="text-sm font-medium text-gray-700">{{ __('ui.withdraw') }}:
                                             ${{ number_format($withdrawAmount, 2) }}</div>
                                     </div>
                                 </div>
@@ -138,8 +143,8 @@
                 @else
                     <div class="text-center py-12">
                         <i class="fas fa-layer-group text-gray-300 text-5xl mb-4"></i>
-                        <p class="text-gray-500">No second level referrals yet</p>
-                        <p class="text-sm text-gray-400 mt-2">Your team members will bring more people</p>
+                        <p class="text-gray-500">{{ __('ui.no_second_level_referrals_yet') }}</p>
+                        <p class="text-sm text-gray-400 mt-2">{{ __('ui.team_members_will_bring_more') }}</p>
                     </div>
                 @endif
             </div>
@@ -148,9 +153,9 @@
             <div id="level-3" class="level-content hidden">
                 <div class="mb-4">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-bold text-gray-800">Third Level Referrals</h3>
+                        <h3 class="font-bold text-gray-800">{{ __('ui.third_level_referrals') }}</h3>
                         <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold">
-                            {{ $level3Count }} Members
+                            {{ $level3Count }} {{ __('ui.members') }}
                         </span>
                     </div>
                 </div>
@@ -176,8 +181,9 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <div class="text-xs text-gray-500">Deposit: ${{ number_format($depositAmount, 2) }}</div>
-                                        <div class="text-sm font-medium text-gray-700">Withdraw:
+                                        <div class="text-xs text-gray-500">{{ __('ui.deposit') }}:
+                                            ${{ number_format($depositAmount, 2) }}</div>
+                                        <div class="text-sm font-medium text-gray-700">{{ __('ui.withdraw') }}:
                                             ${{ number_format($withdrawAmount, 2) }}</div>
                                     </div>
                                 </div>
@@ -187,8 +193,8 @@
                 @else
                     <div class="text-center py-12">
                         <i class="fas fa-network-wired text-gray-300 text-5xl mb-4"></i>
-                        <p class="text-gray-500">No third level referrals yet</p>
-                        <p class="text-sm text-gray-400 mt-2">Your network will expand as your team grows</p>
+                        <p class="text-gray-500">{{ __('ui.no_third_level_referrals_yet') }}</p>
+                        <p class="text-sm text-gray-400 mt-2">{{ __('ui.network_will_expand') }}</p>
                     </div>
                 @endif
             </div>
@@ -199,22 +205,22 @@
     <div class="grid grid-cols-3 gap-3 mb-4">
         <div class="bg-white rounded-xl shadow-sm p-4 text-center">
             <div class="text-2xl font-bold text-purple-600">{{ $level1Count }}</div>
-            <div class="text-xs text-gray-600 mt-1">Level 1</div>
+            <div class="text-xs text-gray-600 mt-1">{{ __('ui.level_1') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-4 text-center">
             <div class="text-2xl font-bold text-blue-600">{{ $level2Count }}</div>
-            <div class="text-xs text-gray-600 mt-1">Level 2</div>
+            <div class="text-xs text-gray-600 mt-1">{{ __('ui.level_2') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-4 text-center">
             <div class="text-2xl font-bold text-green-600">{{ $level3Count }}</div>
-            <div class="text-xs text-gray-600 mt-1">Level 3</div>
+            <div class="text-xs text-gray-600 mt-1">{{ __('ui.level_3') }}</div>
         </div>
     </div>
 
     <!-- Total Team Size -->
     <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-lg p-4 text-white text-center">
         <div class="text-3xl font-bold">{{ $totalTeamSize }}</div>
-        <div class="text-purple-100 text-sm mt-1">Total Team Members</div>
+        <div class="text-purple-100 text-sm mt-1">{{ __('ui.total_team_members') }}</div>
     </div>
 @endsection
 

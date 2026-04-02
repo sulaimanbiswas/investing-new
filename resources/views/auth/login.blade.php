@@ -1,9 +1,9 @@
 @extends('layouts.auth')
 
-@section('title', 'Login')
+@section('title', __('ui.sign_in'))
 
 @section('content')
-    <h1 class="text-4xl font-bold text-center text-yellow-500 mb-10">Login</h1>
+    <h1 class="text-4xl font-bold text-center text-yellow-500 mb-10">{{ __('ui.sign_in') }}</h1>
 
     @if (session('status'))
         <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-6">
@@ -24,14 +24,15 @@
 
         <div class="relative mb-5">
             <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-            <input type="text" name="identifier" placeholder="Phone / Username" value="{{ old('identifier') }}"
+            <input type="text" name="identifier" placeholder="{{ __('ui.phone_or_username') }}"
+                value="{{ old('identifier') }}"
                 class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
                 required autofocus>
         </div>
 
         <div class="relative mb-5">
             <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-            <input type="password" id="password" name="password" placeholder="Password"
+            <input type="password" id="password" name="password" placeholder="{{ __('ui.password') }}"
                 class="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
                 required>
             <button type="button" onclick="togglePassword()"
@@ -45,7 +46,7 @@
                 <div class="flex gap-3">
                     <div class="relative flex-1">
                         <i class="fas fa-shield-alt absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 text-lg"></i>
-                        <input type="text" name="captcha" id="captcha" placeholder="Verification Code"
+                        <input type="text" name="captcha" id="captcha" placeholder="{{ __('ui.verification_code') }}"
                             class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
                             required>
                     </div>
@@ -57,7 +58,7 @@
                     </button>
                 </div>
                 <p id="captchaError" class="text-red-600 text-sm mt-2 ml-1 hidden">
-                    <i class="fas fa-exclamation-circle"></i> Invalid verification code. Please try again.
+                    <i class="fas fa-exclamation-circle"></i> {{ __('ui.invalid_verification_code') }}
                 </p>
             @endif
         </div>
@@ -65,22 +66,22 @@
         <div class="flex justify-between items-center mb-6 text-sm">
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="remember" class="w-5 h-5 cursor-pointer">
-                <span class="text-gray-700">Remember password</span>
+                <span class="text-gray-700">{{ __('ui.remember_password') }}</span>
             </label>
             @if (Route::has('password.request'))
                 <a href="{{ route('password.request') }}"
-                    class="text-yellow-500 hover:text-yellow-600 hover:underline transition">Forgot Password?</a>
+                    class="text-yellow-500 hover:text-yellow-600 hover:underline transition">{{ __('ui.forgot_password') }}</a>
             @endif
         </div>
 
         <button type="submit"
-            class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-base font-semibold uppercase tracking-wide transition-all hover:-translate-y-1 hover:shadow-xl">Login</button>
+            class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-base font-semibold uppercase tracking-wide transition-all hover:-translate-y-1 hover:shadow-xl">{{ __('ui.sign_in') }}</button>
     </form>
 
     @if (Route::has('register'))
         <div class="text-center mt-6 text-sm text-gray-600">
-            Don't have an account? <a href="{{ route('register') }}"
-                class="text-yellow-500 font-semibold hover:text-yellow-600 hover:underline transition">Register</a>
+            {{ __('ui.dont_have_account') }} <a href="{{ route('register') }}"
+                class="text-yellow-500 font-semibold hover:text-yellow-600 hover:underline transition">{{ __('ui.register_now') }}</a>
         </div>
     @endif
 @endsection

@@ -6,7 +6,7 @@
     <!-- Header -->
     <div class="mb-6 flex items-center gap-3">
         @include('components.back-button')
-        <h1 class="text-2xl font-bold text-gray-800">Guideline Details</h1>
+        <h1 class="text-2xl font-bold text-gray-800">{{ __('ui.guideline_details') }}</h1>
     </div>
 
     <!-- Content Card -->
@@ -52,7 +52,7 @@
         <a href="{{ route('platform-rules') }}"
             class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition">
             <i class="fas fa-arrow-left"></i>
-            <span>Back to Guidelines</span>
+            <span>{{ __('ui.back_to_guidelines') }}</span>
         </a>
     </div>
 @endsection

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8">
@@ -22,6 +22,41 @@
         body {
             font-family: 'Poppins', sans-serif;
         }
+
+        [dir="rtl"] .auth-card .left-4 {
+            left: auto;
+            right: 1rem;
+        }
+
+        [dir="rtl"] .auth-card .right-4 {
+            right: auto;
+            left: 1rem;
+        }
+
+        [dir="rtl"] .auth-card .pl-12 {
+            padding-left: 1rem;
+            padding-right: 3rem;
+        }
+
+        [dir="rtl"] .auth-card .pr-12 {
+            padding-right: 1rem;
+            padding-left: 3rem;
+        }
+
+        [dir="rtl"] .auth-card .ml-1 {
+            margin-left: 0;
+            margin-right: 0.25rem;
+        }
+
+        [dir="rtl"] .auth-card .mr-1 {
+            margin-right: 0;
+            margin-left: 0.25rem;
+        }
+
+        [dir="rtl"] .auth-card .border-l-4 {
+            border-left-width: 0;
+            border-right-width: 4px;
+        }
     </style>
 
     @stack('styles')
@@ -29,7 +64,7 @@
 
 <body
     class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4 md:p-6">
-    <div class="bg-white rounded-3xl shadow-2xl p-6 md:p-10 w-full max-w-sm md:max-w-md">
+    <div class="auth-card bg-white rounded-3xl shadow-2xl p-6 md:p-10 w-full max-w-sm md:max-w-md">
         @yield('content')
     </div>
 

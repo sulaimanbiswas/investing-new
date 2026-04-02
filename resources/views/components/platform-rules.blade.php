@@ -1,9 +1,9 @@
 <!-- Platform Rules Section -->
 <div class="space-y-4 mt-2">
     <div class="flex items-center justify-between px-2">
-        <h2 class="text-xl font-bold text-gray-800">Platform Guidelines</h2>
+        <h2 class="text-xl font-bold text-gray-800">{{ __("ui.platform_guidelines") }}</h2>
         <a href="{{ route('platform-rules') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-            View All <i class="fas fa-arrow-right ml-1"></i>
+            {{ __('ui.view_all') }} <i class="fas fa-arrow-right ml-1"></i>
         </a>
     </div>
 

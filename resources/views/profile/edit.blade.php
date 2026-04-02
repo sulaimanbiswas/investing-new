@@ -1,13 +1,13 @@
 @extends('layouts.user.app')
 
-@section('title', 'Edit Profile - ' . config('app.name'))
+@section('title', __('ui.edit_profile') . ' - ' . config('app.name'))
 
 @section('content')
     <div class="max-w-4xl mx-auto space-y-8">
         <!-- Header with Back Button -->
         <div class="mb-6 flex items-center gap-3">
             @include('components.back-button')
-            <h1 class="text-2xl font-bold text-gray-800">Profile Settings</h1>
+            <h1 class="text-2xl font-bold text-gray-800">{{ __('ui.profile_settings') }}</h1>
         </div>
 
         <!-- Header Card (Preview Info) -->
@@ -24,12 +24,14 @@
             <div class="flex-1">
                 <div class="flex flex-wrap items-center gap-3">
                     <h1 class="text-2xl font-bold">{{ auth()->user()->name }}</h1>
-                    <span class="bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded">Level 1</span>
+                    <span
+                        class="bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded">{{ __('ui.level_1') }}</span>
                     @if(auth()->user()->username)
                         <span class="text-xs bg-white/20 px-2 py-1 rounded">{{ '@' . auth()->user()->username }}</span>
                     @endif
                 </div>
-                <div class="text-white/80 text-sm mt-2">Invitation Code: {{ auth()->user()->referral_code ?? '—' }}</div>
+                <div class="text-white/80 text-sm mt-2">{{ __('ui.invitation_code') }}:
+                    {{ auth()->user()->referral_code ?? '—' }}</div>
                 <div class="mt-3 flex gap-4 text-sm">
                     <div class="flex items-center gap-1"><i class="fas fa-phone"></i>
                         <span>{{ auth()->user()->phone }}</span>
@@ -45,23 +47,23 @@
 
         <!-- Profile Information Form -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-1">Basic Information</h2>
-            <p class="text-sm text-gray-500 mb-6">Update your display name and avatar. Phone, email & username are fixed.
+            <h2 class="text-lg font-semibold text-gray-800 mb-1">{{ __('ui.basic_information') }}</h2>
+            <p class="text-sm text-gray-500 mb-6">{{ __('ui.update_display_name_avatar') }}
             </p>
             @include('profile.partials.update-profile-information-form', ['user' => auth()->user()])
         </div>
 
         <!-- Password Update -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-1">Change Password</h2>
-            <p class="text-sm text-gray-500 mb-6">Use a strong password to keep your account secure.</p>
+            <h2 class="text-lg font-semibold text-gray-800 mb-1">{{ __('ui.change_password') }}</h2>
+            <p class="text-sm text-gray-500 mb-6">{{ __('ui.strong_password_hint') }}</p>
             @include('profile.partials.update-password-form')
         </div>
 
         <!-- Withdrawal Password Update -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-1">Change Withdrawal Password</h2>
-            <p class="text-sm text-gray-500 mb-6">Update your withdrawal password for enhanced security.</p>
+            <h2 class="text-lg font-semibold text-gray-800 mb-1">{{ __('ui.change_withdrawal_password') }}</h2>
+            <p class="text-sm text-gray-500 mb-6">{{ __('ui.update_withdrawal_password_hint') }}</p>
             @include('profile.partials.update-withdrawal-password-form')
         </div>
 

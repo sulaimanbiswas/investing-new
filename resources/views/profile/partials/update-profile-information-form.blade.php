@@ -3,7 +3,7 @@
     @method('patch')
 
     <div>
-        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">{{ __('ui.full_name') }}</label>
         <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required
             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
         @error('name')
@@ -12,21 +12,21 @@
     </div>
 
     <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('ui.username') }}</label>
         <input type="text" value="{{ '@' . $user->username }}" disabled
             class="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg text-gray-600 cursor-not-allowed">
-        <p class="mt-1 text-xs text-gray-500">Username cannot be changed.</p>
+        <p class="mt-1 text-xs text-gray-500">{{ __('ui.username_cannot_be_changed') }}</p>
     </div>
 
     <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('ui.email_address') }}</label>
         <input type="text" value="{{ $user->email }}" disabled
             class="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg text-gray-600 cursor-not-allowed">
-        <p class="mt-1 text-xs text-gray-500">Email cannot be changed.</p>
+        <p class="mt-1 text-xs text-gray-500">{{ __('ui.email_cannot_be_changed') }}</p>
     </div>
 
     <div>
-        <label for="avatar" class="block text-sm font-medium text-gray-700 mb-2">Profile Avatar</label>
+        <label for="avatar" class="block text-sm font-medium text-gray-700 mb-2">{{ __('ui.profile_avatar') }}</label>
         <div class="flex items-center gap-5">
             <div id="avatar-container" class="relative">
                 @if($user->avatar_path)
@@ -45,7 +45,7 @@
                 <input id="avatar" name="avatar" type="file" accept="image/*"
                     class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 file:cursor-pointer cursor-pointer"
                     onchange="previewAvatar(event)">
-                <p class="mt-1 text-xs text-gray-500">JPEG, PNG, WEBP up to 2MB.</p>
+                <p class="mt-1 text-xs text-gray-500">{{ __('ui.avatar_format_hint') }}</p>
             </div>
         </div>
         @error('avatar')
@@ -56,11 +56,11 @@
     <div class="flex items-center gap-4 pt-2">
         <button type="submit"
             class="px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition shadow-sm">
-            Save Changes
+            {{ __('ui.save_changes') }}
         </button>
         @if (session('status') === 'profile-updated')
             <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 3000)"
-                class="text-sm text-green-600 font-medium">✓ Profile updated successfully!</p>
+                class="text-sm text-green-600 font-medium">✓ {{ __('ui.profile_updated_successfully') }}</p>
         @endif
     </div>
 </form>
