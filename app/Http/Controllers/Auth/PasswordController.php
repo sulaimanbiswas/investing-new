@@ -3,29 +3,45 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\SessionRevocationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class PasswordController extends Controller
 {
+    public function __construct(private SessionRevocationService $sessionRevocationService) {}
+
     /**
      * Update the user's password.
      */
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validateWithBag('updatePassword', [
-            'current_password' => ['required', 'current_password'],
+            'current_password' => ['required', 'string'],
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
+        $user = $request->user();
+
+        if ($validated['current_password'] !== $user->password && ! Hash::check($validated['current_password'], $user->password)) {
+            return back()->withErrors([
+                'current_password' => __('auth.password'),
+            ], 'updatePassword');
+        }
+
+        $user->update([
+            'password' => $validated['password'],
         ]);
 
-        flash()->success('Password updated successfully.');
+        $this->sessionRevocationService->revokeForUser($user);
 
-        return back();
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Password updated successfully. Please log in again.');
     }
 }

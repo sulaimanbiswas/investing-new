@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\OrderSet;
 use App\Models\UserOrderSet;
 use App\Models\UserOrder;
+use App\Services\SessionRevocationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,8 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+    public function __construct(private SessionRevocationService $sessionRevocationService) {}
+
     public function index(Request $request)
     {
         $query = User::where('is_admin', false);
@@ -264,6 +267,18 @@ class UserController extends Controller
         $user->update([
             'password' => $request->password,
         ]);
+
+        $this->sessionRevocationService->revokeForUser($user);
+
+        if (Auth::guard('admin')->check() && (int) Auth::guard('admin')->id() === (int) $user->id) {
+            Auth::guard('admin')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()
+                ->route('admin.login')
+                ->with('success', 'Password changed successfully. Please log in again.');
+        }
 
         return redirect()
             ->route('admin.users.show', $user)
@@ -556,6 +571,20 @@ class UserController extends Controller
         }
 
         $user->update($updateData);
+
+        if ($request->filled('password')) {
+            $this->sessionRevocationService->revokeForUser($user);
+
+            if (Auth::guard('admin')->check() && (int) Auth::guard('admin')->id() === (int) $user->id) {
+                Auth::guard('admin')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()
+                    ->route('admin.login')
+                    ->with('success', 'User management updated successfully. Please log in again.');
+            }
+        }
 
         return redirect()
             ->route('admin.users.show', $user)

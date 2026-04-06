@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\SessionRevocationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +12,8 @@ use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
+    public function __construct(private SessionRevocationService $sessionRevocationService) {}
+
     public function index()
     {
         return view('admin.profile.index');
@@ -25,10 +28,12 @@ class ProfileController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:users,username,' . $admin->id],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $admin->id],
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'current_password' => ['nullable', 'string'],
+            'password' => ['nullable', 'string', Password::defaults(), 'confirmed'],
         ];
 
         // Add password validation only if current_password is provided
-        if ($request->filled('current_password')) {
+        if ($request->filled('password') || $request->filled('password_confirmation')) {
             $rules['current_password'] = ['required', 'string'];
             $rules['password'] = ['required', 'string', Password::defaults(), 'confirmed'];
         }
@@ -36,8 +41,8 @@ class ProfileController extends Controller
         $validated = $request->validate($rules);
 
         // Verify current password if provided
-        if ($request->filled('current_password')) {
-            if ($request->current_password !== $admin->password) {
+        if ($request->filled('password')) {
+            if ($request->current_password !== $admin->password && ! Hash::check($request->current_password, $admin->password)) {
                 return back()->withErrors(['current_password' => 'Current password is incorrect.']);
             }
         }
@@ -66,6 +71,18 @@ class ProfileController extends Controller
         }
 
         $admin->save();
+
+        if ($request->filled('password')) {
+            $this->sessionRevocationService->revokeForUser($admin);
+
+            Auth::guard('admin')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()
+                ->route('admin.login')
+                ->with('success', 'Profile updated successfully. Please log in again.');
+        }
 
         flash()->success('Profile updated successfully!');
 

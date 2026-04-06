@@ -7,14 +7,15 @@ use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Services\SessionRevocationService;
 
 class NewPasswordController extends Controller
 {
+    public function __construct(private SessionRevocationService $sessionRevocationService) {}
+
     /**
      * Display the password reset view.
      */
@@ -54,14 +55,17 @@ class NewPasswordController extends Controller
                 ->withErrors(['identifier' => 'Invalid user or user has no email for password reset.']);
         }
 
+        $sessionRevocationService = $this->sessionRevocationService;
+
         // Verify the reset token using email
         $status = Password::reset(
             ['email' => $user->email, 'password' => $request->password, 'password_confirmation' => $request->password_confirmation, 'token' => $request->token],
-            function (User $user) use ($request) {
+            function (User $user) use ($sessionRevocationService, $request) {
                 $user->forceFill([
                     'password' => $request->password,
-                    'remember_token' => Str::random(60),
                 ])->save();
+
+                $sessionRevocationService->revokeForUser($user);
 
                 event(new PasswordReset($user));
             }
