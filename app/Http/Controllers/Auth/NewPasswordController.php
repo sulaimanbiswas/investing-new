@@ -8,7 +8,6 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Services\SessionRevocationService;
 
@@ -34,7 +33,7 @@ class NewPasswordController extends Controller
         $request->validate(rules: [
             'token' => ['required'],
             'identifier' => ['required', 'string'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
         // Find user by identifier

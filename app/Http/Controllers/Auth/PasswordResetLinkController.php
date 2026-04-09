@@ -51,10 +51,10 @@ class PasswordResetLinkController extends Controller
         }
 
         // For now, we'll use email-based password reset if user has email
-        // Otherwise, show error message
+        // Otherwise, show an identifier-specific error
         if (!$user->email) {
-            flash()->error('Password reset is only available for users with email addresses. Please contact support.');
-            return back();
+            return back()->withInput($request->only('identifier'))
+                ->withErrors(['identifier' => 'This user does not have an email address on file.']);
         }
 
         $status = Password::sendResetLink(['email' => $user->email]);
