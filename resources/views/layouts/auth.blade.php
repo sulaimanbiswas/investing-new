@@ -14,6 +14,12 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @if(setting('favicon_path'))
+        <link rel="icon" type="image/x-icon" href="{{ asset(setting('favicon_path')) }}">
+    @else
+        <link rel="icon" type="image/svg+xml"
+            href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' font-weight='bold' fill='%2336C95F'>$</text></svg>">
+    @endif
 
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
