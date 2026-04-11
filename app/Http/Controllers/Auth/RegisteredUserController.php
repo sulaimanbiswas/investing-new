@@ -33,7 +33,7 @@ class RegisteredUserController extends Controller
 
         $validationRules = [
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
+            'username' => ['required', 'string', 'min:6', 'max:255', 'unique:' . User::class],
             'phone' => [
                 'required',
                 'string',
