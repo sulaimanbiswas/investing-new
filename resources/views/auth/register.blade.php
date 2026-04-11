@@ -78,7 +78,7 @@
                 value="{{ old('phone') }}"
                 class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl text-base transition-all focus:outline-none focus:border-indigo-500 focus:bg-white bg-indigo-50"
                 inputmode="tel" autocomplete="tel" required>
-            <input type="hidden" id="phone_country" name="phone_country" value="{{ old('phone_country', 'bd') }}">
+            <input type="hidden" id="phone_country" name="phone_country" value="{{ old('phone_country') }}">
             <p id="phone-format-hint" class="mt-2 ml-1 text-xs text-gray-500"></p>
         </div>
         {{--
@@ -237,6 +237,7 @@
 
         let phoneIti = null;
         let lastDialCode = '';
+        let autoCountryResolved = false;
 
         function updatePhoneFormatHint() {
             const phoneFormatHint = document.getElementById('phone-format-hint');
@@ -308,9 +309,73 @@
             updatePhoneFormatHint();
         }
 
+        function resolveInitialCountry(callback) {
+            const storedCountry = (phoneCountryInput?.value || '').toLowerCase();
+            if (storedCountry) {
+                autoCountryResolved = true;
+                callback(storedCountry);
+                return;
+            }
+
+            const providers = [
+                function () {
+                    return fetch('https://ipwho.is/?fields=country_code')
+                        .then(function (response) {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then(function (data) {
+                            return data?.country_code || '';
+                        });
+                },
+                function () {
+                    return fetch('https://ipapi.co/json/')
+                        .then(function (response) {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then(function (data) {
+                            return data?.country_code || '';
+                        });
+                },
+                function () {
+                    return fetch('https://ipapi.co/country/')
+                        .then(function (response) {
+                            return response.ok ? response.text() : '';
+                        });
+                },
+            ];
+
+            const safeCallback = function (country) {
+                autoCountryResolved = true;
+                callback(country);
+            };
+
+            const tryNext = function (index) {
+                if (index >= providers.length) {
+                    safeCallback('bd');
+                    return;
+                }
+
+                providers[index]()
+                    .then(function (code) {
+                        const iso2 = String(code || '').trim().toLowerCase();
+                        if (iso2) {
+                            safeCallback(iso2);
+                            return;
+                        }
+                        tryNext(index + 1);
+                    })
+                    .catch(function () {
+                        tryNext(index + 1);
+                    });
+            };
+
+            tryNext(0);
+        }
+
         if (phoneInput && window.intlTelInput) {
             phoneIti = window.intlTelInput(phoneInput, {
-                initialCountry: (phoneCountryInput?.value || 'bd').toLowerCase(),
+                initialCountry: 'auto',
+                geoIpLookup: resolveInitialCountry,
                 preferredCountries: ['bd', 'in', 'pk', 'my', 'sa', 'ae', 'uk', 'us'],
                 separateDialCode: false,
                 nationalMode: false,
@@ -323,7 +388,8 @@
             const initialCountry = phoneIti.getSelectedCountryData();
             lastDialCode = initialCountry.dialCode || '';
 
-            if (!String(phoneInput.value || '').trim() && lastDialCode) {
+            const hasStoredCountry = Boolean((phoneCountryInput?.value || '').trim());
+            if (!String(phoneInput.value || '').trim() && lastDialCode && hasStoredCountry) {
                 setPhoneWithDialCode(lastDialCode);
             } else if (String(phoneInput.value || '').trim().startsWith('+')) {
                 phoneIti.setNumber(phoneInput.value);
@@ -339,12 +405,14 @@
                     const subscriberNumber = extractSubscriberNumber(phoneInput.value, lastDialCode);
 
                     setPhoneWithDialCode(nextDialCode, subscriberNumber);
+                    autoCountryResolved = true;
                     syncCountryMeta();
                 });
             }
 
             phoneInput.addEventListener('focus', function () {
-                if (!String(this.value || '').trim() && lastDialCode) {
+                const hasStoredCountry = Boolean((phoneCountryInput?.value || '').trim());
+                if (!String(this.value || '').trim() && lastDialCode && (autoCountryResolved || hasStoredCountry)) {
                     setPhoneWithDialCode(lastDialCode);
                 }
             });
